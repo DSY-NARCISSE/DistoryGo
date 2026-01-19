@@ -3,63 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - HALLOWEEN</title>
+    <title>Distory Go - V27 TRICK OR TREAT</title>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* === THÈME HALLOWEEN === */
         :root { 
-            --bg-void: #0f0518; /* Violet très sombre */
-            --panel-bg: #1a0b2e;
-            --pumpkin: #ff7b00;
-            --slime: #76ff03;
-            --ghost: #e2e8f0;
-            --blood: #ff0000;
+            --bg-void: #0f0518; --panel-bg: #1a0b2e;
+            --pumpkin: #ff7b00; --slime: #76ff03; --ghost: #e2e8f0; --blood: #ff0000;
             --border: #4a1d96;
-            
-            --font-title: 'Creepster', cursive;
-            --font-body: 'Roboto Condensed', sans-serif;
+            --font-title: 'Creepster', cursive; --font-body: 'Roboto Condensed', sans-serif;
         }
         
         body { 
-            background-color: var(--bg-void); 
-            color: var(--ghost); 
-            font-family: var(--font-body); 
+            background-color: var(--bg-void); color: var(--ghost); font-family: var(--font-body); 
             overflow: hidden; height: 100vh; user-select: none; 
-            /* Fond Brumeux */
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(118, 255, 3, 0.1), transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(255, 123, 0, 0.1), transparent 40%);
+            background-image: radial-gradient(circle at 50% 50%, rgba(74, 29, 150, 0.1), transparent 60%);
         }
 
         /* LAYOUT */
         .layout { display: grid; grid-template-columns: 380px 1fr 320px; gap: 1.5rem; height: 100vh; padding: 1.5rem; max-width: 1920px; margin: 0 auto; transition: filter 0.3s; }
-        .layout.blur { filter: blur(4px) grayscale(0.8); pointer-events: none; }
+        .layout.blur { filter: blur(5px) grayscale(0.8); pointer-events: none; }
 
-        /* PANNEAUX CIMETIÈRE */
         .panel { 
-            background: var(--panel-bg); 
-            border: 2px solid var(--border);
-            border-radius: 16px; 
+            background: var(--panel-bg); border: 2px solid var(--border); border-radius: 16px; 
             display: flex; flex-direction: column; overflow: hidden; position: relative;
-            box-shadow: 0 0 20px rgba(74, 29, 150, 0.6), inset 0 0 50px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
-        /* Effet toile d'araignée CSS */
-        .panel::before {
-            content: ''; position: absolute; top: -20px; right: -20px; width: 60px; height: 60px;
-            background: radial-gradient(transparent 40%, rgba(255,255,255,0.1) 41%);
-            transform: rotate(45deg); pointer-events: none;
-        }
-
         .head { 
-            padding: 15px 20px; background: rgba(0,0,0,0.5);
-            border-bottom: 2px solid var(--border); color: var(--pumpkin); 
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: var(--font-title); font-size: 24px; letter-spacing: 2px;
-            text-shadow: 2px 2px 0 #000;
+            padding: 15px 20px; background: rgba(0,0,0,0.5); border-bottom: 2px solid var(--border); 
+            color: var(--pumpkin); display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-title); font-size: 24px; letter-spacing: 2px; text-shadow: 2px 2px 0 #000;
         }
 
-        /* HERO ZONE */
+        /* HERO */
         .hero-zone { 
             height: 320px; position: relative; display: flex; align-items: center; justify-content: center;
             background: radial-gradient(circle, #2d1b4e 0%, #0f0518 90%); border-bottom: 2px solid var(--border);
@@ -68,7 +45,7 @@
         .hero-img:hover { transform: scale(1.1); filter: drop-shadow(0 0 25px var(--slime)); }
         .pet-img { font-size: 50px; position: absolute; bottom: 10px; left: 10px; animation: bounce 2s infinite; z-index: 5; }
 
-        /* BOUTONS (CERCUEIL) */
+        /* BOUTONS */
         .btn-main { 
             width: 100%; background: linear-gradient(to bottom, #ff7b00, #c2410c); 
             border: 2px solid #fdba74; border-bottom: 6px solid #9a3412;
@@ -93,50 +70,27 @@
             display: flex; align-items: center; justify-content: center; font-size: 26px; cursor: pointer; transition: 0.2s; 
         }
         .slot:hover { border-color: var(--pumpkin); background: rgba(255, 123, 0, 0.2); transform: scale(1.05); z-index: 20; }
-        .r-rare { border-color: var(--slime); box-shadow: inset 0 0 5px var(--slime); } 
-        .r-legendary { border-color: var(--pumpkin); animation: pulse 2s infinite; box-shadow: inset 0 0 10px var(--pumpkin); }
-
+        
         /* ECRAN TITRE */
         .screen-overlay { 
             position: fixed; inset: 0; background: #0f0518; z-index: 2000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: opacity 0.5s; 
-            background-image: radial-gradient(circle at center, #2d1b4e 0%, #000 100%);
+            transition: opacity 0.5s; background-image: radial-gradient(circle at center, #2d1b4e 0%, #000 100%);
         }
         .screen-overlay.hidden { opacity: 0; pointer-events: none; }
-        
-        .title-spooky { 
-            font-family: var(--font-title); font-size: 100px; color: var(--pumpkin); 
-            text-shadow: 0 0 20px var(--pumpkin), 4px 4px 0 #000; letter-spacing: 5px; margin-bottom: 1rem;
-            animation: text-flicker 3s infinite;
-        }
-
-        .menu-input { 
-            background: #2d1b4e; border: 2px solid var(--slime); color: var(--slime); 
-            padding: 15px; width: 350px; text-align: center; font-size: 24px; 
-            font-family: var(--font-title); margin-bottom: 20px; border-radius: 4px; 
-            outline: none; text-transform: uppercase;
-        }
-        .menu-btn { 
-            background: transparent; border: 2px solid var(--pumpkin); color: var(--pumpkin); 
-            font-size: 28px; padding: 10px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; 
-            font-family: var(--font-title); transition: 0.2s; 
-        }
+        .title-spooky { font-family: var(--font-title); font-size: 100px; color: var(--pumpkin); text-shadow: 0 0 20px var(--pumpkin), 4px 4px 0 #000; letter-spacing: 5px; margin-bottom: 1rem; animation: text-flicker 3s infinite; }
+        .menu-input { background: #2d1b4e; border: 2px solid var(--slime); color: var(--slime); padding: 15px; width: 350px; text-align: center; font-size: 24px; font-family: var(--font-title); margin-bottom: 20px; border-radius: 4px; outline: none; text-transform: uppercase; }
+        .menu-btn { background: transparent; border: 2px solid var(--pumpkin); color: var(--pumpkin); font-size: 28px; padding: 10px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; font-family: var(--font-title); transition: 0.2s; }
         .menu-btn:hover { background: var(--pumpkin); color: #000; box-shadow: 0 0 20px var(--pumpkin); }
 
         /* HUB */
-        .card-upg { 
-            background: #1a0b2e; border: 2px solid var(--border); padding: 20px; border-radius: 12px; 
-            text-align: center; cursor: pointer; transition: 0.2s; 
-        }
+        .card-upg { background: #1a0b2e; border: 2px solid var(--border); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
         .card-upg:hover { transform: translateY(-5px); border-color: var(--slime); box-shadow: 0 0 15px var(--slime); }
         .cost-badge { background: #000; color: var(--pumpkin); border: 1px solid var(--pumpkin); font-family: var(--font-body); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-top: 8px; }
 
         /* FX */
         .dmg { position: absolute; font-weight: 900; font-size: 40px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 3px 3px 0 black; font-family: var(--font-title); }
         @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-50px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
-        @keyframes pulse { 50% { border-color: var(--slime); box-shadow: 0 0 20px var(--slime); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         @keyframes text-flicker { 0%, 100% { opacity: 1; } 92% { opacity: 0.5; } 96% { opacity: 1; } 98% { opacity: 0.2; } }
@@ -151,7 +105,20 @@
         
         /* MODAL */
         #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-box { background: #1a0b2e; border: 4px solid var(--pumpkin); padding: 40px; border-radius: 20px; text-align: center; max-width: 600px; width: 90%; box-shadow: 0 0 50px var(--pumpkin); }
+        .modal-box { background: #1a0b2e; border: 4px solid var(--pumpkin); padding: 30px; border-radius: 20px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 50px var(--pumpkin); max-height: 90vh; overflow-y: auto; }
+        
+        /* SKILL CARDS */
+        .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .skill-card { background: #0f0518; border: 2px solid var(--border); padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .skill-card:hover { border-color: var(--slime); background: #220f38; transform: translateY(-5px); }
+        .skill-icon { font-size: 30px; margin-bottom: 5px; display: block; text-align: center; }
+        .skill-name { color: var(--pumpkin); font-family: var(--font-title); font-size: 18px; margin-bottom: 5px; text-align: center; }
+        .skill-desc { color: #aaa; font-size: 12px; line-height: 1.2; text-align: center; }
+
+        /* EVENT CHOICES */
+        .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #2d1b4e; border: 2px solid var(--pumpkin); color: var(--pumpkin); font-family: var(--font-title); font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .choice-btn:hover { background: var(--pumpkin); color: black; }
+
         .hidden { display: none !important; }
         #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: #000; border: 1px solid var(--slime); padding: 12px; border-radius: 4px; font-size: 16px; max-width: 250px; color: var(--ghost); display: none; box-shadow: 0 0 10px var(--slime); }
         #tooltip.visible { display: block; }
@@ -161,7 +128,7 @@
 
     <div id="start-screen" class="screen-overlay">
         <h1 class="title-spooky">HALLOWEEN<br>NIGHTMARE</h1>
-        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">EDITION SPÉCIALE</div>
+        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">TRICK OR TREAT EDITION</div>
         <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU SURVIVANT" maxlength="12">
         <button onclick="Core.bootGame()" class="menu-btn">ENTRER DANS LA NUIT</button>
         <button onclick="Core.resetGame()" class="menu-btn text-red-600 border-red-600 hover:bg-red-900">OUBLIER LE CAUCHEMAR</button>
@@ -233,6 +200,7 @@
 
         <div class="panel">
             <div class="head">GRIMOIRE</div>
+            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto h-1/3 bg-black/30 border-b border-purple-900"></div>
             <div id="logs" class="p-3 font-sans text-xs text-purple-300 overflow-y-auto flex-grow bg-black/20 space-y-1"></div>
             <div class="flex border-t border-purple-900">
                 <button onclick="UI.tab('adv')" class="flex-1 p-3 hover:bg-purple-900 text-sm text-orange-500 font-title uppercase transition">Nuit</button>
@@ -270,7 +238,7 @@
     <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
 
     <script>
-        // --- AUDIO (SPOOKY STYLE) ---
+        // --- AUDIO (SPOOKY) ---
         const AudioSys = {
             ctx: null, muted: false,
             init: () => { window.AudioContext = window.AudioContext || window.webkitAudioContext; AudioSys.ctx = new AudioContext(); },
@@ -278,36 +246,33 @@
                 if(AudioSys.muted || !AudioSys.ctx) return;
                 const o = AudioSys.ctx.createOscillator(); const g = AudioSys.ctx.createGain();
                 o.connect(g); g.connect(AudioSys.ctx.destination);
-                if(type==='coin'){ 
-                    o.type='triangle'; o.frequency.setValueAtTime(800,AudioSys.ctx.currentTime); 
-                    o.frequency.exponentialRampToValueAtTime(1200,AudioSys.ctx.currentTime+0.1); // High pitch candy sound
-                    g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); 
-                }
-                else if(type==='hit'){ 
-                    o.type='sawtooth'; o.frequency.setValueAtTime(60,AudioSys.ctx.currentTime); // Low spooky hit
-                    g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); 
-                    g.gain.exponentialRampToValueAtTime(0.01,AudioSys.ctx.currentTime+0.2);
-                    o.start(); o.stop(AudioSys.ctx.currentTime+0.2); 
-                }
+                if(type==='coin'){ o.type='triangle'; o.frequency.setValueAtTime(800,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); }
+                else if(type==='hit'){ o.type='sawtooth'; o.frequency.setValueAtTime(60,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.2); }
             }
         };
 
-        // --- DATA HALLOWEEN ---
+        // --- DATA ---
         const DB = {
             chars: [{id:"🧙‍♀️",n:"Sorcière"}, {id:"🧛‍♂️",n:"Vampire"}, {id:"🧟",n:"Zombie"}, {id:"💀",n:"Squelette"}],
             enemies: {
-                common: [{n:"Fantôme",hp:50,atk:5,i:"👻"}, {n:"Araignée",hp:40,atk:8,i:"🕷️"}, {n:"Chauve-souris",hp:30,atk:10,i:"🦇"}],
+                common: [{n:"Fantôme",hp:50,atk:5,i:"👻"}, {n:"Araignée",hp:40,atk:8,i:"🕷️"}, {n:"Loup-Garou",hp:60,atk:10,i:"🐺"}],
                 boss: [{n:"ROI CITROUILLE",hp:500,atk:20,i:"🎃"}, {n:"GRIM REAPER",hp:600,atk:25,i:"☠️"}]
             },
-            items: [
-                {n:"Os Pointu",e:"🦴",s:10,t:"weapon",r:"r-common",d:"Ça pique."}, 
-                {n:"Cape Noire",e:"🧥",s:20,t:"head",r:"r-common",d:"Discrétion."},
-                {n:"Faux Maudite",e:"⛏️",s:100,t:"weapon",r:"r-legendary",d:"L'arme de la mort."}
-            ]
+            skills: {
+                'fire': {n:"Feu Follet",i:"🔥",d:"Dégâts de feu"}, 'heal':{n:"Vampirisme",i:"🩸",d:"Vole de la vie"},
+                'bolt':{n:"Eclair Noir",i:"⚡",d:"Gros dégâts"}, 'shield':{n:"Ossement",i:"🦴",d:"Armure +"},
+                'curse':{n:"Malédiction",i:"🕸️",d:"Affaiblit l'ennemi"}, 'luck':{n:"Chance",i:"🍀",d:"Plus de bonbons"}
+            },
+            events: [
+                {t:"Cimetière Profané", d:"Vous trouvez une tombe ouverte.", c:[{t:"Fouiller",a:"loot"},{t:"Partir",a:"leave"}]},
+                {t:"Miroir Hanté", d:"Un visage vous regarde.", c:[{t:"Briser",a:"break"},{t:"Parler",a:"talk"}]},
+                {t:"Chat Noir", d:"Il miaule tristement.", c:[{t:"Caresser",a:"pet"},{t:"Ignorer",a:"leave"}]}
+            ],
+            items: [{n:"Os Pointu",e:"🦴",s:10,t:"weapon",r:"r-common"}, {n:"Faux Maudite",e:"⛏️",s:100,t:"weapon",r:"r-legendary"}]
         };
 
         let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"SURVIVANT" };
-        let R = { active:false, day:0, hp:100, max:100, atk:10, def:0 };
+        let R = { active:false, day:0, hp:100, max:100, atk:10, def:0, skills:[] };
         let C = { active:false, hp:0, max:0, atk:0, boss:false };
         let Conf = { auto:false, speed:1 };
         let Act = null;
@@ -322,18 +287,23 @@
                 Core.init();
             },
             init: () => {
-                let s = localStorage.getItem('distory_v26');
+                let s = localStorage.getItem('distory_v27');
                 if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 document.getElementById('ui-pseudo').innerText = D.pseudo;
                 if(!D.char) UI.modal('char');
                 else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("CHASSER", Core.start); }
             },
             resetGame: () => { localStorage.clear(); location.reload(); },
-            save: () => localStorage.setItem('distory_v26', JSON.stringify(D)),
+            save: () => localStorage.setItem('distory_v27', JSON.stringify(D)),
             
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = 0 + (D.stats.def*2);
                 if(D.weapon) R.atk += D.weapon.s; if(D.head) { R.def += D.head.s; R.max += D.head.s; } if(D.pet) R.atk += D.pet.s;
+                
+                // Skill Passives
+                let sAtk = R.skills.find(s=>s.id==='fire'); if(sAtk) R.atk += (5*sAtk.lvl);
+                let sDef = R.skills.find(s=>s.id==='shield'); if(sDef) R.def += (2*sDef.lvl);
+                
                 R.hp = Math.min(R.hp, R.max);
             },
             
@@ -344,23 +314,49 @@
             },
 
             pick: (c) => { D.char = c; Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("COMMENCER", Core.start); AudioSys.play('coin'); },
-            start: () => { Core.calc(); R.hp=R.max; R.day=0; R.active=true; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("NUIT TOMBÉE","Entrée du cimetière"); AudioSys.play('coin'); Core.next(); },
+            start: () => { Core.calc(); R.hp=R.max; R.day=0; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("NUIT TOMBÉE","Entrée du cimetière"); AudioSys.play('coin'); Core.next(); },
             
-            // --- LOGIQUE HALLOWEEN ---
+            // --- LOGIQUE TRICK OR TREAT ---
             next: () => { 
                 R.day++; Core.calc(); UI.upd(); 
-                if(R.day % 10 === 0) Core.fight(true); // Boss
-                else if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("SORCIÈRE","Elle vend des potions"); }
-                else if(Math.random() < 0.6) Core.fight(false); 
-                else { 
-                    let r = Math.random();
-                    if(r < 0.5) { D.gold += 30; UI.log("Citrouille remplie trouvée (+30 Bonbons)"); AudioSys.play('coin'); UI.toast("BONBONS !", "loot"); }
-                    else if (r < 0.8) { R.hp = Math.min(R.max, R.hp + 50); UI.log("Potion étrange bue (+50 PV)"); UI.toast("SOIN", "success"); }
-                    else { UI.modal('skill'); }
-                    UI.upd(); Core.checkAuto(); 
-                }
+                
+                if(R.day % 10 === 0) { Core.fight(true); return; } // BOSS
+                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("SORCIÈRE","Elle vend des potions"); return; }
+                
+                let roll = Math.random();
+                if(roll < 0.5) Core.fight(false); // Combat
+                else if (roll < 0.8) Core.triggerEvent(); // Choix
+                else UI.modal('skill-choice'); // Skill
+                
+                UI.upd();
             },
             
+            triggerEvent: () => {
+                let ev = DB.events[Math.floor(Math.random()*DB.events.length)];
+                UI.modal('event', ev);
+            },
+            
+            resolveEvent: (action) => {
+                document.getElementById('modal-overlay').classList.add('hidden');
+                let res = "";
+                if(action === 'loot') { D.gold += 40; res = "Vous trouvez 40 Bonbons !"; }
+                else if(action === 'leave') { res = "Vous passez votre chemin."; }
+                else if(action === 'break') { R.hp -= 10; res = "Aïe ! 7 ans de malheur (-10 PV)."; }
+                else if(action === 'talk') { D.gold += 20; res = "L'esprit vous donne 20 Bonbons."; }
+                else if(action === 'pet') { R.hp = Math.min(R.max, R.hp+30); res = "Il ronronne (+30 PV)."; }
+                
+                UI.log(res); UI.toast(res, action==='break'?'err':'success');
+                UI.upd(); Core.checkAuto();
+            },
+
+            addSkill: (id) => {
+                let s = R.skills.find(x=>x.id===id);
+                if(s) s.lvl++; else R.skills.push({id:id, lvl:1});
+                document.getElementById('modal-overlay').classList.add('hidden');
+                UI.toast("NOUVEAU POUVOIR !", "loot");
+                Core.calc(); UI.upd(); Core.checkAuto();
+            },
+
             fight: (boss) => { 
                 C.active = true; C.boss = boss;
                 let pool = boss ? DB.enemies.boss : DB.enemies.common;
@@ -374,14 +370,23 @@
             
             turn: () => { 
                 if(!C.active) return; 
-                let dmg = R.atk; C.hp -= dmg; UI.fx(dmg, '#ff7b00', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
+                
+                // Player Attack
+                let dmg = R.atk; 
+                // Vampirism
+                let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("VOL DE VIE"); }
+                
+                C.hp -= dmg; UI.fx(dmg, '#ff7b00', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
+                
                 if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500/Conf.speed); return; } 
+                
                 setTimeout(()=>{ 
                     if(!C.active) return; 
                     let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#ff0000', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); 
                     if(R.hp <= 0) Core.end(false); else setTimeout(Core.turn, 800/Conf.speed); 
                 }, 500/Conf.speed); 
             },
+            
             end: (win) => { 
                 C.active = false; 
                 if(win) { 
@@ -410,6 +415,15 @@
                 ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 🍬");
                 if(R.active || D.char) { document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`; document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%"; document.getElementById('ui-atk').innerText = R.atk; document.getElementById('ui-def').innerText = R.def; }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
+                
+                // Skills List
+                let sl = document.getElementById('list-skills'); sl.innerHTML = '';
+                if(R.skills.length === 0) sl.innerHTML = '<div class="text-gray-500 text-xs text-center italic">Aucun pouvoir</div>';
+                R.skills.forEach(s => {
+                    let inf = DB.skills[s.id];
+                    sl.innerHTML += `<div class="bg-purple-900/30 p-1 mb-1 rounded flex justify-between text-xs border border-purple-800"><span class="text-orange-400">${inf.i} ${inf.n}</span><span class="text-white">Nv.${s.lvl}</span></div>`;
+                });
+
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
                 D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d); d.onmouseleave=UI.untip; g.appendChild(d); });
                 const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-stone-700';}};
@@ -424,11 +438,23 @@
             shake: (id) => { let el=document.getElementById(id); el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim'); },
             toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-200':'border-green-600 text-green-200'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
             
-            modal: (t) => { 
+            modal: (t, data) => { 
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden'); 
                 if(t==='char') c.innerHTML=`<h2 class="text-[#ff7b00] text-4xl font-title mb-8">QUI SURVIVRA ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#2d1b4e] rounded-lg border-2 border-[#ff7b00] hover:scale-110 hover:bg-[#4a1d96] transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
                 else if(t==='shop') c.innerHTML=`<h2 class="text-[#ff7b00] text-3xl font-title mb-4">LA SORCIÈRE</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#2d1b4e] border border-green-500 text-green-400 font-bold mb-2 font-title text-xl">🧪 Jus de Citrouille (50 PV)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Fuir</button>`;
-                else if(t==='skill') c.innerHTML=`<h2 class="text-purple-400 text-3xl font-title mb-4">LIVRE MAUDIT</h2><div class="text-white mb-4">Un nouveau sortilège !</div><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#2d1b4e] border border-purple-500 text-purple-400 font-bold font-title text-xl">LIRE</button>`;
+                else if(t==='skill-choice') {
+                    let k1=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*6)];
+                    c.innerHTML=`<h2 class="text-purple-400 text-3xl font-title mb-4">CHOIX DU DESTIN</h2><div class="skill-grid">
+                        <div class="skill-card" onclick="Core.addSkill('${k1}')"><span class="skill-icon">${DB.skills[k1].i}</span><div class="skill-name">${DB.skills[k1].n}</div><div class="skill-desc">${DB.skills[k1].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k2}')"><span class="skill-icon">${DB.skills[k2].i}</span><div class="skill-name">${DB.skills[k2].n}</div><div class="skill-desc">${DB.skills[k2].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k3}')"><span class="skill-icon">${DB.skills[k3].i}</span><div class="skill-name">${DB.skills[k3].n}</div><div class="skill-desc">${DB.skills[k3].d}</div></div>
+                    </div>`;
+                }
+                else if(t==='event') {
+                    c.innerHTML=`<h2 class="text-[#ff7b00] text-3xl font-title mb-4">${data.t}</h2><p class="text-gray-300 mb-6 text-xl">${data.d}</p>
+                    <button onclick="Core.resolveEvent('${data.c[0].a}')" class="choice-btn">${data.c[0].t}</button>
+                    <button onclick="Core.resolveEvent('${data.c[1].a}')" class="choice-btn text-gray-500 border-gray-600">${data.c[1].t}</button>`;
+                }
             },
             
             tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
