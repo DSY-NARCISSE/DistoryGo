@@ -3,120 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V38 FUSION</title>
+    <title>Distory Go - V39 VIOLET</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { 
-            --bg: #02040a; --panel: rgba(13, 20, 38, 0.95);
-            --border: #1e293b; --neon: #3b82f6; --cyan: #06b6d4;
-            --gold: #f59e0b; --epic: #a855f7;
+            --bg: #05020a; --panel: rgba(22, 10, 45, 0.95);
+            --border: #4c1d95; --neon: #a855f7; --cyan: #d8b4fe;
+            --gold: #f59e0b; --epic: #d946ef;
         }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; background-image: radial-gradient(circle at center, #1e293b 0%, #02040a 100%); }
+        body { 
+            background: var(--bg); color: #f5f3ff; font-family: 'Rajdhani', sans-serif; 
+            overflow: hidden; height: 100vh; user-select: none;
+            background-image: radial-gradient(circle at center, #1e1033 0%, #05020a 100%);
+        }
+        
+        /* ANIMATIONS HUD */
+        @keyframes scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 5px; background: rgba(168, 85, 247, 0.05); pointer-events: none; z-index: 100; animation: scanline 8s linear infinite; }
+
         .layout { display: grid; grid-template-columns: 380px 1fr 320px; gap: 1rem; height: 100vh; padding: 1rem; position: relative; z-index: 10; transition: filter 0.3s; }
         .layout.blur { filter: blur(8px) brightness(0.4); pointer-events: none; }
-        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-        .panel::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
-        .head { padding: 15px; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border); color: var(--cyan); display: flex; justify-content: space-between; align-items: center; font-family: 'Share Tech Mono'; font-weight: bold; }
-        .hero-zone { height: 300px; position: relative; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #1e3a8a 0%, transparent 80%); }
-        .hero-img { font-size: 140px; filter: drop-shadow(0 0 20px var(--neon)); transition: 0.3s; cursor: pointer; }
-        .bar-container { background: #000; height: 12px; border-radius: 2px; border: 1px solid #334155; margin-top: 5px; position: relative; overflow: hidden; }
-        .bar-fill { height: 100%; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .hp-fill { background: linear-gradient(90deg, #991b1b, #ef4444); }
-        .btn-main { width: 100%; background: linear-gradient(to bottom, #2563eb, #1d4ed8); border: 1px solid #60a5fa; border-bottom: 5px solid #1e40af; color: white; font-family: 'Share Tech Mono'; font-weight: 900; font-size: 26px; border-radius: 4px; padding: 18px; letter-spacing: 4px; transition: 0.1s; }
-        .btn-main:active { transform: translateY(4px); border-bottom-width: 0; }
-        .btn-control { flex: 1; background: #0f172a; border: 1px solid var(--border); border-radius: 4px; color: #94a3b8; font-family: 'Share Tech Mono'; font-size: 11px; }
-        .slot { width: 100%; height: 55px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: 0.2s; position: relative; }
-        .slot:hover { border-color: var(--cyan); background: rgba(6, 182, 212, 0.1); transform: scale(1.05); z-index: 20; }
-        
-        /* RARETÉS */
-        .r-common { border-color: #475569; }
-        .r-rare { border-color: var(--neon); box-shadow: inset 0 0 8px rgba(59, 130, 246, 0.4); }
-        .r-epic { border-color: var(--epic); box-shadow: 0 0 10px var(--epic); }
-        .r-legend { border-color: var(--gold); animation: glow-gold 2s infinite; }
-        @keyframes glow-gold { 50% { box-shadow: 0 0 15px var(--gold); border-color: #fff; } }
 
-        .list-item { display: flex; align-items: center; gap: 12px; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; margin-bottom: 4px; border: 1px solid transparent; cursor: help; }
-        .list-icon { width: 32px; height: 32px; background: #000; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--border); }
-        .screen-title { position: fixed; inset: 0; background: #02040a; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(circle at center, #172554 0%, #000 100%); }
-        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: rgba(2, 6, 23, 0.98); border: 1px solid var(--neon); padding: 15px; border-radius: 4px; width: 260px; display: none; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
+        .panel { 
+            background: var(--panel); border: 1px solid var(--border); border-radius: 8px; 
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15); transition: 0.3s;
+        }
+        .panel:hover { border-color: var(--neon); box-shadow: 0 0 40px rgba(168, 85, 247, 0.25); }
+        .panel::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: var(--neon); box-shadow: 0 0 15px var(--neon); }
+
+        .head { padding: 15px; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border); color: var(--cyan); display: flex; justify-content: space-between; align-items: center; font-family: 'Share Tech Mono'; font-weight: bold; }
+
+        /* HERO AREA */
+        .hero-zone { height: 300px; position: relative; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #4c1d95 0%, transparent 80%); overflow: hidden; }
+        .hero-img { font-size: 140px; filter: drop-shadow(0 0 25px var(--neon)); transition: 0.3s; cursor: pointer; z-index: 10; }
+        .hero-img.attacking { transform: scale(1.2) translateX(30px); }
+
+        /* BARS */
+        .bar-container { background: #000; height: 14px; border-radius: 3px; border: 1px solid #4c1d95; margin-top: 5px; position: relative; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 0.3s ease-out; }
+        .hp-fill { background: linear-gradient(90deg, #701a75, #d946ef); box-shadow: 0 0 10px #d946ef; }
+
+        /* BUTTONS */
+        .btn-main { 
+            width: 100%; background: linear-gradient(to bottom, #a855f7, #7e22ce); 
+            border: 1px solid #d8b4fe; border-bottom: 5px solid #581c87;
+            color: white; font-family: 'Share Tech Mono'; font-weight: 900; font-size: 26px; 
+            border-radius: 4px; padding: 18px; letter-spacing: 4px; transition: 0.1s;
+        }
+        .btn-main:hover:not(:disabled) { filter: brightness(1.1); box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+        .btn-main:active { transform: translateY(4px); border-bottom-width: 0; }
+        .btn-main:disabled { filter: grayscale(100%); opacity: 0.4; cursor: not-allowed; }
+
+        .btn-control { flex: 1; background: #1e1b4b; border: 1px solid var(--border); border-radius: 4px; color: #c084fc; font-family: 'Share Tech Mono'; font-size: 11px; transition: 0.2s; }
+        .btn-control.active { background: var(--neon); color: white; border-color: white; box-shadow: 0 0 10px var(--neon); }
+
+        /* SLOTS */
+        .slot { width: 100%; height: 55px; background: rgba(0,0,0,0.6); border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; transition: 0.2s; }
+        .slot:hover { border-color: var(--cyan); background: rgba(168, 85, 247, 0.15); transform: translateY(-3px); }
+        .r-rare { border-color: #3b82f6; box-shadow: inset 0 0 8px #3b82f6; }
+        .r-epic { border-color: var(--epic); box-shadow: 0 0 15px var(--epic); }
+        .r-legend { border-color: var(--gold); animation: glow-gold 2s infinite; }
+        @keyframes glow-gold { 50% { box-shadow: 0 0 20px var(--gold); border-color: #fff; } }
+
+        /* FX */
+        .dmg { position: absolute; font-weight: 900; font-size: 38px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; color: white; }
+        @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+        
+        .shake { animation: shakeAnim 0.3s; }
+        @keyframes shakeAnim { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-5px, 5px); } 50% { transform: translate(5px, -5px); } 75% { transform: translate(-5px, -5px); } }
+
+        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: rgba(10, 5, 20, 0.98); border: 1px solid var(--neon); padding: 15px; border-radius: 4px; width: 260px; display: none; box-shadow: 0 10px 30px black; }
         .hidden { display: none !important; }
-        .dmg { position: absolute; font-weight: 900; font-size: 32px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; }
-        @keyframes fly { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
+
+        .screen-title { position: fixed; inset: 0; background: #05020a; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .logo-violet { font-family: 'Share Tech Mono'; font-size: 90px; font-weight: 900; color: white; text-shadow: 0 0 40px var(--neon); animation: pulseLogo 2s infinite; }
+        @keyframes pulseLogo { 50% { opacity: 0.8; transform: scale(0.98); } }
     </style>
 </head>
-<body>
+<body class="crt">
+
+    <div class="scanline"></div>
 
     <div id="start-screen" class="screen-title">
-        <div class="text-7xl font-black text-white mb-2 tracking-tighter">OCTO GO</div>
-        <div class="text-blue-400 mb-10 font-mono tracking-[10px]">V38 TRI-FUSION</div>
-        <input type="text" id="player-pseudo" class="bg-black border-2 border-blue-500 text-white p-4 w-80 text-center font-bold mb-4 outline-none" placeholder="NOM DU PILOTE" maxlength="12">
-        <button onclick="Core.bootGame()" class="btn-main w-80">CONNEXION</button>
-        <button onclick="Core.hardReset()" class="mt-10 text-red-500 text-xs hover:underline uppercase">Formatage système</button>
+        <div class="logo-violet">OCTO GO</div>
+        <div class="text-purple-400 mb-10 font-mono tracking-[8px] uppercase">Violet Nebula // V39</div>
+        <input type="text" id="player-pseudo" class="bg-black border-2 border-purple-600 text-white p-4 w-80 text-center font-bold mb-4 outline-none focus:border-white transition" placeholder="ID PILOTE" maxlength="12">
+        <button onclick="Core.bootGame()" class="btn-main w-80">INITIALISER RUN</button>
+        <button onclick="Core.hardReset()" class="mt-8 text-red-500 text-xs hover:underline uppercase opacity-50 hover:opacity-100">Wipe Data</button>
     </div>
 
     <div id="game-ui" class="layout blur">
         <div class="panel">
-            <div class="head"><span>STATION : PILOTE</span> <button onclick="UI.modal('settings')">⚙️</button></div>
+            <div class="head"><span>STATION : PROFIL</span> <button onclick="UI.modal('settings')">⚙️</button></div>
             <div class="hero-zone">
                 <div id="vis-hero" class="hero-img">🐙</div>
                 <div id="vis-pet" class="absolute bottom-6 left-6 text-6xl animate-bounce"></div>
-                <div class="absolute top-4 right-4 bg-blue-600 px-3 py-1 font-bold text-sm">NV <span id="ui-lvl">1</span></div>
+                <div class="absolute top-4 right-4 bg-purple-700 px-3 py-1 font-bold text-sm">NV <span id="ui-lvl">1</span></div>
             </div>
             <div class="p-6 space-y-6">
                 <div>
-                    <div class="flex justify-between text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Intégrité <span id="ui-hp-txt">100/100</span></div>
+                    <div class="flex justify-between text-xs font-bold text-purple-300 uppercase mb-1">Cœur Énergie <span id="ui-hp-txt">100/100</span></div>
                     <div class="bar-container"><div id="ui-hp-bar" class="bar-fill hp-fill" style="width:100%"></div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/5 border border-white/10 p-3 text-center">
-                        <div class="text-[10px] text-blue-400 font-bold">PUISSANCE</div>
+                    <div class="bg-white/5 border border-purple-900 p-3 text-center">
+                        <div class="text-[10px] text-purple-400 font-bold uppercase">Impact</div>
                         <div id="ui-atk" class="text-2xl font-black text-white">10</div>
                     </div>
-                    <div class="bg-white/5 border border-white/10 p-3 text-center">
-                        <div class="text-[10px] text-cyan-400 font-bold">BOUCLIERS</div>
+                    <div class="bg-white/5 border border-purple-900 p-3 text-center">
+                        <div class="text-[10px] text-purple-300 font-bold uppercase">Résistance</div>
                         <div id="ui-def" class="text-2xl font-black text-white">0</div>
                     </div>
                 </div>
             </div>
-            <div class="mt-auto p-6 border-t border-white/10 bg-black/40">
+            <div class="mt-auto p-4 border-t border-purple-900/50 bg-black/20">
                 <div class="flex gap-2">
-                    <div id="s-w" class="slot text-gray-700">⚔️</div>
-                    <div id="s-h" class="slot text-gray-700">🛡️</div>
-                    <div id="s-p" class="slot text-gray-700">🐾</div>
+                    <div id="s-w" class="slot text-purple-900">⚔️</div>
+                    <div id="s-h" class="slot text-purple-900">🛡️</div>
+                    <div id="s-p" class="slot text-purple-900">🐾</div>
                 </div>
             </div>
         </div>
 
         <div class="panel">
             <div class="head">
-                <div class="flex items-center gap-4"><span class="text-white font-black text-xl uppercase">JOUR <span id="ui-day">1</span></span></div>
-                <div class="flex gap-6 font-mono font-bold">
-                    <span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span>
-                    <span class="text-purple-400">⚛️ <span id="ui-perls">0</span></span>
+                <span class="text-white font-black text-xl">CYCLE <span id="ui-day">0</span></span>
+                <div class="flex gap-6 font-mono text-purple-300">
+                    <span>🪙 <span id="ui-gold">0</span></span>
+                    <span>⚛️ <span id="ui-perls">0</span></span>
                 </div>
             </div>
             <div class="flex-grow flex flex-col items-center justify-center p-10">
-                <div id="enemy-box" class="hidden text-center">
-                    <div class="w-64 h-2 bg-black rounded overflow-hidden mb-4"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
-                    <div id="vis-enemy" class="text-[150px]">👾</div>
-                    <div id="name-enemy" class="text-red-500 font-bold text-xl uppercase">CIBLE</div>
+                <div id="enemy-box" class="hidden text-center z-10">
+                    <div class="w-64 h-2 bg-black border border-purple-900 rounded overflow-hidden mb-6"><div id="ui-en-bar" class="h-full bg-purple-500 w-full"></div></div>
+                    <div id="vis-enemy" class="text-[160px] filter drop-shadow-[0_0_40px_rgba(168,85,247,0.5)]">👾</div>
+                    <div id="name-enemy" class="font-bold text-purple-400 text-2xl mt-4 uppercase">OBJET HOSTILE</div>
                 </div>
-                <div id="text-box" class="text-center">
-                    <h1 id="txt-1" class="text-6xl font-black text-white mb-4 uppercase">Exploration</h1>
-                    <p id="txt-2" class="text-blue-400 tracking-[5px] bg-blue-900/10 px-6 py-2 border border-blue-500/30">Systèmes Prêts</p>
+                <div id="text-box" class="text-center z-10">
+                    <h1 id="txt-1" class="text-7xl font-black text-white mb-4 uppercase italic">Standby</h1>
+                    <p id="txt-2" class="text-purple-400 tracking-[8px] bg-purple-900/20 px-6 py-2 border border-purple-500/30 rounded">SCANNER EN ATTENTE</p>
                 </div>
             </div>
-            <div class="h-56 bg-slate-950/90 border-t border-white/10 grid grid-cols-12">
-                <div class="col-span-8 p-4 overflow-y-auto border-r border-white/10">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-[11px] font-bold text-blue-400 uppercase">Soute (3 objets = Fusion)</span>
-                        <button onclick="Core.chest()" class="bg-purple-600 text-white px-3 py-1 text-[10px] font-bold rounded">COFFRE (5⚛️)</button>
+            <div class="h-56 bg-black/80 border-t border-purple-900 grid grid-cols-12 backdrop-blur">
+                <div class="col-span-8 p-4 overflow-y-auto border-r border-purple-900/50">
+                    <div class="flex justify-between items-center mb-3 text-[11px] font-bold text-purple-300 uppercase">
+                        <span>Soute (Fusion 3x auto)</span>
+                        <button onclick="Core.chest()" class="bg-purple-600 text-white px-3 py-1 rounded-sm hover:bg-purple-500 transition">OUVRIR ⚛️</button>
                     </div>
                     <div id="inv-grid" class="grid grid-cols-6 gap-2"></div>
                 </div>
                 <div class="col-span-4 p-4 flex flex-col gap-3">
-                    <button id="btn-act" onclick="Core.click()" class="btn-main">SCANNER</button>
+                    <button id="btn-act" onclick="Core.click()" class="btn-main">EXECUTE</button>
                     <div class="flex gap-2 h-10">
                         <button id="btn-auto" onclick="Core.toggleAuto()" class="btn-control">AUTO: OFF</button>
                         <button id="btn-speed" onclick="Core.toggleSpeed()" class="btn-control">VIT: x1</button>
@@ -128,29 +167,29 @@
         <div class="panel">
             <div class="head">SYSTÈMES</div>
             <div class="p-4 flex-grow overflow-hidden flex flex-col">
-                <div id="skill-list" class="flex-grow overflow-y-auto pr-2"></div>
-                <div class="mt-4 pt-4 border-t border-white/10">
-                    <button onclick="UI.tab('hub')" class="w-full py-3 bg-white/5 text-cyan-400 text-xs font-bold uppercase tracking-widest">⚙️ AMÉLIORATION BASE</button>
+                <div id="skill-list" class="flex-grow overflow-y-auto"></div>
+                <div class="mt-4 pt-4 border-t border-purple-900/50">
+                    <button onclick="UI.tab('hub')" class="w-full py-3 bg-purple-900/20 hover:bg-purple-900/40 text-purple-300 text-xs font-bold uppercase tracking-widest transition">⚙️ AMÉLIORER UNITÉ</button>
                 </div>
             </div>
-            <div id="logs" class="h-40 bg-black/40 p-3 font-mono text-[10px] text-blue-300 overflow-y-auto border-t border-white/10"></div>
+            <div id="logs" class="h-40 bg-black/40 p-3 font-mono text-[10px] text-purple-400 overflow-y-auto border-t border-purple-900/50"></div>
         </div>
     </div>
 
-    <div id="view-hub" class="hidden absolute inset-0 bg-slate-950 z-[100] flex flex-col items-center justify-center p-10">
-        <h2 class="text-6xl text-white font-black mb-12 italic uppercase">Amélioration de Base</h2>
+    <div id="view-hub" class="hidden absolute inset-0 bg-black/95 z-[200] flex flex-col items-center justify-center p-10">
+        <h2 class="text-6xl text-white font-black mb-12 tracking-tighter uppercase italic border-b-4 border-purple-600 pb-2">Unité de Base</h2>
         <div class="grid grid-cols-3 gap-8 w-full max-w-5xl">
-            <div onclick="Core.upg('hp')" class="bg-white/5 border border-white/10 p-8 rounded hover:border-blue-500 cursor-pointer text-center transition">
-                <div class="text-6xl mb-4">❤️</div><div class="font-bold text-xl">VITALITÉ</div><div class="cost-badge" id="cost-hp">100 🪙</div>
+            <div onclick="Core.upg('hp')" class="bg-purple-900/10 border border-purple-500/30 p-8 rounded hover:border-white transition cursor-pointer text-center">
+                <div class="text-6xl mb-4">❤️</div><div class="font-bold text-xl uppercase">Énergie</div><div class="mt-4 text-orange-400 font-bold" id="cost-hp">100 🪙</div>
             </div>
-            <div onclick="Core.upg('atk')" class="bg-white/5 border border-white/10 p-8 rounded hover:border-blue-500 cursor-pointer text-center transition">
-                <div class="text-6xl mb-4">⚔️</div><div class="font-bold text-xl">PUISSANCE</div><div class="cost-badge" id="cost-atk">100 🪙</div>
+            <div onclick="Core.upg('atk')" class="bg-purple-900/10 border border-purple-500/30 p-8 rounded hover:border-white transition cursor-pointer text-center">
+                <div class="text-6xl mb-4">⚔️</div><div class="font-bold text-xl uppercase">Puissance</div><div class="mt-4 text-orange-400 font-bold" id="cost-atk">100 🪙</div>
             </div>
-            <div onclick="Core.upg('def')" class="bg-white/5 border border-white/10 p-8 rounded hover:border-blue-500 cursor-pointer text-center transition">
-                <div class="text-6xl mb-4">🛡️</div><div class="font-bold text-xl">BLINDAGE</div><div class="cost-badge" id="cost-def">100 🪙</div>
+            <div onclick="Core.upg('def')" class="bg-purple-900/10 border border-purple-500/30 p-8 rounded hover:border-white transition cursor-pointer text-center">
+                <div class="text-6xl mb-4">🛡️</div><div class="font-bold text-xl uppercase">Blindage</div><div class="mt-4 text-orange-400 font-bold" id="cost-def">100 🪙</div>
             </div>
         </div>
-        <button onclick="UI.tab('adv')" class="mt-12 text-blue-400 font-bold uppercase">RETOUR AU VAISSEAU</button>
+        <button onclick="UI.tab('adv')" class="mt-12 text-purple-400 font-bold uppercase tracking-widest hover:text-white">Retour au poste</button>
     </div>
 
     <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
@@ -158,32 +197,60 @@
     <div id="toast-layer" class="fixed top-10 left-1/2 -translate-x-1/2 z-[5000]"></div>
 
     <script>
-        const AudioSys = { ctx: null, vol: 0.5, init: () => { try { AudioSys.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }, setVol: (v) => { AudioSys.vol = v; }, play: (t) => { if(!AudioSys.ctx || AudioSys.vol <= 0) return; const o = AudioSys.ctx.createOscillator(), g = AudioSys.ctx.createGain(); o.connect(g); g.connect(AudioSys.ctx.destination); if(t==='coin'){ o.type='sine'; o.frequency.setValueAtTime(1200,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1*AudioSys.vol,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); } else { o.type='triangle'; o.frequency.setValueAtTime(200,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1*AudioSys.vol,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); } } };
+        const AudioSys = {
+            ctx: null, vol: 0.5,
+            init: () => { if(!AudioSys.ctx) AudioSys.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            play: (t) => {
+                if(!AudioSys.ctx || AudioSys.vol <= 0) return;
+                const o = AudioSys.ctx.createOscillator(), g = AudioSys.ctx.createGain();
+                o.connect(g); g.connect(AudioSys.ctx.destination);
+                const now = AudioSys.ctx.currentTime;
+                if(t==='coin'){ o.type='sine'; o.frequency.setValueAtTime(1000,now); g.gain.setValueAtTime(0.1*AudioSys.vol,now); o.start(); o.stop(now+0.1); }
+                else { o.type='square'; o.frequency.setValueAtTime(150,now); g.gain.setValueAtTime(0.1*AudioSys.vol,now); o.start(); o.stop(now+0.1); }
+            }
+        };
 
         const DB = {
             chars: ["🐙", "🦈", "🐢", "👽"],
-            enemies: [{n:"Drone Pirate",hp:50,atk:5,i:"🛸"}, {n:"Xéno",hp:60,atk:8,i:"👾"}, {n:"Sonde Fugitive",hp:40,atk:6,i:"🛰️"}],
-            boss: [{n:"KRAKEN",hp:600,atk:25,i:"🦑"}, {n:"LÉVIATHAN",hp:800,atk:30,i:"🐋"}],
-            skills: { 'fire': {n:"Feu",i:"🔥",d:"Dégâts de feu (+5 ATK/nv)"}, 'heal':{n:"Soin",i:"💚",d:"Régène 5% PV / tour"}, 'shield':{n:"Holo-Bouclier",i:"🛡️",d:"Def +2/nv"} },
+            enemies: [{n:"Drone Corrompu",hp:50,atk:5,i:"🛸"}, {n:"Prédateur",hp:60,atk:8,i:"👾"}],
+            boss: [{n:"KRAKEN VIOLET",hp:700,atk:30,i:"🦑"}],
+            skills: { 
+                'fire': {n:"Plasma",i:"🔥",d:"Attaque brute. +5 ATK par niveau."}, 
+                'heal': {n:"Nanobots",i:"💉",d:"Réparation auto. +5% PV par tour."}, 
+                'shield': {n:"Gravité",i:"🛡️",d:"Champ protecteur. +2 DEF par niveau."} 
+            },
             items: [
-                {n:"Laser",e:"🔫",s:10,t:"weapon",r:"r-common",d:"Standard"},
-                {n:"Plastron",e:"🛡️",s:20,t:"head",r:"r-common",d:"Armure"},
-                {n:"Sonde",e:"🤖",s:5,t:"pet",r:"r-common",d:"Aide"}
+                {n:"Laser",e:"🔫",s:10,t:"weapon",r:"r-common",d:"Arme à impulsion."},
+                {n:"Plaque",e:"🛡️",s:20,t:"head",r:"r-common",d:"Structure renforcée."},
+                {n:"Sonde",e:"🤖",s:5,t:"pet",r:"r-common",d:"Assistant IA."}
             ],
             rarities: ["r-common", "r-rare", "r-epic", "r-legend"]
         };
 
-        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"PILOTE" };
+        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"USER" };
         let R = { active:false, day:0, hp:100, max:100, atk:10, def:0, skills:[] };
         let C = { active:false, hp:0, max:0, atk:0 };
         let Conf = { auto:false, speed:1, pause: false };
         let Act = null;
 
         const Core = {
-            bootGame: () => { AudioSys.init(); let n = document.getElementById('player-pseudo').value.trim(); if(n) D.pseudo = n.toUpperCase(); document.getElementById('start-screen').classList.add('hidden'); document.getElementById('game-ui').classList.remove('blur'); Core.init(); },
-            init: () => { let s = localStorage.getItem('distory_v38'); if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} } document.getElementById('ui-pseudo').innerText = D.pseudo; if(!D.char) UI.modal('char'); else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("LANCER", Core.start); } },
-            save: () => localStorage.setItem('distory_v38', JSON.stringify(D)),
-            hardReset: () => { if(confirm("Supprimer la sauvegarde ?")) { localStorage.clear(); location.reload(); } },
+            bootGame: () => {
+                AudioSys.init();
+                let n = document.getElementById('player-pseudo').value.trim();
+                if(n) D.pseudo = n.toUpperCase();
+                document.getElementById('start-screen').classList.add('hidden');
+                document.getElementById('game-ui').classList.remove('blur');
+                Core.init();
+            },
+            init: () => {
+                let s = localStorage.getItem('distory_v39');
+                if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
+                document.getElementById('ui-pseudo').innerText = D.pseudo;
+                if(!D.char) UI.modal('char');
+                else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("LANCER", Core.start); }
+            },
+            save: () => localStorage.setItem('distory_v39', JSON.stringify(D)),
+            hardReset: () => { if(confirm("Supprimer tout ?")) { localStorage.clear(); location.reload(); } },
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = D.stats.def*2;
                 if(D.weapon) R.atk += D.weapon.s; if(D.head) R.max += D.head.s; if(D.pet) R.atk += D.pet.s;
@@ -191,71 +258,73 @@
                 let sAtk = R.skills.find(s=>s.id==='fire'); if(sAtk) R.atk += (5*sAtk.lvl);
                 R.hp = Math.min(R.hp, R.max);
             },
-            upg: (t) => { let c=100+(D.stats[t]*50); if(D.gold>=c){D.gold-=c; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("UPGRADE OK"); AudioSys.play('coin');} },
-            start: () => { Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("PROCHAIN CYCLE", Core.next); UI.txt("STATION PRÊTE","Cycle 1"); UI.modal('skill-choice'); },
+            start: () => { 
+                Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; 
+                UI.scene('adv'); UI.btn("EXPLORER", Core.next); UI.txt("STATION PRÊTE","Cycle 1"); 
+                UI.modal('skill-choice');
+            },
             next: () => {
                 if(Conf.pause || !R.active) return;
                 R.day++; Core.calc(); UI.upd();
-                if(R.day%10===0) Core.fight(true);
-                else if(R.day%5===0) Core.fight(false);
-                else if(Math.random()<0.3) UI.modal('skill-choice');
-                else { D.gold += 30; UI.log("Cristaux +30"); UI.upd(); Core.checkAuto(); }
+                if(R.day % 10 === 0) Core.fight(true);
+                else if(R.day % 5 === 0) Core.fight(false);
+                else if(Math.random() < 0.3) UI.modal('skill-choice');
+                else { D.gold += 30; UI.log("Ressources +30 🪙"); UI.upd(); Core.checkAuto(); }
             },
             fight: (boss) => {
-                C.active=true; let pool = boss ? DB.boss : DB.enemies; let en = pool[Math.floor(Math.random()*pool.length)];
+                C.active = true; let pool = boss ? DB.boss : DB.enemies; let en = pool[Math.floor(Math.random()*pool.length)];
                 C.max = en.hp * (1+R.day*0.1); C.hp=C.max; C.atk=en.atk*(1+R.day*0.05);
-                UI.scene('com'); document.getElementById('vis-enemy').innerText=en.i; document.getElementById('name-enemy').innerText=en.n;
+                UI.scene('com'); document.getElementById('vis-enemy').innerText=en.i;
                 UI.btn("COMBAT...", null, true); setTimeout(Core.turn, 800/Conf.speed);
             },
             turn: () => {
                 if(!C.active) return;
-                let dmg = R.atk; C.hp -= dmg; UI.fx(dmg, '#fbbf24', 'vis-enemy'); UI.bar(); AudioSys.play('hit');
+                let dmg = R.atk; C.hp -= dmg; 
+                UI.fx(dmg, '#a855f7', 'vis-enemy'); UI.bar(); AudioSys.play('hit');
+                document.getElementById('vis-hero').classList.add('attacking');
+                setTimeout(()=>document.getElementById('vis-hero').classList.remove('attacking'), 200);
+
                 if(C.hp<=0) { setTimeout(()=>Core.end(true), 500/Conf.speed); return; }
                 setTimeout(() => {
                     if(!C.active) return;
                     let edmg = Math.max(1, C.atk-R.def); R.hp-=edmg; UI.fx(edmg, '#f00', 'vis-hero'); UI.upd();
+                    UI.shake('game-ui');
                     if(R.hp<=0) Core.end(false); else setTimeout(Core.turn, 800/Conf.speed);
                 }, 500/Conf.speed);
             },
             end: (win) => {
-                C.active=false; if(win) { D.gold+=50; UI.btn("CONTINUER", Core.next); Core.checkAuto(); }
-                else { R.active=false; UI.btn("RELANCER", Core.start); }
+                C.active=false; if(win) { D.gold+=50; UI.btn("CONTINUER", Core.next); UI.log("Victoire !"); Core.checkAuto(); }
+                else { R.active=false; UI.btn("RELANCER", Core.start); UI.log("Crash système."); }
                 Core.save(); UI.scene('adv');
             },
             click: () => { if(Act) Act(); },
             toggleAuto: () => { Conf.auto=!Conf.auto; document.getElementById('btn-auto').innerText=Conf.auto?"AUTO: ON":"AUTO: OFF"; document.getElementById('btn-auto').classList.toggle('active'); if(Conf.auto) Core.checkAuto(); },
             toggleSpeed: () => { Conf.speed=Conf.speed===1?2:1; document.getElementById('btn-speed').innerText=`VIT: x${Conf.speed}`; },
             checkAuto: () => { if(Conf.auto && R.active && !C.active && document.getElementById('modal-overlay').classList.contains('hidden')) setTimeout(()=>document.getElementById('btn-act').click(), 1000/Conf.speed); },
-            
-            // MECANIQUE DE FUSION
             checkFusion: () => {
-                let counts = {};
-                D.inv.forEach(item => { counts[item.n] = (counts[item.n] || 0) + 1; });
+                let counts = {}; D.inv.forEach(item => { counts[item.n] = (counts[item.n] || 0) + 1; });
                 for(let name in counts) {
                     if(counts[name] >= 3) {
-                        let matches = D.inv.filter(it => it.n === name);
-                        let first = matches[0];
+                        let matches = D.inv.filter(it => it.n === name); let first = matches[0];
                         let rIdx = DB.rarities.indexOf(first.r);
-                        if(rIdx < 3) { // Ne pas dépasser Légendaire
-                            D.inv = D.inv.filter(it => it.n !== name); // Enlever les 3
-                            D.inv.push({
-                                ...first,
-                                r: DB.rarities[rIdx + 1],
-                                s: first.s * 2, // Double les stats
-                                uid: Date.now()
-                            });
-                            UI.toast("FUSION : " + name + " " + DB.rarities[rIdx+1].toUpperCase());
-                            AudioSys.play('coin');
-                            Core.checkFusion(); // Verifier si une nouvelle fusion est possible
+                        if(rIdx < 3) {
+                            D.inv = D.inv.filter(it => it.n !== name);
+                            D.inv.push({...first, r: DB.rarities[rIdx + 1], s: first.s * 2, uid: Date.now()});
+                            UI.toast("FUSION : " + name.toUpperCase()); AudioSys.play('coin');
+                            Core.checkFusion();
                         }
                     }
                 }
             },
-
             chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = {...DB.items[Math.floor(Math.random()*DB.items.length)], uid:Date.now()}; D.inv.push(i); Core.checkFusion(); Core.save(); UI.upd(); } },
             equip: (idx) => { let i=D.inv[idx]; let t=i.t; if(D[t]) D.inv.push(D[t]); D[t]=i; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); },
             addSkill: (id) => { let s=R.skills.find(x=>x.id===id); if(s)s.lvl++; else R.skills.push({id:id,lvl:1}); UI.closeModal(); UI.upd(); Core.checkAuto(); },
-            pick: (c) => { D.char=c; D.weapon={...DB.items[0],uid:1}; D.head={...DB.items[1],uid:2}; D.pet={...DB.items[2],uid:3}; Core.save(); UI.closeModal(); Core.init(); }
+            upg: (t) => { let c=100+(D.stats[t]*50); if(D.gold>=c){D.gold-=c; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("UNITÉ AMÉLIORÉE"); AudioSys.play('coin');} },
+            pick: (c) => { 
+                D.char=c; 
+                D.weapon={...DB.items[0],uid:1}; D.head={...DB.items[1],uid:2}; D.pet={...DB.items[2],uid:3};
+                Core.save(); UI.closeModal(); Core.init(); 
+            }
         };
 
         const UI = {
@@ -267,11 +336,15 @@
                 document.getElementById('ui-atk').innerText=R.atk; document.getElementById('ui-def').innerText=R.def;
                 if(D.char) document.getElementById('vis-hero').innerText=D.char;
                 if(D.pet) document.getElementById('vis-pet').innerText=D.pet.e;
+                ['hp','atk','def'].forEach(k => { let el = document.getElementById('cost-'+k); if(el) el.innerText = (100 + D.stats[k]*50) + " 🪙"; });
+
                 let sl=document.getElementById('skill-list'); sl.innerHTML='';
-                R.skills.forEach(s=>{ let inf=DB.skills[s.id]; sl.innerHTML+=`<div class="list-item" onmouseenter="UI.tip(event,'${inf.n}','${inf.d} (Lv.${s.lvl})')" onmouseleave="UI.untip()"><div class="list-icon">${inf.i}</div><div><div class="font-bold text-white text-sm">${inf.n}</div><div class="text-[10px] text-blue-400 uppercase">Module Actif</div></div></div>`; });
+                R.skills.forEach(s=>{ let inf=DB.skills[s.id]; sl.innerHTML+=`<div class="flex items-center gap-3 p-2 bg-white/5 border border-purple-900 rounded mb-1 cursor-help" onmouseenter="UI.tip(event,'${inf.n}','${inf.d} (Lv.${s.lvl})')" onmouseleave="UI.untip()"><div class="text-xl">${inf.i}</div><div><div class="font-bold text-xs">${inf.n}</div><div class="text-[9px] text-purple-400">MODULE ACTIF</div></div></div>`; });
+                
                 let g=document.getElementById('inv-grid'); g.innerHTML='';
                 D.inv.forEach((it,i)=>{ let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e,it.n,it.d + " (+" + it.s + " stats)"); d.onmouseleave=UI.untip; g.appendChild(d); });
-                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e; el.className=`slot ${it.r}`; el.onmouseenter=(e)=>UI.tip(e,it.n,it.d + " (+" + it.s + " stats)"); el.onmouseleave=UI.untip;}else{el.innerText=def; el.className='slot text-stone-700';}};
+                
+                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e; el.className=`slot ${it.r}`; el.onmouseenter=(e)=>UI.tip(e,it.n,it.d); el.onmouseleave=UI.untip;}else{el.innerText=def; el.className='slot text-purple-900';}};
                 set('s-w',D.weapon,'⚔️'); set('s-h',D.head,'🛡️'); set('s-p',D.pet,'🐾');
             },
             bar: () => document.getElementById('ui-en-bar').style.width=(C.hp/C.max*100)+"%",
@@ -280,19 +353,20 @@
             txt: (t,s) => { document.getElementById('txt-1').innerText=t; document.getElementById('txt-2').innerText=s; },
             log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div>> ${m}</div>`+l.innerHTML; },
             fx: (t,c,id) => { let el=document.createElement('div'), r=document.getElementById(id).getBoundingClientRect(); el.className='dmg'; el.style.color=c; el.innerText=t; el.style.left=(r.left+r.width/2)+'px'; el.style.top=r.top+'px'; document.body.appendChild(el); setTimeout(()=>el.remove(),800); },
-            toast: (m) => { let d=document.createElement('div'); d.className='toast text-white'; d.innerText=m; document.getElementById('toast-layer').appendChild(d); setTimeout(()=>d.remove(),2000); },
+            shake: (id) => { let el=document.getElementById(id); el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),300); },
+            toast: (m) => { let d=document.createElement('div'); d.className='bg-purple-900 border border-purple-400 text-white px-4 py-2 rounded shadow-2xl mb-2 font-bold'; d.innerText=m; document.getElementById('toast-layer').appendChild(d); setTimeout(()=>d.remove(),2000); },
             modal: (t) => {
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden');
-                if(t==='char') c.innerHTML=`<h2 class="text-white text-3xl font-black mb-6">PROFIL DE VOL</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x}')" class="text-6xl p-6 bg-[#0f172a] border-2 border-blue-500 rounded-full hover:bg-blue-600">${x}</button>`).join('')}</div>`;
+                if(t==='char') c.innerHTML=`<h2 class="text-white text-3xl font-black mb-6">SÉLECTION UNITÉ</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x}')" class="text-6xl p-6 bg-purple-900/40 border-2 border-purple-500 rounded-full hover:bg-purple-500 transition">${x}</button>`).join('')}</div>`;
                 else if(t==='skill-choice') {
                     let k=Object.keys(DB.skills);
-                    c.innerHTML=`<h2 class="text-white text-2xl font-bold mb-6">TÉLÉCHARGEMENT MODULE</h2><div class="grid grid-cols-3 gap-3">${k.map(id=>`<div class="bg-black/40 border border-blue-500 p-4 rounded cursor-pointer hover:bg-blue-900/50" onclick="Core.addSkill('${id}')"><div class="text-4xl mb-2">${DB.skills[id].i}</div><div class="font-bold text-white">${DB.skills[id].n}</div><div class="text-[10px] text-gray-400 mt-2">${DB.skills[id].d}</div></div>`).join('')}</div>`;
+                    c.innerHTML=`<h2 class="text-white text-2xl font-bold mb-6">TÉLÉCHARGEMENT MODULE</h2><div class="grid grid-cols-3 gap-3">${k.map(id=>`<div class="bg-black/40 border border-purple-500 p-4 rounded cursor-pointer hover:bg-purple-900/50" onclick="Core.addSkill('${id}')"><div class="text-4xl mb-2">${DB.skills[id].i}</div><div class="font-bold text-white">${DB.skills[id].n}</div><div class="text-[10px] text-purple-300 mt-2">${DB.skills[id].d}</div></div>`).join('')}</div>`;
                 }
-                else if(t==='settings') c.innerHTML=`<h2 class="text-white font-bold mb-4 uppercase">Options</h2><div class="text-left mb-6"><label class="text-xs text-gray-500">Volume</label><input type="range" min="0" max="1" step="0.1" value="${AudioSys.vol}" oninput="AudioSys.setVol(this.value)" class="w-full"></div><button onclick="UI.closeModal()" class="btn-main text-sm p-2">REPRENDRE</button>`;
+                else if(t==='settings') c.innerHTML=`<h2 class="text-white font-bold mb-4 uppercase">Options</h2><div class="text-left mb-6"><label class="text-xs text-purple-400">Audio</label><input type="range" min="0" max="1" step="0.1" value="${AudioSys.vol}" oninput="AudioSys.setVol(this.value)" class="w-full"></div><button onclick="UI.closeModal()" class="btn-main text-sm p-2">REPRENDRE</button>`;
             },
             closeModal: () => { document.getElementById('modal-overlay').classList.add('hidden'); Core.checkAuto(); },
             tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
-            tip: (e,t,d) => { let tt=document.getElementById('tooltip'); tt.innerHTML=`<div class="font-bold text-cyan-400 mb-1">${t}</div><div class="text-xs text-gray-300">${d}</div>`; tt.style.display="block"; tt.style.left=(e.clientX+20)+"px"; tt.style.top=(e.clientY+20)+"px"; },
+            tip: (e,t,d) => { let tt=document.getElementById('tooltip'); tt.innerHTML=`<div class="font-bold text-purple-300 mb-1">${t}</div><div class="text-xs text-gray-400">${d}</div>`; tt.style.display="block"; tt.style.left=(e.clientX+20)+"px"; tt.style.top=(e.clientY+20)+"px"; },
             untip: () => document.getElementById('tooltip').style.display="none"
         };
     </script>
