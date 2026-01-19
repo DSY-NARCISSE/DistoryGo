@@ -1,109 +1,153 @@
-const UI = {
-    upd: () => {
-        document.getElementById('ui-gold').innerText = D.gold;
-        document.getElementById('ui-perls').innerText = D.perls;
-        
-        if(R.active || D.char) {
+/* --- INTERFACE (UI) --- */
+window.UI = {
+    // Mise à jour globale de l'écran
+    update: () => {
+        const S = State.data; // Raccourci vers Data
+        const R = State.run;  // Raccourci vers Run
+
+        // 1. Ressources
+        document.getElementById('ui-gold').innerText = S.gold;
+        document.getElementById('ui-perls').innerText = S.perls;
+        document.getElementById('ui-lvl').innerText = S.level;
+
+        // 2. Affichage du Héros (CORRECTIF AVATAR)
+        if(S.char) {
+            document.getElementById('vis-hero').innerText = S.char;
+        }
+
+        // 3. Stats en direct
+        if (R.active || S.char) {
             document.getElementById('ui-day').innerText = R.day;
-            document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`;
-            document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%";
+            document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.maxHp}`;
+            document.getElementById('ui-hp-bar').style.width = `${(R.hp / R.maxHp) * 100}%`;
+            document.getElementById('ui-shield-bar').style.width = R.shield > 0 ? "100%" : "0%";
+            
             document.getElementById('ui-atk').innerText = R.atk;
             document.getElementById('ui-def').innerText = R.def;
             
-            let ls = document.getElementById('list-skills'); 
-            ls.innerHTML = '';
-            if(R.skills.length === 0) ls.innerHTML = `<div class="text-xs text-center text-gray-600 mt-4">Vide</div>`;
-            R.skills.forEach(s => { 
-                let d = DB.skills[s.id]; 
-                ls.innerHTML += `<div class="text-xs bg-white/10 p-1 mb-1 rounded flex justify-between"><span class="${d.c} font-bold">${d.i} ${d.n}</span><span>L.${s.lvl}</span></div>`; 
+            // Liste des skills
+            const sl = document.getElementById('list-skills');
+            sl.innerHTML = '';
+            if (R.skills.length === 0) sl.innerHTML = `<div class="text-xs text-slate-500 text-center italic mt-10">Aucun module</div>`;
+            
+            R.skills.forEach(s => {
+                let def = DB.skills[s.id];
+                sl.innerHTML += `<div class="bg-white/5 border border-white/10 p-2 rounded text-xs flex justify-between mb-1">
+                    <span class="${def.c} font-bold">${def.i} ${def.n}</span>
+                    <span class="text-slate-400">Niv.${s.lvl}</span>
+                </div>`;
             });
         }
-        
-        const set = (id, it, p) => { document.getElementById(id).innerText = it ? it.e : p; };
-        set('s-w', D.weapon, '⚔️'); 
-        set('s-h', D.head, '🛡️'); 
-        set('s-p', D.pet, '🐾');
-        
-        let gi = document.getElementById('inv-grid'); 
-        gi.innerHTML = '';
-        D.inv.forEach((it, i) => { 
-            let d = document.createElement('div'); 
-            d.className = `slot ${it.r}`; 
-            d.innerText = it.e; 
-            d.onclick = () => Core.equip(i); 
-            gi.appendChild(d);
+
+        // 4. Inventaire & Slots
+        const setSlot = (id, item, placeholder) => {
+            const el = document.getElementById(id);
+            if (item) {
+                el.innerText = item.e;
+                el.className = `slot ${item.r}`;
+            } else {
+                el.innerText = placeholder;
+                el.className = "slot text-slate-600 border-slate-700";
+            }
+        };
+        setSlot('slot-weapon', S.weapon, '⚔️');
+        setSlot('slot-head', S.head, '🛡️');
+        setSlot('slot-pet', S.pet, '🐾');
+
+        // Grille Inventaire (CORRECTIF COFFRE)
+        const grid = document.getElementById('grid-inv');
+        grid.innerHTML = '';
+        S.inventory.forEach((item, idx) => {
+            let d = document.createElement('div');
+            d.className = `slot ${item.r} scale-90`;
+            d.innerText = item.e;
+            d.onclick = () => Core.equip(idx);
+            grid.appendChild(d);
         });
-        
-        if(D.char) document.getElementById('vis-hero').innerText = D.char;
     },
 
-    bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
-
-    scene: (t) => {
-        let e = document.getElementById('enemy-container');
-        let tx = document.getElementById('text-container');
-        if(t === 'com') { e.classList.remove('hidden'); tx.classList.add('hidden'); }
-        else { e.classList.add('hidden'); tx.classList.remove('hidden'); }
+    // Barre ennemi
+    bar: () => {
+        const C = State.combat;
+        document.getElementById('ui-enemy-bar').style.width = `${(C.hp / C.max * 100)}%`;
     },
 
-    btn: (t, a, dis) => { 
-        let b = document.getElementById('btn-act'); 
-        b.innerText = t; 
-        Conf.act = a; 
-        b.disabled = dis; 
-    },
-
-    txt: (t, s) => { 
-        document.getElementById('txt-1').innerText = t; 
-        document.getElementById('txt-2').innerText = s; 
-    },
-
-    log: (m, type='info') => { 
-        let c = type==='err' ? 'text-red-400' : (type==='loot' ? 'text-purple-400' : 'text-gray-400');
-        let l = document.getElementById('logs'); 
-        l.innerHTML = `<div><span class="${c}">> ${m}</span></div>` + l.innerHTML; 
-    },
-
-    fx: (t, c, id) => {
-        let el = document.createElement('div'); 
-        el.className = 'dmg'; 
-        el.style.color = c; 
-        el.innerText = t;
-        let r = document.getElementById(id).getBoundingClientRect();
-        el.style.left = (r.left + 20) + 'px'; 
-        el.style.top = r.top + 'px';
-        document.getElementById('particle-layer').appendChild(el); 
-        setTimeout(() => el.remove(), 800);
-    },
-
-    toast: (m, t) => {
-        let d = document.createElement('div'); 
-        let c = t==='loot' ? 'border-purple-500' : (t==='err' ? 'border-red-500' : 'border-green-500');
-        d.className = `toast ${c}`; 
-        d.innerText = m;
-        document.getElementById('toast-layer').appendChild(d); 
-        setTimeout(() => d.remove(), 2500);
-    },
-
-    modal: (t) => {
-        let l = document.getElementById('modal-layer');
-        let c = document.getElementById('modal-content');
-        l.classList.add('show');
-        
-        if(t === 'char') {
-            c.innerHTML = `<h2 class="text-white text-2xl font-bold mb-4 font-tech">IDENTIFICATION</h2><div class="flex gap-2 justify-center">${DB.chars.map(x => `<button onclick="Core.pick('${x.id}')" class="text-5xl p-2 bg-slate-800 rounded hover:scale-110 border border-blue-500/50">${x.id}</button>`).join('')}</div>`;
-        } 
-        else if(t === 'shop') {
-            c.innerHTML = `<h2 class="text-emerald-400 text-xl font-bold mb-2">RAVITAILLEMENT</h2><button onclick="Core.heal(R.max/2);document.getElementById('modal-layer').classList.remove('show');Core.auto()" class="w-full p-2 bg-slate-800 mb-2 border border-emerald-500 rounded text-emerald-400 font-bold">💊 Soin 50%</button>`;
+    // Navigation Scènes
+    scene: (mode) => {
+        const enemy = document.getElementById('enemy-container');
+        const txt = document.getElementById('narrative-box');
+        if (mode === 'combat') {
+            enemy.classList.remove('hidden', 'opacity-0');
+            txt.classList.add('hidden');
+        } else {
+            enemy.classList.add('hidden', 'opacity-0');
+            txt.classList.remove('hidden');
         }
-        else if(t === 'skill') {
-            let k = Object.keys(DB.skills)[Math.floor(Math.random()*4)]; 
+    },
+
+    // Gestion Bouton Principal
+    btn: (txt, action, disabled = false) => {
+        const b = document.getElementById('btn-main');
+        b.innerText = txt;
+        State.conf.action = action;
+        b.disabled = disabled;
+        if(disabled) b.classList.add('grayscale', 'cursor-not-allowed');
+        else b.classList.remove('grayscale', 'cursor-not-allowed');
+    },
+
+    // Textes narratifs
+    txt: (t1, t2) => {
+        document.getElementById('txt-title').innerText = t1;
+        document.getElementById('txt-sub').innerText = t2;
+    },
+
+    // Logs
+    log: (msg) => {
+        const box = document.getElementById('game-logs');
+        box.innerHTML = `<div class="mb-1 border-b border-white/5 pb-1"><span class="text-slate-400">> ${msg}</span></div>` + box.innerHTML;
+    },
+
+    // Modals
+    modal: (type) => {
+        const o = document.getElementById('modal-overlay');
+        const c = document.getElementById('modal-content');
+        o.classList.remove('hidden');
+        
+        let h = '';
+        if(type === 'char') {
+            h = `<h2 class="text-2xl font-bold text-white mb-6">IDENTIFICATION</h2><div class="flex gap-4 justify-center">${DB.chars.map(x => `<button onclick="Core.pickChar('${x.id}')" class="text-6xl p-4 bg-slate-800 border rounded-xl hover:scale-110 transition border-blue-500">${x.id}</button>`).join('')}</div>`;
+        }
+        else if(type === 'shop') {
+            h = `<h2 class="text-xl font-bold text-emerald-400 mb-4">RAVITAILLEMENT</h2><button onclick="Core.heal(50);UI.closeModal();" class="w-full p-3 bg-slate-800 border border-green-500 rounded text-green-400 font-bold mb-2">💊 Soin 50%</button>`;
+        }
+        else if(type === 'skill') {
+            let k = Object.keys(DB.skills)[Math.floor(Math.random()*Object.keys(DB.skills).length)];
             let s = DB.skills[k];
-            c.innerHTML = `<h2 class="text-yellow-400 text-xl font-bold mb-2">MODULE</h2><div class="text-4xl mb-2">${s.i}</div><div class="text-white mb-4 font-bold">${s.n}</div><button onclick="Core.addSkill('${k}')" class="bg-yellow-600 text-black px-4 py-2 rounded font-bold w-full hover:bg-yellow-500">INSTALLER</button>`;
+            h = `<h2 class="text-xl font-bold text-yellow-400 mb-4">MODULE</h2><div class="text-5xl mb-2">${s.i}</div><div class="font-bold text-white text-xl mb-4">${s.n}</div><button onclick="Core.addSkill('${k}');UI.closeModal();" class="w-full py-3 bg-yellow-600 text-black font-bold rounded">INSTALLER</button>`;
         }
+        c.innerHTML = h;
     },
 
-    tab: (t) => { 
-        document.getElementById('view-hub').classList.toggle('hidden', t !== 'hub'); 
+    closeModal: () => document.getElementById('modal-overlay').classList.add('hidden'),
+
+    // Effets visuels
+    toast: (msg) => {
+        const t = document.createElement('div');
+        t.className = "bg-slate-800 border-l-4 border-blue-500 text-white px-4 py-2 rounded shadow-lg";
+        t.innerText = msg;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 2500);
+    },
+    
+    fx: (txt, color, target) => {
+        const el = document.createElement('div');
+        el.className = "absolute font-black text-2xl animate-bounce pointer-events-none";
+        el.style.color = color;
+        el.innerText = txt;
+        const r = document.getElementById(target).getBoundingClientRect();
+        el.style.left = (r.left + 20) + "px";
+        el.style.top = r.top + "px";
+        document.getElementById('fx-layer').appendChild(el);
+        setTimeout(() => el.remove(), 800);
     }
 };
