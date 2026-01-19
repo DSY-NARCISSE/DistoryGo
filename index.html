@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V27 TRICK OR TREAT</title>
+    <title>Distory Go - V28 OPTIONS</title>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -64,6 +64,16 @@
         .btn-mini:hover { color: var(--slime); border-color: var(--slime); }
         .btn-mini.active { background: var(--slime); color: black; border-color: white; box-shadow: 0 0 10px var(--slime); }
 
+        /* MENU BUTTON */
+        .btn-menu {
+            position: absolute; top: 1rem; right: 1rem; z-index: 100;
+            background: #2d1b4e; border: 2px solid var(--pumpkin); color: var(--pumpkin);
+            width: 50px; height: 50px; border-radius: 50%; font-size: 24px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 0 15px var(--border);
+        }
+        .btn-menu:hover { transform: rotate(90deg); box-shadow: 0 0 25px var(--pumpkin); background: var(--pumpkin); color: black; }
+
         /* SLOTS */
         .slot { 
             width: 100%; height: 50px; background: rgba(0,0,0,0.6); border: 2px solid #4a1d96; border-radius: 6px; 
@@ -82,11 +92,6 @@
         .menu-input { background: #2d1b4e; border: 2px solid var(--slime); color: var(--slime); padding: 15px; width: 350px; text-align: center; font-size: 24px; font-family: var(--font-title); margin-bottom: 20px; border-radius: 4px; outline: none; text-transform: uppercase; }
         .menu-btn { background: transparent; border: 2px solid var(--pumpkin); color: var(--pumpkin); font-size: 28px; padding: 10px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; font-family: var(--font-title); transition: 0.2s; }
         .menu-btn:hover { background: var(--pumpkin); color: #000; box-shadow: 0 0 20px var(--pumpkin); }
-
-        /* HUB */
-        .card-upg { background: #1a0b2e; border: 2px solid var(--border); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .card-upg:hover { transform: translateY(-5px); border-color: var(--slime); box-shadow: 0 0 15px var(--slime); }
-        .cost-badge { background: #000; color: var(--pumpkin); border: 1px solid var(--pumpkin); font-family: var(--font-body); padding: 4px 10px; border-radius: 4px; display: inline-block; margin-top: 8px; }
 
         /* FX */
         .dmg { position: absolute; font-weight: 900; font-size: 40px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 3px 3px 0 black; font-family: var(--font-title); }
@@ -107,15 +112,14 @@
         #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .modal-box { background: #1a0b2e; border: 4px solid var(--pumpkin); padding: 30px; border-radius: 20px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 50px var(--pumpkin); max-height: 90vh; overflow-y: auto; }
         
-        /* SKILL CARDS */
+        /* SETTINGS BUTTONS */
+        .btn-settings { width: 100%; padding: 15px; margin-bottom: 10px; background: #2d1b4e; border: 1px solid var(--ghost); color: var(--ghost); font-family: var(--font-body); font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .btn-settings:hover { background: var(--pumpkin); color: black; border-color: var(--pumpkin); }
+
+        /* SKILL & EVENT STYLES */
         .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .skill-card { background: #0f0518; border: 2px solid var(--border); padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
         .skill-card:hover { border-color: var(--slime); background: #220f38; transform: translateY(-5px); }
-        .skill-icon { font-size: 30px; margin-bottom: 5px; display: block; text-align: center; }
-        .skill-name { color: var(--pumpkin); font-family: var(--font-title); font-size: 18px; margin-bottom: 5px; text-align: center; }
-        .skill-desc { color: #aaa; font-size: 12px; line-height: 1.2; text-align: center; }
-
-        /* EVENT CHOICES */
         .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #2d1b4e; border: 2px solid var(--pumpkin); color: var(--pumpkin); font-family: var(--font-title); font-size: 20px; cursor: pointer; transition: 0.2s; }
         .choice-btn:hover { background: var(--pumpkin); color: black; }
 
@@ -128,11 +132,13 @@
 
     <div id="start-screen" class="screen-overlay">
         <h1 class="title-spooky">HALLOWEEN<br>NIGHTMARE</h1>
-        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">TRICK OR TREAT EDITION</div>
+        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">SYSTEM COMPLETE EDITION</div>
         <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU SURVIVANT" maxlength="12">
         <button onclick="Core.bootGame()" class="menu-btn">ENTRER DANS LA NUIT</button>
-        <button onclick="Core.resetGame()" class="menu-btn text-red-600 border-red-600 hover:bg-red-900">OUBLIER LE CAUCHEMAR</button>
+        <button onclick="Core.hardReset()" class="menu-btn text-red-600 border-red-600 hover:bg-red-900">EFFACER DONNÉES</button>
     </div>
+
+    <button onclick="UI.modal('settings')" class="btn-menu">⚙️</button>
 
     <div id="game-ui" class="layout blur">
         
@@ -238,7 +244,7 @@
     <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
 
     <script>
-        // --- AUDIO (SPOOKY) ---
+        // --- AUDIO ---
         const AudioSys = {
             ctx: null, muted: false,
             init: () => { window.AudioContext = window.AudioContext || window.webkitAudioContext; AudioSys.ctx = new AudioContext(); },
@@ -248,7 +254,8 @@
                 o.connect(g); g.connect(AudioSys.ctx.destination);
                 if(type==='coin'){ o.type='triangle'; o.frequency.setValueAtTime(800,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); }
                 else if(type==='hit'){ o.type='sawtooth'; o.frequency.setValueAtTime(60,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.1,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.2); }
-            }
+            },
+            toggle: () => { AudioSys.muted = !AudioSys.muted; UI.toast(AudioSys.muted ? "SON DÉSACTIVÉ 🔇" : "SON ACTIVÉ 🔊"); }
         };
 
         // --- DATA ---
@@ -274,7 +281,7 @@
         let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"SURVIVANT" };
         let R = { active:false, day:0, hp:100, max:100, atk:10, def:0, skills:[] };
         let C = { active:false, hp:0, max:0, atk:0, boss:false };
-        let Conf = { auto:false, speed:1 };
+        let Conf = { auto:false, speed:1, pause: false };
         let Act = null;
 
         const Core = {
@@ -287,23 +294,22 @@
                 Core.init();
             },
             init: () => {
-                let s = localStorage.getItem('distory_v27');
+                let s = localStorage.getItem('distory_v28');
                 if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 document.getElementById('ui-pseudo').innerText = D.pseudo;
                 if(!D.char) UI.modal('char');
                 else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("CHASSER", Core.start); }
             },
             resetGame: () => { localStorage.clear(); location.reload(); },
-            save: () => localStorage.setItem('distory_v27', JSON.stringify(D)),
+            hardReset: () => { if(confirm("Tout effacer ?")) Core.resetGame(); },
+            returnToTitle: () => { Core.save(); location.reload(); },
+            save: () => localStorage.setItem('distory_v28', JSON.stringify(D)),
             
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = 0 + (D.stats.def*2);
                 if(D.weapon) R.atk += D.weapon.s; if(D.head) { R.def += D.head.s; R.max += D.head.s; } if(D.pet) R.atk += D.pet.s;
-                
-                // Skill Passives
                 let sAtk = R.skills.find(s=>s.id==='fire'); if(sAtk) R.atk += (5*sAtk.lvl);
                 let sDef = R.skills.find(s=>s.id==='shield'); if(sDef) R.def += (2*sDef.lvl);
-                
                 R.hp = Math.min(R.hp, R.max);
             },
             
@@ -316,25 +322,19 @@
             pick: (c) => { D.char = c; Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("COMMENCER", Core.start); AudioSys.play('coin'); },
             start: () => { Core.calc(); R.hp=R.max; R.day=0; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("NUIT TOMBÉE","Entrée du cimetière"); AudioSys.play('coin'); Core.next(); },
             
-            // --- LOGIQUE TRICK OR TREAT ---
             next: () => { 
+                if(Conf.pause) return;
                 R.day++; Core.calc(); UI.upd(); 
-                
                 if(R.day % 10 === 0) { Core.fight(true); return; } // BOSS
                 if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("SORCIÈRE","Elle vend des potions"); return; }
-                
                 let roll = Math.random();
-                if(roll < 0.5) Core.fight(false); // Combat
-                else if (roll < 0.8) Core.triggerEvent(); // Choix
-                else UI.modal('skill-choice'); // Skill
-                
+                if(roll < 0.5) Core.fight(false); 
+                else if (roll < 0.8) Core.triggerEvent(); 
+                else UI.modal('skill-choice'); 
                 UI.upd();
             },
             
-            triggerEvent: () => {
-                let ev = DB.events[Math.floor(Math.random()*DB.events.length)];
-                UI.modal('event', ev);
-            },
+            triggerEvent: () => { let ev = DB.events[Math.floor(Math.random()*DB.events.length)]; UI.modal('event', ev); },
             
             resolveEvent: (action) => {
                 document.getElementById('modal-overlay').classList.add('hidden');
@@ -344,9 +344,7 @@
                 else if(action === 'break') { R.hp -= 10; res = "Aïe ! 7 ans de malheur (-10 PV)."; }
                 else if(action === 'talk') { D.gold += 20; res = "L'esprit vous donne 20 Bonbons."; }
                 else if(action === 'pet') { R.hp = Math.min(R.max, R.hp+30); res = "Il ronronne (+30 PV)."; }
-                
-                UI.log(res); UI.toast(res, action==='break'?'err':'success');
-                UI.upd(); Core.checkAuto();
+                UI.log(res); UI.toast(res, action==='break'?'err':'success'); UI.upd(); Core.checkAuto();
             },
 
             addSkill: (id) => {
@@ -369,19 +367,13 @@
             },
             
             turn: () => { 
-                if(!C.active) return; 
-                
-                // Player Attack
+                if(!C.active || Conf.pause) return; 
                 let dmg = R.atk; 
-                // Vampirism
                 let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("VOL DE VIE"); }
-                
                 C.hp -= dmg; UI.fx(dmg, '#ff7b00', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
-                
                 if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500/Conf.speed); return; } 
-                
                 setTimeout(()=>{ 
-                    if(!C.active) return; 
+                    if(!C.active || Conf.pause) return; 
                     let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#ff0000', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); 
                     if(R.hp <= 0) Core.end(false); else setTimeout(Core.turn, 800/Conf.speed); 
                 }, 500/Conf.speed); 
@@ -392,15 +384,14 @@
                 if(win) { 
                     let gain = 15 + R.day + (C.boss ? 50 : 0); D.gold += gain; 
                     if(C.boss) { D.perls += 5; UI.toast("ROI VAINCU ! (+5 Âmes)", "loot"); }
-                    UI.log(`Monstre vaincu ! (+${gain} Bonbons)`); 
-                    UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
+                    UI.log(`Monstre vaincu ! (+${gain} Bonbons)`); UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
                 } 
                 else { R.active = false; UI.log("Vous êtes mort..."); UI.btn("RÉSURRECTION", Core.start); } 
                 Core.save(); UI.scene('adv'); 
             },
             
             click: () => { if(Act) Act(); },
-            checkAuto: () => { if(Conf.auto && R.active && !C.active && document.getElementById('modal-overlay').classList.contains('hidden')) setTimeout(() => { let b=document.getElementById('btn-act'); if(!b.disabled) b.click(); }, 1000/Conf.speed); },
+            checkAuto: () => { if(Conf.auto && R.active && !C.active && !Conf.pause && document.getElementById('modal-overlay').classList.contains('hidden')) setTimeout(() => { let b=document.getElementById('btn-act'); if(!b.disabled) b.click(); }, 1000/Conf.speed); },
             toggleAuto: () => { Conf.auto = !Conf.auto; document.getElementById('btn-auto').innerText = Conf.auto ? "AUTO: ON" : "AUTO: OFF"; document.getElementById('btn-auto').classList.toggle('active'); if(Conf.auto) Core.checkAuto(); },
             toggleSpeed: () => { Conf.speed = Conf.speed === 1 ? 2 : 1; document.getElementById('btn-speed').innerText = `VIT: x${Conf.speed}`; },
             chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("LOOT TERRIFIANT !", "loot"); AudioSys.play('coin'); } },
@@ -415,15 +406,9 @@
                 ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 🍬");
                 if(R.active || D.char) { document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`; document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%"; document.getElementById('ui-atk').innerText = R.atk; document.getElementById('ui-def').innerText = R.def; }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
-                
-                // Skills List
                 let sl = document.getElementById('list-skills'); sl.innerHTML = '';
                 if(R.skills.length === 0) sl.innerHTML = '<div class="text-gray-500 text-xs text-center italic">Aucun pouvoir</div>';
-                R.skills.forEach(s => {
-                    let inf = DB.skills[s.id];
-                    sl.innerHTML += `<div class="bg-purple-900/30 p-1 mb-1 rounded flex justify-between text-xs border border-purple-800"><span class="text-orange-400">${inf.i} ${inf.n}</span><span class="text-white">Nv.${s.lvl}</span></div>`;
-                });
-
+                R.skills.forEach(s => { let inf = DB.skills[s.id]; sl.innerHTML += `<div class="bg-purple-900/30 p-1 mb-1 rounded flex justify-between text-xs border border-purple-800"><span class="text-orange-400">${inf.i} ${inf.n}</span><span class="text-white">Nv.${s.lvl}</span></div>`; });
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
                 D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d); d.onmouseleave=UI.untip; g.appendChild(d); });
                 const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-stone-700';}};
@@ -437,10 +422,16 @@
             fx: (t,c,id) => { let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t; let r=document.getElementById(id).getBoundingClientRect(); el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px'; document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800); },
             shake: (id) => { let el=document.getElementById(id); el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim'); },
             toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-200':'border-green-600 text-green-200'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
-            
             modal: (t, data) => { 
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden'); 
-                if(t==='char') c.innerHTML=`<h2 class="text-[#ff7b00] text-4xl font-title mb-8">QUI SURVIVRA ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#2d1b4e] rounded-lg border-2 border-[#ff7b00] hover:scale-110 hover:bg-[#4a1d96] transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
+                if(t==='settings') {
+                    Conf.pause = true;
+                    c.innerHTML=`<h2 class="text-white text-3xl font-title mb-6">PARAMÈTRES</h2>
+                    <button onclick="UI.closeModal()" class="btn-settings border-green-500 text-green-400">REPRENDRE</button>
+                    <button onclick="AudioSys.toggle()" class="btn-settings border-yellow-500 text-yellow-400">SON ON/OFF</button>
+                    <button onclick="Core.returnToTitle()" class="btn-settings border-blue-500 text-blue-400">MENU PRINCIPAL</button>
+                    <button onclick="Core.hardReset()" class="btn-settings border-red-500 text-red-500">ABANDONNER (RESET)</button>`;
+                } else if(t==='char') c.innerHTML=`<h2 class="text-[#ff7b00] text-4xl font-title mb-8">QUI SURVIVRA ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#2d1b4e] rounded-lg border-2 border-[#ff7b00] hover:scale-110 hover:bg-[#4a1d96] transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
                 else if(t==='shop') c.innerHTML=`<h2 class="text-[#ff7b00] text-3xl font-title mb-4">LA SORCIÈRE</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#2d1b4e] border border-green-500 text-green-400 font-bold mb-2 font-title text-xl">🧪 Jus de Citrouille (50 PV)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Fuir</button>`;
                 else if(t==='skill-choice') {
                     let k1=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*6)];
@@ -456,7 +447,11 @@
                     <button onclick="Core.resolveEvent('${data.c[1].a}')" class="choice-btn text-gray-500 border-gray-600">${data.c[1].t}</button>`;
                 }
             },
-            
+            closeModal: () => {
+                document.getElementById('modal-overlay').classList.add('hidden');
+                Conf.pause = false;
+                if(R.active && !C.active) Core.checkAuto();
+            },
             tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
             tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-purple-500 pb-1 mb-1 text-[#ff7b00] font-title">${t}</div><div>${d}</div>`; tt.classList.add('visible'); tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
             untip: () => document.getElementById('tooltip').classList.remove('visible')
