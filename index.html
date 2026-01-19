@@ -3,44 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V48 PURE AVATAR</title>
+    <title>Distory Go - V49 FRANÇAIS TOTAL</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --bg: #03010a; --border: #581c87; --accent: #a855f7; --cyan: #22d3ee; }
         body { background: var(--bg); color: #f5f3ff; font-family: 'JetBrains Mono', monospace; overflow: hidden; height: 100vh; user-select: none; }
         
-        /* LAYOUT PRINCIPAL */
+        /* HUD */
         .layout { display: grid; grid-template-columns: 320px 1fr 320px; height: 100vh; gap: 1px; background: var(--border); transition: filter 0.5s; }
         .layout.blur { filter: blur(30px) brightness(0.2); pointer-events: none; }
 
         .side-panel { background: rgba(15, 5, 35, 0.95); display: flex; flex-direction: column; padding: 25px; }
         .label-tech { font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800; text-transform: uppercase; margin-bottom: 8px; }
 
-        /* VIEWPORT CENTRAL */
+        /* VIEWPORT */
         .main-view { background: var(--bg); display: flex; flex-direction: column; position: relative; background-image: radial-gradient(circle at center, #150a2e 0%, #03010a 100%); }
         .display-area { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         /* BOUTONS */
-        .btn-exe { width: 100%; padding: 25px; background: #000; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; font-size: 20px; letter-spacing: 8px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-exe { width: 100%; padding: 20px; background: #000; border: 1px solid var(--accent); color: var(--accent); font-weight: 800; font-size: 18px; letter-spacing: 5px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         .btn-exe:hover { background: var(--accent); color: white; box-shadow: 0 0 40px var(--accent); }
-        .btn-exe:disabled { opacity: 0.2; cursor: not-allowed; }
 
         /* SLOTS */
-        .item-slot { width: 100%; height: 75px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; transition: 0.2s; }
+        .item-slot { width: 100%; height: 75px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 32px; cursor: pointer; transition: 0.2s; border-radius: 4px; }
         .item-slot:hover { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); }
 
         /* BARRES */
-        .bar-wrap { width: 100%; height: 4px; background: #1e1b4b; border-radius: 2px; overflow: hidden; margin-top: 10px; }
+        .bar-wrap { width: 100%; height: 6px; background: #1e1b4b; border-radius: 2px; overflow: hidden; margin-top: 10px; }
         .bar-fill { height: 100%; background: var(--accent); transition: width 0.4s; box-shadow: 0 0 10px var(--accent); }
 
-        /* SELECTION AVATAR (FULL SCREEN) */
-        .modal-full { position: fixed; inset: 0; background: #05010d; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
-        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .avatar-btn { font-size: 80px; padding: 30px; background: rgba(255,255,255,0.02); border: 2px solid var(--border); border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .avatar-btn:hover { border-color: var(--cyan); transform: scale(1.1); background: rgba(168, 85, 247, 0.1); box-shadow: 0 0 30px rgba(168, 85, 247, 0.3); }
+        /* SELECTION */
+        .modal-full { position: fixed; inset: 0; background: #05010d; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .avatar-btn { font-size: 70px; padding: 25px; background: rgba(255,255,255,0.02); border: 2px solid var(--border); border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .avatar-btn:hover { border-color: var(--cyan); transform: scale(1.1); background: rgba(168, 85, 247, 0.1); }
 
-        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: #000; border: 1px solid var(--accent); padding: 12px; font-size: 11px; display: none; border-radius: 4px; color: #ccc; }
+        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: #000; border: 1px solid var(--accent); padding: 12px; font-size: 11px; display: none; border-radius: 4px; color: #fff; }
         .hidden { display: none !important; }
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--cyan); color: black; padding: 10px 30px; font-weight: 800; z-index: 100000; border-radius: 5px; }
     </style>
@@ -51,7 +50,7 @@
     <div id="toast-layer" class="fixed inset-x-0 top-5 flex flex-col items-center pointer-events-none z-[60000]"></div>
 
     <div id="boot-screen" class="modal-full">
-        <div class="label-tech mb-10 text-xl" style="color:white">SÉLECTIONNEZ VOTRE UNITÉ</div>
+        <div class="label-tech mb-10 text-xl" style="color:white">CHOISISSEZ VOTRE AVATAR</div>
         <div class="avatar-grid">
             <button class="avatar-btn" onclick="Core.selectSpecies('🐙')">🐙</button>
             <button class="avatar-btn" onclick="Core.selectSpecies('🐹')">🐹</button>
@@ -60,7 +59,7 @@
             <button class="avatar-btn" onclick="Core.selectSpecies('🐕')">🐕</button>
             <button class="avatar-btn" onclick="Core.selectSpecies('🐱')">🐱</button>
         </div>
-        <button onclick="Core.hardReset()" class="mt-20 text-[10px] text-gray-700 hover:text-red-500 tracking-[5px] uppercase">Reset System</button>
+        <button onclick="Core.hardReset()" class="mt-20 text-[10px] text-gray-700 hover:text-red-500 uppercase tracking-widest">Réinitialiser les données</button>
     </div>
 
     <div id="modal-container" class="hidden"></div>
@@ -68,24 +67,24 @@
     <div id="game-ui" class="layout blur">
         <div class="side-panel">
             <div class="mb-10 text-center">
-                <div class="label-tech">Bio_Unit</div>
-                <div id="ui-avatar-display" class="text-9xl py-6 filter drop-shadow-[0_0_20px_rgba(168,85,247,0.5)]">?</div>
+                <div class="label-tech">Unité_Biologique</div>
+                <div id="ui-avatar-display" class="text-9xl py-6 filter drop-shadow-[0_0_20px_#a855f7]">?</div>
             </div>
 
-            <div class="label-tech">Integrity</div>
+            <div class="label-tech">Intégrité</div>
             <div class="flex justify-between text-[11px] mb-1 font-bold">
                 <span id="ui-hp-txt">100/100</span>
-                <span class="text-purple-400">LVL.<span id="ui-lvl">1</span></span>
+                <span class="text-purple-400">NV.<span id="ui-lvl">1</span></span>
             </div>
             <div class="bar-wrap"><div id="ui-hp-fill" class="bar-fill"></div></div>
 
             <div class="grid grid-cols-1 gap-8 mt-12">
                 <div>
-                    <div class="label-tech" style="color:var(--cyan)">Firepower</div>
+                    <div class="label-tech" style="color:var(--cyan)">Puissance de Feu</div>
                     <div id="ui-atk" class="text-5xl font-black text-white">10</div>
                 </div>
                 <div>
-                    <div class="label-tech">Armor_Shield</div>
+                    <div class="label-tech">Matrice de Défense</div>
                     <div id="ui-def" class="text-5xl font-black text-white">0</div>
                 </div>
             </div>
@@ -103,82 +102,82 @@
             <div class="p-6 flex justify-between items-center border-b border-purple-900/30">
                 <div class="label-tech" style="margin:0">Cycle_<span id="ui-day">0</span></div>
                 <div class="flex gap-8 text-xs font-bold">
-                    <span class="text-yellow-500">CREDITS: <span id="ui-gold">0</span></span>
-                    <span class="text-cyan-400">MATTER: <span id="ui-perls">0</span></span>
+                    <span class="text-yellow-500">CRÉDITS: <span id="ui-gold">0</span></span>
+                    <span class="text-cyan-400">MATIÈRE: <span id="ui-perls">0</span></span>
                 </div>
             </div>
 
             <div class="display-area">
                 <div id="enemy-box" class="hidden text-center">
                     <div id="ui-en-img" class="text-9xl mb-6">👾</div>
-                    <div class="label-tech" style="color:red">Hostile_Detected</div>
-                    <div class="w-64 h-1 bg-red-900/20 mt-4 mx-auto"><div id="ui-en-hp" class="h-full bg-red-600 shadow-[0_0_10px_red]"></div></div>
+                    <div class="label-tech" style="color:red">Hostile_Identifié</div>
+                    <div class="w-64 h-1 bg-red-900/20 mt-4 mx-auto"><div id="ui-en-hp" class="h-full bg-red-600"></div></div>
                 </div>
                 <div id="story-box" class="text-center">
                     <div id="ui-hero-center" class="text-9xl mb-8">?</div>
-                    <div class="text-5xl font-black text-white uppercase tracking-tighter mb-2">NEBULA_RUN</div>
-                    <div class="label-tech opacity-50 tracking-[8px]">Scanning sector coordinates...</div>
+                    <div class="text-5xl font-black text-white uppercase tracking-tighter mb-2">MISSION</div>
+                    <div class="label-tech opacity-50 tracking-[8px]">Scan des coordonnées en cours...</div>
                 </div>
             </div>
 
             <div class="p-8 bg-black/40 border-t border-purple-900">
                 <div class="flex gap-4 mb-4">
                     <button onclick="Core.toggleAuto()" id="ui-auto" class="flex-1 py-3 border border-purple-900 text-[10px] font-bold uppercase">Auto: OFF</button>
-                    <button onclick="Core.toggleSpeed()" id="ui-speed" class="flex-1 py-3 border border-purple-900 text-[10px] font-bold uppercase">Spd: x1</button>
+                    <button onclick="Core.toggleSpeed()" id="ui-speed" class="flex-1 py-3 border border-purple-900 text-[10px] font-bold uppercase">Vit: x1</button>
                     <button onclick="UI.modal('settings')" class="w-16 border border-purple-900 text-lg">⚙️</button>
                 </div>
-                <button id="main-btn" onclick="Core.processScanner()" class="btn-exe">Scan_Sector</button>
+                <button id="main-btn" onclick="Core.processScanner()" class="btn-exe">Scanner Secteur</button>
             </div>
         </div>
 
         <div class="side-panel">
-            <div class="label-tech mb-6">Internal_Modules</div>
+            <div class="label-tech mb-6">Modules_Internes</div>
             <div id="skill-list" class="flex-grow overflow-y-auto pr-2"></div>
 
             <div class="border-t border-purple-900 pt-6 mt-4">
                 <div class="flex justify-between items-center mb-4">
-                    <div class="label-tech">Cargo</div>
-                    <button onclick="Core.fusion()" class="text-[9px] bg-cyan-600 text-black px-3 py-1 font-bold rounded">MERGE_3X</button>
+                    <div class="label-tech">Soute</div>
+                    <button onclick="Core.fusion()" class="text-[9px] bg-cyan-600 text-black px-2 py-1 font-bold rounded">FUSION_3X</button>
                 </div>
                 <div id="inv-grid" class="grid grid-cols-3 gap-2 h-40 overflow-y-auto mb-4"></div>
-                <button onclick="Core.chest()" class="btn-exe !py-4 !text-xs !bg-purple-900 !text-white border-none shadow-xl">Decipher_Box (5⚛️)</button>
-                <button onclick="UI.showHub()" class="w-full mt-4 text-[10px] text-gray-600 hover:text-cyan-400 uppercase tracking-widest transition">Maintenance_Base</button>
+                <button onclick="Core.chest()" class="btn-exe !py-4 !text-xs !bg-purple-900 !text-white border-none">Décrypter Coffre (5⚛️)</button>
+                <button onclick="UI.showHub()" class="w-full mt-4 text-[10px] text-gray-500 hover:text-cyan-400 uppercase tracking-widest">Maintenance Base</button>
             </div>
         </div>
     </div>
 
     <div id="hub-view" class="modal-full hidden">
-        <h2 class="text-4xl font-black mb-16 tracking-[15px] text-white">UPGRADES</h2>
+        <h2 class="text-4xl font-black mb-16 tracking-[15px] text-white uppercase">Améliorations</h2>
         <div class="grid grid-cols-1 gap-6 w-80">
-            <div onclick="Core.upgradeBase('hp')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer transition">
-                <div class="label-tech">Integrity</div>
-                <div class="text-2xl font-black">HP +20 <span class="text-yellow-500 text-sm float-right" id="up-hp-cost">100</span></div>
+            <div onclick="Core.upgradeBase('hp')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer">
+                <div class="label-tech">Énergie Vitale</div>
+                <div class="text-xl font-black">HP +20 <span class="text-yellow-500 text-sm float-right" id="up-hp-cost">100</span></div>
             </div>
-            <div onclick="Core.upgradeBase('atk')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer transition">
-                <div class="label-tech">Attack</div>
-                <div class="text-2xl font-black">ATK +5 <span class="text-yellow-500 text-sm float-right" id="up-atk-cost">100</span></div>
+            <div onclick="Core.upgradeBase('atk')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer">
+                <div class="label-tech">Attaque</div>
+                <div class="text-xl font-black">ATK +5 <span class="text-yellow-500 text-sm float-right" id="up-atk-cost">100</span></div>
             </div>
-            <div onclick="Core.upgradeBase('def')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer transition">
-                <div class="label-tech">Shields</div>
-                <div class="text-2xl font-black">DEF +2 <span class="text-yellow-500 text-sm float-right" id="up-def-cost">100</span></div>
+            <div onclick="Core.upgradeBase('def')" class="border border-purple-900 p-6 bg-white/5 hover:border-cyan-400 cursor-pointer">
+                <div class="label-tech">Boucliers</div>
+                <div class="text-xl font-black">DEF +2 <span class="text-yellow-500 text-sm float-right" id="up-def-cost">100</span></div>
             </div>
         </div>
-        <button onclick="UI.hideHub()" class="mt-20 text-purple-500 border-b border-purple-500 hover:text-white uppercase tracking-[10px]">Return</button>
+        <button onclick="UI.hideHub()" class="mt-20 text-purple-500 border-b border-purple-500 hover:text-white uppercase tracking-[10px]">Retour</button>
     </div>
 
     <script>
         const DATA = {
-            enemies: [{n:"Drone", i:"🛸", h:50, a:5}, {n:"Xeno", i:"👾", h:70, a:9}, {n:"Sonde", i:"🛰️", h:40, a:12}],
+            enemies: [{n:"Drone Pirate", i:"🛸", h:50, a:5}, {n:"Virus", i:"👾", h:70, a:9}, {n:"Sonde", i:"🛰️", h:40, a:12}],
             boss: [{n:"KRAKEN", i:"🦑", h:800, a:30}],
             items: [
-                {n:"Canon", e:"🔫", s:10, t:"weapon", r:"r-common", d:"Dégâts +10"},
+                {n:"Laser", e:"🔫", s:10, t:"weapon", r:"r-common", d:"Dégâts +10"},
                 {n:"Blindage", e:"🛡️", s:20, t:"head", r:"r-common", d:"PV +20"},
-                {n:"Aide IA", e:"🤖", s:5, t:"pet", r:"r-common", d:"Stats +5"}
+                {n:"Module IA", e:"🤖", s:5, t:"pet", r:"r-common", d:"Stats +5"}
             ],
             skills: {
-                'fire': {n:"Feu", i:"🔥", d:"+5 ATK / nv"},
-                'heal': {n:"Soin", i:"💉", d:"+5% PV / tour"},
-                'shield': {n:"Holo", i:"🛡️", d:"+2 DEF / nv"}
+                'fire': {n:"Plasma", i:"🔥", d:"+5 ATK par niveau."},
+                'heal': {n:"Réparation", i:"💉", d:"+5% PV par cycle."},
+                'shield': {n:"Bouclier", i:"🛡️", d:"+2 DEF par niveau."}
             }
         };
 
@@ -188,7 +187,7 @@
 
         const Core = {
             initGame: () => {
-                let save = localStorage.getItem('distory_v48');
+                let save = localStorage.getItem('distory_v49');
                 if(save) {
                     Player = JSON.parse(save);
                     if(Player.char) {
@@ -200,11 +199,16 @@
             },
             selectSpecies: (emoji) => {
                 Player.char = emoji;
+                Player.eq = { 
+                    weapon: {...DATA.items[0], uid: 1}, 
+                    head: {...DATA.items[1], uid: 2}, 
+                    pet: {...DATA.items[2], uid: 3} 
+                };
+                Core.saveGame();
                 document.getElementById('boot-screen').classList.add('hidden');
                 document.getElementById('game-ui').classList.remove('blur');
-                Core.saveGame();
                 UI.refresh();
-                UI.toast("UNIT_CONNECTED");
+                UI.toast("UNITÉ SYNCHRONISÉE");
             },
             processScanner: () => {
                 if(!Run.active) { Core.startRun(); return; }
@@ -225,7 +229,7 @@
                 else if(Run.day % 5 === 0) Core.startCombat(false);
                 else {
                     if(Math.random() < 0.25) UI.showSkillChoice();
-                    else { Player.gold += 30; UI.toast("+30 🪙"); UI.refresh(); Core.checkAuto(); }
+                    else { Player.gold += 30; UI.toast("+30 Crédits"); UI.refresh(); Core.checkAuto(); }
                 }
             },
             startCombat: (isBoss) => {
@@ -267,7 +271,7 @@
                         let it = Player.inv.find(x => x.n === n);
                         Player.inv = Player.inv.filter(x => x.n !== n);
                         Player.inv.push({...it, s: it.s * 2, n: it.n + "+"});
-                        UI.toast("MERGE_COMPLETE"); Core.fusion(); break;
+                        UI.toast("FUSION RÉUSSIE"); Core.fusion(); break;
                     }
                 }
                 UI.refresh(); Core.saveGame();
@@ -290,8 +294,8 @@
             toggleAuto: () => { Run.auto = !Run.auto; UI.refresh(); if(Run.auto) Core.processScanner(); },
             toggleSpeed: () => { Run.speed = (Run.speed === 1) ? 2 : 1; UI.refresh(); },
             checkAuto: () => { if(Run.auto && Run.active && !Combat.active && document.getElementById('modal-container').classList.contains('hidden')) setTimeout(() => Core.processScanner(), 1000/Run.speed); },
-            saveGame: () => localStorage.setItem('distory_v48', JSON.stringify(Player)),
-            wipeData: () => { localStorage.clear(); location.reload(); }
+            saveGame: () => localStorage.setItem('distory_v49', JSON.stringify(Player)),
+            hardReset: () => { localStorage.clear(); location.reload(); }
         };
 
         const UI = {
@@ -306,11 +310,10 @@
                 document.getElementById('ui-hp-txt').innerText = Math.floor(Run.hp) + "/" + Run.max;
                 document.getElementById('ui-hp-fill').style.width = (Run.hp/Run.max*100) + "%";
                 document.getElementById('ui-auto').innerText = "AUTO: " + (Run.auto ? "ON" : "OFF");
-                document.getElementById('ui-auto').style.borderColor = Run.auto ? "var(--cyan)" : "var(--border)";
-                document.getElementById('ui-speed').innerText = "SPD: x" + Run.speed;
+                document.getElementById('ui-speed').innerText = "VIT: x" + Run.speed;
                 let g = document.getElementById('inv-grid'); g.innerHTML = '';
                 Player.inv.forEach(i => {
-                    let d = document.createElement('div'); d.className = "item-slot"; d.innerText = i.e;
+                    let d = document.createElement('div'); d.className = "item-slot text-lg"; d.innerText = i.e;
                     d.onclick = () => Core.equip(i.uid);
                     d.onmouseenter = (e) => UI.tip(e, i.n, i.d);
                     d.onmouseleave = UI.untip;
@@ -339,8 +342,8 @@
             showSkillChoice: () => {
                 let keys = Object.keys(DATA.skills);
                 let m = document.getElementById('modal-container'); m.classList.remove('hidden');
-                m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-8">Installation_Module</h2><div class="grid grid-cols-1 gap-4 w-80">
-                        ${keys.map(k => `<div onclick="Core.addSkill('${k}')" class="p-4 border border-purple-900 bg-white/5 hover:border-cyan-400 cursor-pointer transition">
+                m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-8">Installation de Module</h2><div class="grid grid-cols-1 gap-4 w-80">
+                        ${keys.map(k => `<div onclick="Core.addSkill('${k}')" class="p-4 border border-purple-900 bg-white/5 hover:border-cyan-400 cursor-pointer">
                             <div class="text-2xl mb-2">${DATA.skills[k].i}</div><div class="font-bold text-white uppercase text-xs">${DATA.skills[k].n}</div>
                         </div>`).join('')}
                     </div></div>`;
@@ -348,9 +351,9 @@
             modal: (t) => {
                 if(t==='settings') {
                     let m = document.getElementById('modal-container'); m.classList.remove('hidden');
-                    m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-10">System_Control</h2>
-                        <button onclick="UI.hideModal()" class="btn-exe w-64 mb-4">Resume</button>
-                        <button onclick="location.reload()" class="text-[10px] text-gray-600 hover:text-white uppercase tracking-widest">Restart</button>
+                    m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-10">Contrôle Système</h2>
+                        <button onclick="UI.hideModal()" class="btn-exe w-64 mb-4">Reprendre</button>
+                        <button onclick="location.reload()" class="text-xs uppercase text-gray-500 hover:text-white">Redémarrer</button>
                     </div>`;
                 }
             },
