@@ -3,258 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V32 SONIC</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>Distory Go - V33 WASTELAND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* === THÈME CYBERPUNK === */
+        /* === THÈME WASTELAND (POST-APO) === */
         :root { 
-            --bg-dark: #090014;
-            --neon-pink: #ff00ff;
-            --neon-cyan: #00ffff;
-            --neon-yellow: #ffee00;
-            --grid-color: rgba(255, 0, 255, 0.15);
-            --font-pixel: 'VT323', monospace;
+            --bg-dust: #1c1917; 
+            --panel-metal: #292524;
+            --rust: #d97706; 
+            --sand: #e7e5e4; 
+            --rad: #4ade80; 
+            --blood: #ef4444;
+            --border: #78716c;
+            
+            --font-title: 'Black Ops One', cursive;
+            --font-body: 'Courier Prime', monospace;
         }
         
         body { 
-            background-color: var(--bg-dark); 
-            color: var(--neon-cyan); 
-            font-family: var(--font-pixel); 
-            font-size: 1.3rem;
+            background-color: var(--bg-dust); 
+            color: var(--sand); 
+            font-family: var(--font-body); 
             overflow: hidden; height: 100vh; user-select: none; 
-        }
-
-        /* FOND GRILLE (VAPORWAVE) */
-        .retro-grid {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-            background: 
-                linear-gradient(transparent 95%, var(--grid-color) 95%),
-                linear-gradient(90deg, transparent 95%, var(--grid-color) 95%);
-            background-size: 50px 50px;
-            transform: perspective(300px) rotateX(45deg) scale(1.5);
-            transform-origin: center top;
-            animation: grid-scroll 3s linear infinite;
-        }
-        .retro-sun {
-            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
-            width: 500px; height: 500px; border-radius: 50%;
-            background: linear-gradient(to top, #ff00ff, #ffbd00);
-            z-index: -2; box-shadow: 0 0 80px #ff00ff;
-            -webkit-mask-image: linear-gradient(to top, black 40%, transparent 100%);
-        }
-        @keyframes grid-scroll { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
-
-        /* EFFET CRT */
-        .crt::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+            /* Texture granuleuse */
+            background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');
         }
 
         /* LAYOUT */
-        .layout { display: grid; grid-template-columns: 350px 1fr 320px; gap: 1rem; height: 100vh; padding: 1rem; max-width: 1920px; margin: 0 auto; transition: filter 0.3s; position: relative; z-index: 10; }
-        .layout.blur { filter: blur(8px) brightness(1.2); pointer-events: none; }
+        .layout { display: grid; grid-template-columns: 380px 1fr 320px; gap: 1.5rem; height: 100vh; padding: 1.5rem; max-width: 1920px; margin: 0 auto; transition: filter 0.3s; }
+        .layout.blur { filter: blur(4px) brightness(0.6); pointer-events: none; }
 
+        /* PANNEAUX MÉTAL ROUILLÉ */
         .panel { 
-            background: rgba(10, 5, 20, 0.9); 
-            border: 2px solid var(--neon-pink); 
-            box-shadow: 0 0 15px var(--neon-pink), inset 0 0 30px rgba(255,0,255,0.1);
-            border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;
+            background: var(--panel-metal); 
+            border: 2px solid var(--border);
+            border-radius: 4px; 
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
-        
+        /* Effet vis rouillées aux coins */
+        .panel::after {
+            content: '+'; position: absolute; top: 5px; right: 5px; color: var(--rust); font-weight: bold; pointer-events: none;
+        }
+        .panel::before {
+            content: '+'; position: absolute; bottom: 5px; left: 5px; color: var(--rust); font-weight: bold; pointer-events: none;
+        }
+
         .head { 
-            padding: 12px 15px; background: rgba(255,0,255,0.1); 
-            border-bottom: 2px solid var(--neon-pink); 
-            color: var(--neon-yellow); font-size: 1.6rem; text-transform: uppercase;
-            display: flex; justify-content: space-between; text-shadow: 2px 2px 0 #000;
+            padding: 15px 20px; background: #000;
+            border-bottom: 2px solid var(--rust); color: var(--rust); 
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-title); font-size: 20px; letter-spacing: 2px;
         }
 
-        /* HERO & ENEMIES */
+        /* ZONE HERO */
         .hero-zone { 
-            height: 300px; display: flex; align-items: center; justify-content: center; position: relative;
-            background: radial-gradient(circle, rgba(0,255,255,0.1), transparent);
-            border-bottom: 2px solid var(--neon-pink);
+            height: 320px; position: relative; display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #44403c 0%, #1c1917 90%); border-bottom: 2px solid var(--border);
         }
-        .hero-img { 
-            font-size: 130px; filter: drop-shadow(4px 4px 0 var(--neon-pink)); 
-            animation: glitch-anim 2s infinite alternate-reverse; cursor: pointer;
-        }
-        .pet-img { font-size: 50px; position: absolute; bottom: 10px; left: 10px; animation: bounce 1s infinite; }
+        .hero-img { font-size: 130px; filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.5)); transition: 0.2s; cursor: pointer; z-index: 10; }
+        .hero-img:hover { transform: scale(1.05); }
+        .pet-img { font-size: 50px; position: absolute; bottom: 10px; left: 10px; animation: bounce 2s infinite; z-index: 5; }
 
-        @keyframes glitch-anim {
-            0% { transform: skew(0deg); } 20% { transform: skew(-5deg); } 40% { transform: skew(5deg); } 60% { transform: skew(-2deg); } 80% { transform: skew(2deg); } 100% { transform: skew(0deg); }
-        }
-
-        /* BOUTONS ARCADE */
+        /* BOUTONS INDUSTRIELS */
         .btn-main { 
-            width: 100%; background: var(--neon-pink); color: #fff; font-size: 2.2rem; 
-            border: none; border-bottom: 6px solid #b300b3; padding: 15px; 
-            text-transform: uppercase; letter-spacing: 2px; transition: 0.1s; cursor: pointer;
-            text-shadow: 2px 2px 0 #000;
+            width: 100%; background: repeating-linear-gradient(45deg, #b45309, #b45309 10px, #92400e 10px, #92400e 20px); 
+            border: 2px solid #f59e0b; color: #fff; 
+            font-family: var(--font-title); font-size: 28px; 
+            border-radius: 2px; padding: 15px; letter-spacing: 2px; transition: 0.1s;
+            text-shadow: 2px 2px 0 #000; box-shadow: 0 5px 0 #78350f;
         }
-        .btn-main:active { transform: translateY(6px); border-bottom: 0; }
-        .btn-main:disabled { background: #555; border-bottom-color: #333; cursor: not-allowed; opacity: 0.7; transform: none; }
+        .btn-main:active { transform: translateY(4px); box-shadow: 0 1px 0 #78350f; }
+        .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; transform: none; box-shadow: none; border: 2px solid #555; background: #333; }
 
         .btn-mini { 
-            flex: 1; background: #000; border: 1px solid var(--neon-cyan); color: var(--neon-cyan);
-            font-size: 1.2rem; cursor: pointer; transition: 0.2s; 
+            flex: 1; background: #44403c; border: 1px solid var(--border); border-radius: 2px; 
+            color: var(--sand); font-family: var(--font-body); font-weight: bold; font-size: 12px; 
+            transition: 0.2s; text-transform: uppercase; 
         }
-        .btn-mini:hover { background: var(--neon-cyan); color: #000; }
-        .btn-mini.active { background: var(--neon-yellow); color: #000; border-color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); }
+        .btn-mini:hover { color: var(--rust); border-color: var(--rust); background: #292524; }
+        .btn-mini.active { background: var(--rust); color: black; border-color: white; }
+
+        /* MENU BUTTON */
+        .btn-menu {
+            position: absolute; top: 1rem; right: 1rem; z-index: 100;
+            background: #292524; border: 2px solid var(--rust); color: var(--rust);
+            width: 50px; height: 50px; border-radius: 4px; font-size: 24px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+        }
+        .btn-menu:hover { background: var(--rust); color: black; }
 
         /* SLOTS */
         .slot { 
-            width: 100%; height: 60px; background: #000; border: 2px solid var(--neon-cyan); 
-            display: flex; align-items: center; justify-content: center; font-size: 32px; 
-            cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 10px var(--neon-cyan);
+            width: 100%; height: 60px; background: #1c1917; border: 2px dashed var(--border); 
+            display: flex; align-items: center; justify-content: center; font-size: 28px; 
+            cursor: pointer; transition: 0.2s; border-radius: 4px;
         }
-        .slot:hover { background: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan); transform: scale(1.05); }
+        .slot:hover { border-color: var(--rad); background: #292524; transform: scale(1.05); }
+        .r-rare { border-color: var(--rad); border-style: solid; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.2); } 
+        .r-legendary { border-color: var(--rust); border-style: solid; animation: pulse 2s infinite; }
 
-        /* BARRES */
-        .bar-container { background: #000; height: 20px; border: 1px solid var(--neon-pink); margin-top: 5px; position: relative; }
-        .bar-fill { height: 100%; background: repeating-linear-gradient(45deg, var(--neon-pink), var(--neon-pink) 10px, #b300b3 10px, #b300b3 20px); transition: width 0.2s; }
-
-        /* START SCREEN */
+        /* ECRAN TITRE */
         .screen-overlay { 
-            position: fixed; inset: 0; background: #000; z-index: 2000; 
+            position: fixed; inset: 0; background: #1c1917; z-index: 2000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            background-image: linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
+            transition: opacity 0.5s; 
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, #000 3px);
+            background-size: 100% 4px;
         }
-        .screen-overlay.hidden { display: none; }
+        .screen-overlay.hidden { opacity: 0; pointer-events: none; }
         
-        .title-neon { 
-            font-size: 120px; color: #fff; text-transform: uppercase; 
-            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 40px var(--neon-pink), 0 0 80px var(--neon-pink);
-            margin-bottom: 1rem; animation: flicker 2s infinite; line-height: 0.9; text-align: center;
+        .title-wasted { 
+            font-family: var(--font-title); font-size: 90px; color: var(--rust); 
+            text-transform: uppercase; letter-spacing: 10px; margin-bottom: 1rem;
+            text-shadow: 5px 5px 0 #000; border-bottom: 4px solid var(--rad); padding-bottom: 20px;
         }
-        @keyframes flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 24%, 55% { opacity: 0.4; } }
 
         .menu-input { 
-            background: #000; border: 2px solid var(--neon-cyan); color: var(--neon-cyan); 
-            padding: 15px; width: 350px; text-align: center; font-size: 24px; font-family: var(--font-pixel); 
-            margin-bottom: 20px; outline: none; box-shadow: 0 0 15px var(--neon-cyan);
+            background: #000; border: 2px solid var(--rust); color: var(--rust); 
+            padding: 15px; width: 350px; text-align: center; font-size: 24px; 
+            font-family: var(--font-title); margin-bottom: 20px; outline: none; text-transform: uppercase;
         }
         .menu-btn { 
-            background: transparent; border: 2px solid var(--neon-pink); color: var(--neon-pink); 
-            font-size: 32px; padding: 10px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; 
-            font-family: var(--font-pixel); transition: 0.2s; text-shadow: 0 0 5px var(--neon-pink);
+            background: #292524; border: 2px solid #57534e; color: #a8a29e; 
+            font-size: 24px; padding: 12px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; 
+            font-family: var(--font-title); transition: 0.2s; 
         }
-        .menu-btn:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 30px var(--neon-pink); }
+        .menu-btn:hover { background: var(--rust); color: #000; border-color: #fff; }
 
-        /* FX & TOAST */
-        .dmg { position: absolute; font-size: 40px; font-weight: bold; color: #fff; text-shadow: 4px 4px 0 var(--neon-pink); pointer-events: none; animation: floatUp 0.8s forwards; z-index: 50; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+        /* SETTINGS SLIDER */
+        input[type=range] { width: 100%; accent-color: var(--rust); margin: 15px 0; }
+
+        /* FX */
+        .dmg { position: absolute; font-weight: 900; font-size: 40px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; font-family: var(--font-title); }
+        @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-50px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
+        @keyframes pulse { 50% { border-color: var(--rust); box-shadow: 0 0 15px var(--rust); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake-anim { animation: shake 0.2s; }
         
-        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #000; border: 2px solid var(--neon-cyan); color: var(--neon-cyan); padding: 15px 30px; font-size: 24px; z-index: 4000; box-shadow: 0 0 20px var(--neon-cyan); animation: slideDown 0.3s; text-transform: uppercase; }
-        @keyframes slideDown { from { transform:translate(-50%, -20px); opacity: 0; } to { transform:translate(-50%, 0); opacity: 1; } }
-
+        .bar-container { background: #000; height: 16px; border: 1px solid #57534e; margin-top: 5px; position: relative; }
+        .bar-fill { height: 100%; transition: width 0.2s; }
+        .hp { background: var(--blood); }
+        
+        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #000; padding: 15px 30px; border: 2px solid var(--rad); color: var(--rad); font-family: var(--font-body); font-weight: bold; font-size: 18px; animation: slideDown 0.3s; z-index: 3000; box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
+        @keyframes slideDown { from { opacity:0; transform:translateY(-20px) translateX(-50%); } to { opacity:1; transform:translateY(0) translateX(-50%); } }
+        
         /* MODAL */
-        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: flex; align-items: center; justify-content: center; }
-        .modal-box { background: #000; border: 4px solid var(--neon-yellow); padding: 40px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 50px var(--neon-yellow); }
-        .hidden { display: none !important; }
-        .card-upg { background: #120429; border: 2px solid var(--neon-cyan); padding: 20px; cursor: pointer; transition: 0.2s; }
-        .card-upg:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); }
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .modal-box { background: var(--panel-metal); border: 2px solid var(--rust); padding: 30px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 50px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         
-        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: #000; border: 2px solid var(--neon-pink); padding: 10px; max-width: 250px; color: #fff; display: none; box-shadow: 5px 5px 0 var(--neon-pink); }
+        /* SKILL & EVENT STYLES */
+        .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .skill-card { background: #1c1917; border: 1px solid var(--border); padding: 15px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .skill-card:hover { border-color: var(--rad); background: #292524; }
+        .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #1c1917; border: 1px solid var(--rust); color: var(--rust); font-family: var(--font-title); font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .choice-btn:hover { background: var(--rust); color: black; }
+        
+        /* HUB UPGRADES */
+        .card-upg { background: #1c1917; border: 1px solid var(--border); padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card-upg:hover { transform: translateY(-5px); border-color: var(--rust); }
+        .cost-badge { background: #000; color: var(--rust); border: 1px solid var(--rust); padding: 4px 10px; font-size: 12px; display: inline-block; margin-top: 8px; }
+
+        .hidden { display: none !important; }
+        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: #000; border: 1px solid var(--rad); padding: 12px; font-size: 14px; max-width: 250px; color: var(--rad); display: none; font-family: var(--font-body); }
+        #tooltip.visible { display: block; }
     </style>
 </head>
-<body class="crt">
-
-    <div class="retro-grid"></div>
-    <div class="retro-sun"></div>
+<body>
 
     <div id="start-screen" class="screen-overlay">
-        <h1 class="title-neon">NEON<br>OVERDRIVE</h1>
-        <div class="text-yellow-400 mb-8 text-2xl flashing">INSERT COIN TO START</div>
-        <input type="text" id="player-pseudo" class="menu-input" placeholder="ENTER PLAYER 1 NAME" maxlength="8">
-        <button onclick="Core.bootGame()" class="menu-btn">START GAME</button>
-        <button onclick="Core.hardReset()" class="menu-btn" style="border-color: red; color: red;">SYSTEM RESET</button>
+        <h1 class="title-wasted">WASTELAND</h1>
+        <div class="text-orange-500 mb-8 font-mono text-xl tracking-widest">SURVIVAL EDITION V33</div>
+        <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU SURVIVANT" maxlength="12">
+        <button onclick="Core.bootGame()" class="menu-btn">LANCER LA SURVIE</button>
+        <button onclick="Core.hardReset()" class="menu-btn text-red-600 border-red-900 hover:bg-red-900">RESET TOTAL</button>
     </div>
 
-    <button onclick="UI.modal('settings')" class="absolute top-4 right-4 z-50 text-3xl text-cyan-400 hover:text-white cursor-pointer bg-black p-2 border border-cyan-400">💾</button>
+    <button onclick="UI.modal('settings')" class="btn-menu">⚙️</button>
 
     <div id="game-ui" class="layout blur">
+        
         <div class="panel">
-            <div class="head"><span>PLAYER 1</span> <span id="ui-pseudo" class="text-white">...</span></div>
+            <div class="head"><span>SURVIVANT</span> <span id="ui-pseudo" class="text-green-400">...</span></div>
             <div class="hero-zone">
-                <div id="vis-hero" class="hero-img">👾</div>
+                <div id="vis-hero" class="hero-img">?</div>
                 <div id="vis-pet" class="pet-img"></div>
-                <div class="absolute top-2 right-2 text-3xl text-yellow-400">LVL <span id="ui-lvl">1</span></div>
+                <div class="absolute top-2 right-2 text-2xl font-title text-orange-500">NIV <span id="ui-lvl">1</span></div>
             </div>
             <div class="p-4 space-y-4">
                 <div>
-                    <div class="flex justify-between text-cyan-400 mb-1">INTEGRITY <span id="ui-hp-txt" class="text-white">100/100</span></div>
-                    <div class="bar-container"><div id="ui-hp-bar" class="bar-fill" style="width:100%"></div></div>
+                    <div class="flex justify-between text-xs text-gray-400 font-bold mb-1 uppercase">Santé <span id="ui-hp-txt" class="text-white">100/100</span></div>
+                    <div class="bar-container"><div id="ui-hp-bar" class="bar-fill hp"></div></div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 text-center text-2xl">
-                    <div><div class="text-pink-500">POWER</div><div id="ui-atk" class="text-white">10</div></div>
-                    <div><div class="text-blue-400">SHIELD</div><div id="ui-def" class="text-white">0</div></div>
+                <div class="grid grid-cols-2 gap-2 text-center text-lg font-title">
+                    <div class="bg-black/30 p-2 border border-gray-700"><div class="text-xs text-gray-500 font-sans">FORCE</div><div id="ui-atk" class="text-red-500">10</div></div>
+                    <div class="bg-black/30 p-2 border border-gray-700"><div class="text-xs text-gray-500 font-sans">BLINDAGE</div><div id="ui-def" class="text-gray-300">0</div></div>
                 </div>
             </div>
-            <div class="mt-auto p-4 border-t-2 border-pink-500 bg-black/50">
+            <div class="mt-auto p-4 border-t border-gray-700 bg-black/40">
                 <div class="flex gap-2">
-                    <div id="s-w" class="slot">⚔️</div>
-                    <div id="s-h" class="slot">🛡️</div>
-                    <div id="s-p" class="slot">🤖</div>
+                    <div id="s-w" class="slot text-gray-500">🔧</div>
+                    <div id="s-h" class="slot text-gray-500">🪖</div>
+                    <div id="s-p" class="slot text-gray-500">🐕</div>
                 </div>
             </div>
         </div>
 
         <div class="panel">
             <div class="head">
-                <span>SECTOR <span id="ui-zone" class="text-white">1-1</span></span>
+                <span>SECTEUR <span id="ui-zone" class="text-gray-400">1-1</span></span>
                 <div class="flex gap-4">
-                    <span class="text-yellow-400">💾 <span id="ui-gold">0</span></span>
-                    <span class="text-purple-400">💿 <span id="ui-perls">0</span></span>
+                    <span class="text-orange-500 drop-shadow-sm">🔩 <span id="ui-gold">0</span></span>
+                    <span class="text-green-400 drop-shadow-sm">🟢 <span id="ui-perls">0</span></span>
                 </div>
             </div>
-            <div class="flex-grow relative flex flex-col items-center justify-center overflow-hidden">
-                <div id="enemy-box" class="text-center hidden relative z-10 w-full">
-                    <div class="w-1/2 h-4 bg-black border border-red-500 mx-auto mb-4"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
-                    <div id="vis-enemy" class="text-[150px] filter drop-shadow-[0_0_20px_red]">👹</div>
-                    <div id="name-enemy" class="text-3xl text-red-500 mt-2 bg-black px-4 border border-red-500">VIRUS.EXE</div>
+            
+            <div class="flex-grow bg-[#151210] relative flex flex-col items-center justify-center">
+                <div id="enemy-box" class="text-center hidden relative z-10">
+                    <div class="w-32 h-4 bg-black border border-red-900 mx-auto mb-4 overflow-hidden"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
+                    <div id="vis-enemy" class="text-[120px] filter drop-shadow-lg transition-transform">☣️</div>
+                    <div id="name-enemy" class="font-bold text-red-500 text-2xl font-title mt-4 inline-block tracking-widest bg-black px-2">MUTANT</div>
                 </div>
                 <div id="text-box" class="text-center z-0">
-                    <h1 id="txt-1" class="text-6xl text-cyan-400 mb-2">SYSTEM READY</h1>
-                    <p id="txt-2" class="text-pink-500 text-xl blink">WAITING FOR INPUT...</p>
+                    <h1 id="txt-1" class="text-5xl text-orange-500 mb-2 font-title">DÉSERT...</h1>
+                    <p id="txt-2" class="text-gray-500 text-sm italic">Le vent souffle.</p>
                 </div>
             </div>
-            <div class="h-48 border-t-2 border-pink-500 bg-black/80 grid grid-cols-12">
-                <div class="col-span-8 p-3 overflow-y-auto border-r-2 border-pink-500">
-                    <div class="flex justify-between mb-2 text-cyan-400"><span>CACHE</span> <button onclick="Core.chest()" class="text-sm bg-purple-700 text-white px-2 border border-white hover:bg-purple-500">DECRYPT (5💿)</button></div>
-                    <div id="inv-grid" class="grid grid-cols-6 gap-2"></div>
+
+            <div class="h-48 bg-[#1c1917] border-t border-gray-600 grid grid-cols-12">
+                <div class="col-span-8 p-3 overflow-y-auto border-r border-gray-600">
+                    <div class="flex justify-between mb-2 text-[12px] font-bold text-gray-500 uppercase"><span>Sac à Dos</span> <button onclick="Core.chest()" class="text-[10px] bg-green-900 text-green-200 border border-green-700 px-2 rounded hover:bg-green-800 font-bold">COFFRE RADIOACTIF (5🟢)</button></div>
+                    <div id="inv-grid" class="grid grid-cols-6 gap-1"></div>
                 </div>
                 <div class="col-span-4 p-3 flex flex-col gap-2">
-                    <button id="btn-act" onclick="Core.click()" class="btn-main">EXECUTE</button>
-                    <div class="flex gap-2 h-10">
+                    <button id="btn-act" onclick="Core.click()" class="btn-main">EXPLORER</button>
+                    <div class="flex gap-2 h-8">
                         <button id="btn-auto" onclick="Core.toggleAuto()" class="btn-mini">AUTO: OFF</button>
-                        <button id="btn-speed" onclick="Core.toggleSpeed()" class="btn-mini">SPD: x1</button>
+                        <button id="btn-speed" onclick="Core.toggleSpeed()" class="btn-mini">VIT: x1</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="panel">
-            <div class="head">TERMINAL LOG</div>
-            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto h-1/3 bg-black/30 border-b-2 border-pink-500"></div>
-            <div id="logs" class="p-3 text-sm text-green-400 overflow-y-auto flex-grow bg-black space-y-1 font-mono"></div>
-            <div class="flex border-t-2 border-pink-500">
-                <button onclick="UI.tab('adv')" class="flex-1 p-3 hover:bg-pink-500 hover:text-black transition text-cyan-400 border-r border-pink-500">MISSION</button>
-                <button onclick="UI.tab('hub')" class="flex-1 p-3 hover:bg-pink-500 hover:text-black transition text-purple-400">DARK WEB</button>
+            <div class="head">RADIO</div>
+            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto h-1/3 bg-black/30 border-b border-gray-700"></div>
+            <div id="logs" class="p-3 font-body text-xs text-green-500 overflow-y-auto flex-grow bg-black space-y-1"></div>
+            <div class="flex border-t border-gray-700">
+                <button onclick="UI.tab('adv')" class="flex-1 p-3 hover:bg-gray-800 text-sm text-orange-500 font-title uppercase transition">Route</button>
+                <button onclick="UI.tab('hub')" class="flex-1 p-3 hover:bg-gray-800 text-sm text-gray-400 font-title uppercase border-l border-gray-700 transition">Bunker</button>
             </div>
         </div>
+
     </div>
 
     <div id="view-hub" class="hidden absolute inset-0 bg-black/95 z-40 flex flex-col items-center justify-center p-10">
-        <h2 class="text-8xl text-cyan-400 mb-10" style="text-shadow: 4px 4px 0 #ff00ff">DARK WEB</h2>
-        <div class="grid grid-cols-3 gap-8 w-full max-w-5xl">
-            <div onclick="Core.upg('hp')" class="card-upg"><div class="text-6xl mb-2">❤️</div><div class="text-white text-3xl">INTEGRITY</div><div class="text-pink-500 text-sm">MAX HP +20</div><div class="cost-badge" id="cost-hp">100 💾</div></div>
-            <div onclick="Core.upg('atk')" class="card-upg"><div class="text-6xl mb-2">⚡</div><div class="text-white text-3xl">OVERCLOCK</div><div class="text-pink-500 text-sm">ATK +5</div><div class="cost-badge" id="cost-atk">100 💾</div></div>
-            <div onclick="Core.upg('def')" class="card-upg"><div class="text-6xl mb-2">🛡️</div><div class="text-white text-3xl">FIREWALL</div><div class="text-pink-500 text-sm">DEF +2</div><div class="cost-badge" id="cost-def">100 💾</div></div>
+        <h2 class="text-6xl text-orange-500 font-title mb-10 tracking-widest border-b-4 border-orange-500 pb-2">BUNKER</h2>
+        <div class="grid grid-cols-3 gap-6 w-full max-w-4xl">
+            <div onclick="Core.upg('hp')" class="card-upg">
+                <div class="text-5xl mb-2 text-red-600">❤️</div>
+                <div class="text-white font-title text-2xl">SANTÉ</div>
+                <div class="text-gray-500 text-xs">PV Max +20</div>
+                <div class="cost-badge" id="cost-hp">100 🔩</div>
+            </div>
+            <div onclick="Core.upg('atk')" class="card-upg">
+                <div class="text-5xl mb-2 text-purple-400">⚔️</div>
+                <div class="text-white font-title text-2xl">DÉGÂTS</div>
+                <div class="text-gray-500 text-xs">Attaque +5</div>
+                <div class="cost-badge" id="cost-atk">100 🔩</div>
+            </div>
+            <div onclick="Core.upg('def')" class="card-upg">
+                <div class="text-5xl mb-2 text-gray-400">🛡️</div>
+                <div class="text-white font-title text-2xl">BLINDAGE</div>
+                <div class="text-gray-500 text-xs">Défense +2</div>
+                <div class="cost-badge" id="cost-def">100 🔩</div>
+            </div>
         </div>
-        <button onclick="UI.tab('adv')" class="mt-16 text-2xl text-pink-500 hover:text-white border-b-2 border-pink-500">LOGOUT</button>
+        <button onclick="UI.tab('adv')" class="mt-16 text-gray-500 hover:text-white font-title text-2xl transition">Sortir du bunker</button>
     </div>
 
     <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
@@ -263,58 +290,73 @@
     <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
 
     <script>
-        // --- AUDIO ENGINE (SYNTH) ---
+        // --- AUDIO ENGINE V3 (VOLUME CONTROL) ---
         const AudioSys = {
-            ctx: null, muted: false,
+            ctx: null, vol: 0.5,
             init: () => { window.AudioContext = window.AudioContext || window.webkitAudioContext; AudioSys.ctx = new AudioContext(); },
+            setVol: (v) => { AudioSys.vol = v; },
             play: (type) => {
-                if(AudioSys.muted || !AudioSys.ctx) return;
-                const t = AudioSys.ctx.currentTime;
+                if(!AudioSys.ctx || AudioSys.vol <= 0) return;
                 const o = AudioSys.ctx.createOscillator(); const g = AudioSys.ctx.createGain();
                 o.connect(g); g.connect(AudioSys.ctx.destination);
+                
+                // Volume global appliqué
+                const v = AudioSys.vol;
 
-                if(type === 'coin') { // Retro Coin
-                    o.type = 'square'; o.frequency.setValueAtTime(1200, t); o.frequency.exponentialRampToValueAtTime(2000, t+0.1);
-                    g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.15);
-                    o.start(t); o.stop(t+0.15);
-                } else if(type === 'laser') { // Pew Pew
-                    o.type = 'sawtooth'; o.frequency.setValueAtTime(800, t); o.frequency.exponentialRampToValueAtTime(100, t+0.2);
-                    g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.2);
-                    o.start(t); o.stop(t+0.2);
-                } else if(type === 'boot') { // THX Style
-                    o.type = 'sawtooth'; o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(800, t+1.5);
-                    g.gain.setValueAtTime(0.05, t); g.gain.linearRampToValueAtTime(0, t+1.5);
-                    o.start(t); o.stop(t+1.5);
-                } else if(type === 'error') { // Buzzer
-                    o.type = 'square'; o.frequency.setValueAtTime(150, t); o.frequency.linearRampToValueAtTime(100, t+0.1);
-                    g.gain.setValueAtTime(0.1, t); g.gain.exponentialRampToValueAtTime(0.01, t+0.2);
-                    o.start(t); o.stop(t+0.2);
+                if(type==='coin'){ // Bruit de métal/Ferraille
+                    o.type='square'; o.frequency.setValueAtTime(300,AudioSys.ctx.currentTime); 
+                    o.frequency.exponentialRampToValueAtTime(600,AudioSys.ctx.currentTime+0.1); 
+                    g.gain.setValueAtTime(0.1 * v, AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); 
                 }
-            },
-            toggle: () => { AudioSys.muted = !AudioSys.muted; UI.toast(AudioSys.muted ? "MUTE" : "SOUND ON"); }
+                else if(type==='hit'){ // Bruit sourd
+                    o.type='sawtooth'; o.frequency.setValueAtTime(80,AudioSys.ctx.currentTime); 
+                    g.gain.setValueAtTime(0.2 * v, AudioSys.ctx.currentTime); 
+                    g.gain.exponentialRampToValueAtTime(0.01,AudioSys.ctx.currentTime+0.2);
+                    o.start(); o.stop(AudioSys.ctx.currentTime+0.2); 
+                }
+            }
         };
 
-        // --- DATA ---
+        // --- DATA WASTELAND ---
         const DB = {
-            chars: [{id:"👨‍💻",n:"HACKER"}, {id:"🤖",n:"CYBORG"}, {id:"🕹️",n:"GAMER"}, {id:"👽",n:"GLITCH"}],
+            chars: [{id:"🤠",n:"Mercenaire"}, {id:"👩‍🔧",n:"Mécano"}, {id:"🧟",n:"Goule"}, {id:"🐕",n:"Chien Errant"}],
             enemies: {
-                common: [{n:"BUG",hp:50,atk:5,i:"🐛"}, {n:"TROJAN",hp:40,atk:8,i:"🐴"}, {n:"SPAM BOT",hp:60,atk:10,i:"🤖"}],
-                boss: [{n:"MAINFRAME",hp:800,atk:30,i:"💾"}, {n:"MASTER AI",hp:1000,atk:25,i:"👁️"}]
+                common: [{n:"Pillard",hp:50,atk:5,i:"👺"}, {n:"Rad-Scorpion",hp:40,atk:8,i:"🦂"}, {n:"Robot Fou",hp:60,atk:10,i:"🤖"}],
+                boss: [{n:"CHEF DE GANG",hp:600,atk:25,i:"🏍️"}, {n:"BÉHÉMOTH",hp:800,atk:35,i:"🦍"}]
             },
             skills: {
-                'fire': {n:"LASER",i:"🔫",d:"+DMG"}, 'heal':{n:"REBOOT",i:"🔋",d:"Heal/Hit"},
-                'bolt':{n:"SHOCK",i:"⚡",d:"Crit DMG"}, 'shield':{n:"PROXY",i:"🧱",d:"+DEF"},
-                'curse':{n:"LAG",i:"⏳",d:"Slow Enemy"}, 'luck':{n:"MINER",i:"💎",d:"+Loot"}
+                'fire': {n:"Molotov",i:"🔥",d:"Dégâts de feu (+5 ATK/nv)"}, 
+                'heal':{n:"Premiers Secours",i:"🩹",d:"Chance de soin au coup"},
+                'bolt':{n:"Tir Précis",i:"🎯",d:"Coups critiques"}, 
+                'shield':{n:"Plaques de Fer",i:"⛓️",d:"Armure renforcée (+2 DEF/nv)"},
+                'luck':{n:"Recycleur",i:"♻️",d:"Plus de ferraille"}
             },
-            events: [
-                {t:"CORRUPTED FILE", d:"Access data?", c:[{t:"DECRYPT",a:"loot_gold"},{t:"DELETE",a:"leave"}]},
-                {t:"BLUE SCREEN", d:"System unstable.", c:[{t:"RESTART",a:"dmg_low"},{t:"DEBUG",a:"loot_gold"}]},
-                {t:"DATA LEAK", d:"Bits flowing.", c:[{t:"COLLECT",a:"heal_low"},{t:"IGNORE",a:"leave"}]}
+            events: [ // 20 EVENTS DIVERSIFIÉS
+                {t:"Abri Abandonné", d:"La porte est entrouverte.", c:[{t:"Fouiller",a:"loot_gold"},{t:"Partir",a:"leave"}]},
+                {t:"Eau Trouble", d:"Une flaque radioactive.", c:[{t:"Boire",a:"mutate"},{t:"Ignorer",a:"leave"}]},
+                {t:"Caravane", d:"Des marchands passent.", c:[{t:"Voler",a:"fight"},{t:"Saluer",a:"heal_low"}]},
+                {t:"Chien Blessé", d:"Il gémit doucement.", c:[{t:"Soigner",a:"pet_bonus"},{t:"Laisser",a:"leave"}]},
+                {t:"Orage Radiactif", d:"Le ciel devient vert.", c:[{t:"S'abriter",a:"leave"},{t:"Courir",a:"dmg_low"}]},
+                {t:"Cadavre", d:"Il a un sac à dos.", c:[{t:"Prendre",a:"loot_item"},{t:"Respecter",a:"leave"}]},
+                {t:"Distributeur", d:"Il reste une boisson.", c:[{t:"Frapper",a:"loot_gold"},{t:"Pièce",a:"heal_mid"}]},
+                {t:"Piège à Ours", d:"Caché sous le sable.", c:[{t:"Désamorcer",a:"skill_xp"},{t:"Marcher dessus",a:"dmg_mid"}]},
+                {t:"Ermite Fou", d:"Il parle aux cailloux.", c:[{t:"Ecouter",a:"skill_xp"},{t:"Tuer",a:"fight"}]},
+                {t:"Mine d'Or", d:"Une vieille galerie.", c:[{t:"Creuser",a:"loot_gold_big"},{t:"Trop risqué",a:"leave"}]},
+                {t:"Coffre Verrouillé", d:"Besoin d'un code.", c:[{t:"Forcer",a:"dmg_low"},{t:"Hacker",a:"loot_gold"}]},
+                {t:"Oasis", d:"De l'eau pure !", c:[{t:"Boire",a:"heal_high"},{t:"Remplir gourde",a:"buff_atk"}]},
+                {t:"Signal Radio", d:"S.O.S lointain.", c:[{t:"Répondre",a:"quest"},{t:"Couper",a:"leave"}]},
+                {t:"Robots en panne", d:"Ils fument.", c:[{t:"Réparer",a:"pet_bot"},{t:"Démonter",a:"loot_gold"}]},
+                {t:"Bandits", d:"La bourse ou la vie ?", c:[{t:"Se battre",a:"fight"},{t:"Payer",a:"pay_gold"}]},
+                {t:"Mutant Amical", d:"Il veut échanger.", c:[{t:"Commerce",a:"trade"},{t:"Refuser",a:"leave"}]},
+                {t:"Zone Rouge", d:"Radiation extrême.", c:[{t:"Traverser",a:"dmg_high"},{t:"Contourner",a:"leave"}]},
+                {t:"Livre Ancien", d:"Un manuel technique.", c:[{t:"Lire",a:"skill_xp"},{t:"Brûler",a:"leave"}]},
+                {t:"Statue", d:"Une idole étrange.", c:[{t:"Prier",a:"heal_full"},{t:"Renverser",a:"curse"}]},
+                {t:"Nid de Scorpions", d:"Ça grouille.", c:[{t:"Brûler",a:"loot_gold"},{t:"Fuir",a:"leave"}]}
             ],
-            items: [{n:"Power Glove",e:"🥊",s:10,t:"weapon",r:"r-common",d:"Hit harder"}, {n:"Laser Sword",e:"🗡️",s:100,t:"weapon",r:"r-legendary",d:"Slice code"}]
+            items: [{n:"Pied de Biche",e:"🥢",s:8,t:"weapon",r:"r-common",d:"Ouvre tout."}, {n:"Fusil Laser",e:"🔫",s:50,t:"weapon",r:"r-legendary",d:"Technologie perdue."}]
         };
 
-        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"PLAYER 1" };
+        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"SURVIVANT" };
         let R = { active:false, day:0, hp:100, max:100, atk:10, def:0, skills:[] };
         let C = { active:false, hp:0, max:0, atk:0, boss:false };
         let Conf = { auto:false, speed:1, pause: false };
@@ -323,7 +365,6 @@
         const Core = {
             bootGame: () => {
                 AudioSys.init();
-                AudioSys.play('boot');
                 const n = document.getElementById('player-pseudo').value.trim();
                 if(n) D.pseudo = n.toUpperCase();
                 document.getElementById('start-screen').classList.add('hidden');
@@ -331,16 +372,16 @@
                 Core.init();
             },
             init: () => {
-                let s = localStorage.getItem('distory_v32');
+                let s = localStorage.getItem('distory_v33');
                 if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 document.getElementById('ui-pseudo').innerText = D.pseudo;
                 if(!D.char) UI.modal('char');
-                else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("RESUME", Core.next); else if(C.active) { C.active=false; UI.btn("RETRY", Core.next); } else UI.btn("START RUN", Core.start); }
+                else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("EXPLORER", Core.start); }
             },
             resetGame: () => { localStorage.clear(); location.reload(); },
-            hardReset: () => { if(confirm("FORMAT C:?")) Core.resetGame(); },
+            hardReset: () => { if(confirm("Tout effacer ?")) Core.resetGame(); },
             returnToTitle: () => { Core.save(); location.reload(); },
-            save: () => localStorage.setItem('distory_v32', JSON.stringify(D)),
+            save: () => localStorage.setItem('distory_v33', JSON.stringify(D)),
             
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = 0 + (D.stats.def*2);
@@ -352,62 +393,85 @@
             
             upg: (t) => {
                 let cost = 100 + (D.stats[t] * 50);
-                if(D.gold >= cost) { D.gold -= cost; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("UPGRADE COMPLETE", "success"); AudioSys.play('coin'); } 
-                else UI.toast("INSUFFICIENT DATA", "err");
+                if(D.gold >= cost) { D.gold -= cost; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("AMÉLIORÉ !", "success"); AudioSys.play('coin'); } 
+                else UI.toast("PAS ASSEZ DE FERRAILLE", "err");
             },
 
             pick: (c) => { 
                 D.char = c; 
-                if(c==='👨‍💻'){D.weapon={n:"Keyboard",e:"⌨️",s:5,t:"weapon",r:"r-common",d:"Mechanical"}; D.head={n:"VR Headset",e:"🥽",s:5,t:"head",r:"r-common",d:"Virtual"}; D.pet={n:"Mouse",e:"🖱️",s:5,t:"pet",r:"r-common",d:"Optical"};}
-                else {D.weapon={n:"Gun",e:"🔫",s:5,t:"weapon",r:"r-common",d:"Plasma"}; D.head={n:"Visor",e:"🕶️",s:5,t:"head",r:"r-common",d:"Tactical"}; D.pet={n:"Drone",e:"🚁",s:5,t:"pet",r:"r-common",d:"Scout"};}
-                Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("INITIATE", Core.start); AudioSys.play('coin'); 
+                // STARTER KIT WASTELAND
+                if(c==='🤠'){D.weapon={n:"Couteau",e:"🔪",s:5,t:"weapon",r:"r-common",d:"Aiguisé"}; D.head={n:"Bandana",e:"🧣",s:5,t:"head",r:"r-common",d:"Sale"}; D.pet={n:"Chien",e:"🐕",s:5,t:"pet",r:"r-common",d:"Fidèle"};}
+                else if(c==='👩‍🔧'){D.weapon={n:"Clé à Molette",e:"🔧",s:5,t:"weapon",r:"r-common",d:"Lourde"}; D.head={n:"Lunettes",e:"🥽",s:5,t:"head",r:"r-common",d:"Soudure"}; D.pet={n:"Drone",e:"🛸",s:5,t:"pet",r:"r-common",d:"Volant"};}
+                else {D.weapon={n:"Tuyau",e:"➖",s:5,t:"weapon",r:"r-common",d:"En plomb"}; D.head={n:"Masque à Gaz",e:"😷",s:5,t:"head",r:"r-common",d:"Filtre"}; D.pet={n:"Rat",e:"🐀",s:5,t:"pet",r:"r-common",d:"Géant"};}
+
+                Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("COMMENCER", Core.start); AudioSys.play('coin'); 
             },
-            start: () => { Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("NEXT SECTOR", Core.next); UI.txt("DAY 1","System Breach"); UI.modal('skill-choice'); },
+            start: () => { Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("JOUR 1","Sortie de l'abri"); UI.modal('skill-choice'); },
             
+            // --- LOGIQUE WASTELAND ---
             next: () => { 
                 if(Conf.pause) return;
                 R.day++; Core.calc(); UI.upd(); 
-                if(R.day % 10 === 0) { Core.fight(true); return; }
-                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("MERCHANT","Illegal Mods"); return; }
+                
+                // EVENTS FIXES
+                if(R.day % 50 === 0) { Core.fight(true); return; } // BOSS RARE
+                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("MARCHAND","Troc possible"); return; }
+                
+                // EVENTS ALEATOIRES (80% EVENT, 20% COMBAT)
                 let roll = Math.random();
-                if(roll < 0.5) Core.fight(false); else if (roll < 0.8) Core.triggerEvent(); else UI.modal('skill-choice'); 
+                if(roll < 0.2) Core.fight(false); 
+                else if (roll < 0.9) Core.triggerEvent(); 
+                else UI.modal('skill-choice'); 
                 UI.upd();
             },
             
             triggerEvent: () => { let ev = DB.events[Math.floor(Math.random()*DB.events.length)]; UI.modal('event', ev); },
+            
             resolveEvent: (a) => {
                 document.getElementById('modal-overlay').classList.add('hidden');
-                let res = "NO EFFECT.";
-                if(a.includes('loot')) { D.gold += 30; res = "DATA RECOVERED (+30 💾)"; AudioSys.play('coin'); }
-                else if(a.includes('dmg')) { R.hp -= 15; res = "CORRUPTION DETECTED (-15 HP)"; AudioSys.play('error'); }
-                else if(a.includes('heal')) { R.hp = Math.min(R.max, R.hp+40); res = "SYSTEM REPAIRED (+40 HP)"; AudioSys.play('coin'); }
-                else if(a === 'leave') { res = "SKIPPED"; }
-                UI.log(res); UI.toast(res, "loot"); UI.upd(); Core.checkAuto();
+                let res = "Rien ne se passe.";
+                let bad = false;
+
+                // LOGIQUE EVENTS SIMPLIFIÉE
+                if(a.includes('loot')) { D.gold += 30; res = "Ferraille trouvée (+30 🔩)"; }
+                else if(a.includes('dmg')) { R.hp -= 15; res = "Blessure (-15 Santé)."; bad=true; }
+                else if(a.includes('heal')) { R.hp = Math.min(R.max, R.hp+40); res = "Repos (+40 Santé)."; }
+                else if(a === 'fight') { Core.fight(false); return; }
+                else if(a === 'skill_xp') { D.gold += 50; res = "Connaissances (+50 🔩)."; }
+                else if(a === 'mutate') { R.hp -= 5; res = "Irradiation (-5 Santé)"; bad=true; }
+                else if(a === 'leave') { res = "Vous continuez votre route."; }
+                
+                UI.log(res); UI.toast(res, bad?'err':'success'); UI.upd(); Core.checkAuto();
             },
 
             addSkill: (id) => {
-                let s = R.skills.find(x=>x.id===id); if(s) s.lvl++; else R.skills.push({id:id, lvl:1});
-                document.getElementById('modal-overlay').classList.add('hidden'); UI.toast("SKILL INSTALLED", "loot"); AudioSys.play('coin'); Core.calc(); UI.upd(); Core.checkAuto();
+                let s = R.skills.find(x=>x.id===id);
+                if(s) s.lvl++; else R.skills.push({id:id, lvl:1});
+                document.getElementById('modal-overlay').classList.add('hidden');
+                UI.toast("COMPÉTENCE ACQUISE !", "loot");
+                Core.calc(); UI.upd(); Core.checkAuto();
             },
 
             fight: (boss) => { 
                 C.active = true; C.boss = boss;
-                let pool = boss ? DB.enemies.boss : DB.enemies.common; let en = pool[Math.floor(Math.random() * pool.length)]; 
+                let pool = boss ? DB.enemies.boss : DB.enemies.common;
+                let en = pool[Math.floor(Math.random() * pool.length)]; 
                 let scale = 1 + (R.day * 0.1);
                 C.max = Math.floor(en.hp * scale * (boss?3:1)); C.hp = C.max; C.atk = Math.floor(en.atk * scale * (boss?1.5:1)); 
                 UI.scene('com'); document.getElementById('vis-enemy').innerText = en.i; document.getElementById('name-enemy').innerText = boss ? "BOSS : "+en.n : en.n;
-                UI.btn(boss ? "BOSS BATTLE" : "ATTACK", null, true); 
+                UI.btn(boss ? "BOSS !" : "RIPOSTER", null, true); 
                 setTimeout(Core.turn, 800/Conf.speed); 
             },
             
             turn: () => { 
                 if(!C.active || Conf.pause) return; 
-                let dmg = R.atk; let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("LEECH"); }
-                C.hp -= dmg; UI.fx(dmg, '#ff00ff', 'vis-enemy'); UI.bar(); AudioSys.play('laser'); 
+                let dmg = R.atk; 
+                let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("SOIN URGENCE"); }
+                C.hp -= dmg; UI.fx(dmg, '#d97706', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
                 if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500/Conf.speed); return; } 
                 setTimeout(()=>{ 
                     if(!C.active || Conf.pause) return; 
-                    let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#ff0000', 'vis-hero'); UI.upd(); AudioSys.play('error'); 
+                    let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#ef4444', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); 
                     if(R.hp <= 0) Core.end(false); else setTimeout(Core.turn, 800/Conf.speed); 
                 }, 500/Conf.speed); 
             },
@@ -416,18 +480,19 @@
                 C.active = false; 
                 if(win) { 
                     let gain = 15 + R.day + (C.boss ? 50 : 0); D.gold += gain; 
-                    if(C.boss) { D.perls += 5; UI.toast("BOSS DELETED (+5 💿)", "loot"); }
-                    UI.log(`THREAT ELIMINATED (+${gain} 💾)`); UI.btn("CONTINUE", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
-                } else { R.active = false; UI.log("FATAL ERROR"); UI.btn("REBOOT", Core.start); } 
+                    if(C.boss) { D.perls += 5; UI.toast("BOSS ÉLIMINÉ ! (+5 🟢)", "loot"); }
+                    UI.log(`Ennemi vaincu ! (+${gain} 🔩)`); UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
+                } 
+                else { R.active = false; UI.log("Mort dans le désert..."); UI.btn("RENAÎTRE", Core.start); } 
                 Core.save(); UI.scene('adv'); 
             },
             
             click: () => { if(Act) Act(); },
             checkAuto: () => { if(Conf.auto && R.active && !C.active && !Conf.pause && document.getElementById('modal-overlay').classList.contains('hidden')) setTimeout(() => { let b=document.getElementById('btn-act'); if(!b.disabled) b.click(); }, 1000/Conf.speed); },
             toggleAuto: () => { Conf.auto = !Conf.auto; document.getElementById('btn-auto').innerText = Conf.auto ? "AUTO: ON" : "AUTO: OFF"; document.getElementById('btn-auto').classList.toggle('active'); if(Conf.auto) Core.checkAuto(); },
-            toggleSpeed: () => { Conf.speed = Conf.speed === 1 ? 2 : 1; document.getElementById('btn-speed').innerText = `SPD: x${Conf.speed}`; },
-            chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("NEW HARDWARE", "loot"); AudioSys.play('coin'); } },
-            equip: (idx) => { let it = D.inv[idx]; if(D[it.t]) D.inv.push(D[it.t]); D[it.t] = it; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); AudioSys.play('coin'); }
+            toggleSpeed: () => { Conf.speed = Conf.speed === 1 ? 2 : 1; document.getElementById('btn-speed').innerText = `VIT: x${Conf.speed}`; },
+            chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("LOOT TROUVÉ !", "loot"); AudioSys.play('coin'); } },
+            equip: (idx) => { let it = D.inv[idx]; if(D[it.t]) D.inv.push(D[it.t]); D[it.t] = it; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); AudioSys.play('click'); }
         };
 
         const UI = {
@@ -435,57 +500,58 @@
                 document.getElementById('ui-gold').innerText = D.gold;
                 document.getElementById('ui-perls').innerText = D.perls;
                 document.getElementById('ui-lvl').innerText = D.level || 1;
-                ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 💾");
+                ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 🔩");
                 if(R.active || D.char) { document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`; document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%"; document.getElementById('ui-atk').innerText = R.atk; document.getElementById('ui-def').innerText = R.def; }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
                 let sl = document.getElementById('list-skills'); sl.innerHTML = '';
-                if(R.skills.length === 0) sl.innerHTML = '<div class="text-gray-500 text-center italic">NO MODS</div>';
-                R.skills.forEach(s => { let inf = DB.skills[s.id]; sl.innerHTML += `<div class="bg-purple-900/50 p-1 mb-1 flex justify-between text-sm border border-purple-500"><span class="text-cyan-400">${inf.i} ${inf.n}</span><span class="text-white">v.${s.lvl}</span></div>`; });
+                if(R.skills.length === 0) sl.innerHTML = '<div class="text-gray-500 text-xs text-center italic">Aucune aptitude</div>';
+                R.skills.forEach(s => { let inf = DB.skills[s.id]; sl.innerHTML += `<div class="bg-stone-800 p-1 mb-1 rounded flex justify-between text-xs border border-gray-600 cursor-help" onmouseenter="UI.tip(event, '${inf.n}', '${inf.d}')" onmouseleave="UI.untip()"><span class="text-orange-400">${inf.i} ${inf.n}</span><span class="text-white">Nv.${s.lvl}</span></div>`; });
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
-                D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d); d.onmouseleave=UI.untip; g.appendChild(d); });
-                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-gray-700';}};
-                set('s-w',D.weapon,'⚔️'); set('s-h',D.head,'🧢'); set('s-p',D.pet,'🐈');
+                D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d + "<br>Bonus: "+it.s); d.onmouseleave=UI.untip; g.appendChild(d); });
+                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`; el.onmouseenter=(e)=>UI.tip(e,it.n,it.d+"<br>Stats: "+it.s); el.onmouseleave=UI.untip;}else{el.innerText=def;el.className='slot text-stone-700';el.onmouseenter=null;}};
+                set('s-w',D.weapon,'🔧'); set('s-h',D.head,'🪖'); set('s-p',D.pet,'🐕');
             },
             bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
             scene: (t) => { let e=document.getElementById('enemy-box'), tx=document.getElementById('text-box'); if(t==='com'){e.classList.remove('hidden'); tx.classList.add('hidden');}else{e.classList.add('hidden'); tx.classList.remove('hidden');} },
             btn: (t,a,dis) => { let b=document.getElementById('btn-act'); b.innerText=t; Act=a; b.disabled=dis; },
             txt: (t,s) => { document.getElementById('txt-1').innerText=t; document.getElementById('txt-2').innerText=s; },
-            log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div class="mb-1 border-b border-green-900 pb-1">> ${m}</div>`+l.innerHTML; },
+            log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div class="mb-1 border-b border-gray-700 pb-1">> ${m}</div>`+l.innerHTML; },
             fx: (t,c,id) => { let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t; let r=document.getElementById(id).getBoundingClientRect(); el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px'; document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800); },
-            toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-500':'border-cyan-400 text-cyan-400'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
+            shake: (id) => { let el=document.getElementById(id); el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim'); },
+            toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-500':'border-green-600 text-green-500'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
+            
             modal: (t, data) => { 
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden'); 
                 if(t==='settings') {
                     Conf.pause = true;
-                    c.innerHTML=`<h2 class="text-white text-3xl mb-6">SETTINGS</h2>
-                    <button onclick="UI.closeModal()" class="btn-main mb-2">RESUME</button>
-                    <button onclick="AudioSys.toggle()" class="btn-main mb-2">TOGGLE SOUND</button>
-                    <button onclick="Core.returnToTitle()" class="btn-main mb-2">MAIN MENU</button>
-                    <button onclick="Core.hardReset()" class="btn-main" style="border-color:red; color:red;">RESET DATA</button>`;
-                } else if(t==='char') c.innerHTML=`<h2 class="text-cyan-400 text-4xl mb-8">SELECT AVATAR</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-4 bg-black border-2 border-pink-500 hover:scale-110 hover:bg-pink-500 transition">${x.id}</button>`).join('')}</div>`; 
-                else if(t==='shop') c.innerHTML=`<h2 class="text-pink-500 text-3xl mb-4">DARK WEB MARKET</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-black border border-green-500 text-green-400 font-bold mb-2 text-xl">💊 PATCH (50 HP)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">EXIT</button>`;
+                    c.innerHTML=`<h2 class="text-white text-3xl font-title mb-6">PARAMÈTRES</h2>
+                    <div class="mb-4 text-left"><label class="text-gray-400 text-sm">VOLUME SONORE</label><input type="range" min="0" max="1" step="0.1" value="${AudioSys.vol}" oninput="AudioSys.setVol(this.value)"></div>
+                    <button onclick="UI.closeModal()" class="w-full p-3 bg-gray-800 border border-green-600 text-green-500 font-bold mb-2">REPRENDRE</button>
+                    <button onclick="Core.returnToTitle()" class="w-full p-3 bg-gray-800 border border-blue-600 text-blue-500 font-bold mb-2">MENU PRINCIPAL</button>
+                    <button onclick="Core.hardReset()" class="w-full p-3 bg-gray-800 border border-red-600 text-red-500 font-bold">RESET TOTAL</button>`;
+                } else if(t==='char') c.innerHTML=`<h2 class="text-orange-500 text-4xl font-title mb-8">QUI ÊTES-VOUS ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#292524] rounded border-2 border-orange-500 hover:scale-110 transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
+                else if(t==='shop') c.innerHTML=`<h2 class="text-orange-500 text-3xl font-title mb-4">MARCHAND ITINÉRANT</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#292524] border border-green-500 text-green-400 font-bold mb-2 font-title text-xl">💉 Stimpak (50 PV)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Rien acheter</button>`;
                 else if(t==='skill-choice') {
-                    let k1=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*6)];
-                    c.innerHTML=`<h2 class="text-purple-400 text-3xl mb-4">DOWNLOAD MOD</h2><div class="grid grid-cols-3 gap-2">
-                        <div class="card-upg" onclick="Core.addSkill('${k1}')"><div class="text-4xl mb-2">${DB.skills[k1].i}</div><div>${DB.skills[k1].n}</div></div>
-                        <div class="card-upg" onclick="Core.addSkill('${k2}')"><div class="text-4xl mb-2">${DB.skills[k2].i}</div><div>${DB.skills[k2].n}</div></div>
-                        <div class="card-upg" onclick="Core.addSkill('${k3}')"><div class="text-4xl mb-2">${DB.skills[k3].i}</div><div>${DB.skills[k3].n}</div></div>
+                    let k1=Object.keys(DB.skills)[Math.floor(Math.random()*5)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*5)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*5)];
+                    c.innerHTML=`<h2 class="text-green-400 text-3xl font-title mb-4">NOUVELLE APTITUDE</h2><div class="skill-grid">
+                        <div class="skill-card" onclick="Core.addSkill('${k1}')"><span class="block text-3xl mb-1">${DB.skills[k1].i}</span><div class="font-bold text-orange-500">${DB.skills[k1].n}</div><div class="text-xs text-gray-400">${DB.skills[k1].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k2}')"><span class="block text-3xl mb-1">${DB.skills[k2].i}</span><div class="font-bold text-orange-500">${DB.skills[k2].n}</div><div class="text-xs text-gray-400">${DB.skills[k2].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k3}')"><span class="block text-3xl mb-1">${DB.skills[k3].i}</span><div class="font-bold text-orange-500">${DB.skills[k3].n}</div><div class="text-xs text-gray-400">${DB.skills[k3].d}</div></div>
                     </div>`;
                 }
                 else if(t==='event') {
-                    c.innerHTML=`<h2 class="text-cyan-400 text-3xl mb-4">${data.t}</h2><p class="text-white mb-6 text-xl">${data.d}</p>
-                    <button onclick="Core.resolveEvent('${data.c[0].a}')" class="btn-main mb-2">${data.c[0].t}</button>
-                    <button onclick="Core.resolveEvent('${data.c[1].a}')" class="btn-mini w-full">${data.c[1].t}</button>`;
+                    c.innerHTML=`<h2 class="text-orange-500 text-3xl font-title mb-4">${data.t}</h2><p class="text-gray-300 mb-6 text-xl font-body">${data.d}</p>
+                    <button onclick="Core.resolveEvent('${data.c[0].a}')" class="choice-btn">${data.c[0].t}</button>
+                    <button onclick="Core.resolveEvent('${data.c[1].a}')" class="choice-btn text-gray-500 border-gray-600">${data.c[1].t}</button>`;
                 }
             },
             closeModal: () => { document.getElementById('modal-overlay').classList.add('hidden'); Conf.pause = false; if(R.active && !C.active) Core.checkAuto(); },
             tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
-            tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-pink-500 pb-1 mb-1 text-cyan-400">${t}</div><div>${d}</div>`; tt.style.display = "block"; tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
-            untip: () => document.getElementById('tooltip').style.display = "none"
+            tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-orange-500 pb-1 mb-1 text-green-400 font-title">${t}</div><div>${d}</div>`; tt.classList.add('visible'); tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
+            untip: () => document.getElementById('tooltip').classList.remove('visible')
         };
         
-        document.addEventListener('mousemove', (e) => { let tt = document.getElementById('tooltip'); if(tt.style.display==="block") { tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; } });
-        Core.heal = (v) => { R.hp = Math.min(R.max, R.hp+v); UI.upd(); UI.toast(`+${v} HP`, "success"); };
+        document.addEventListener('mousemove', (e) => { let tt = document.getElementById('tooltip'); if(tt.classList.contains('visible')) { tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; } });
         window.onload = Core.bootGame;
     </script>
 </body>
