@@ -3,182 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V33 WASTELAND</title>
-    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <title>Distory Go - V34 GALAXY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* === THÈME WASTELAND (POST-APO) === */
+        /* === THÈME SPACE OPERA === */
         :root { 
-            --bg-dust: #1c1917; 
-            --panel-metal: #292524;
-            --rust: #d97706; 
-            --sand: #e7e5e4; 
-            --rad: #4ade80; 
-            --blood: #ef4444;
-            --border: #78716c;
+            --bg-space: #020617; 
+            --panel-glass: rgba(15, 23, 42, 0.85);
+            --holo-blue: #0ea5e9; 
+            --holo-cyan: #22d3ee; 
+            --alert: #f43f5e; 
+            --star-white: #f8fafc;
+            --border: rgba(14, 165, 233, 0.3);
             
-            --font-title: 'Black Ops One', cursive;
-            --font-body: 'Courier Prime', monospace;
+            --font-title: 'Orbitron', sans-serif;
+            --font-body: 'Exo 2', sans-serif;
         }
         
         body { 
-            background-color: var(--bg-dust); 
-            color: var(--sand); 
+            background-color: var(--bg-space); 
+            color: var(--star-white); 
             font-family: var(--font-body); 
             overflow: hidden; height: 100vh; user-select: none; 
-            /* Texture granuleuse */
-            background-image: url('https://www.transparenttextures.com/patterns/concrete-wall.png');
         }
 
-        /* LAYOUT */
+        /* FOND ETOILÉ ANIMÉ */
+        .star-field {
+            position: fixed; inset: 0; z-index: -1;
+            background-image: 
+                radial-gradient(1px 1px at 10% 10%, white 100%, transparent),
+                radial-gradient(1px 1px at 20% 20%, white 100%, transparent),
+                radial-gradient(2px 2px at 30% 30%, white 100%, transparent),
+                radial-gradient(1px 1px at 40% 40%, white 100%, transparent),
+                radial-gradient(2px 2px at 50% 50%, white 100%, transparent);
+            background-size: 500px 500px;
+            animation: space-travel 20s linear infinite;
+            opacity: 0.5;
+        }
+        @keyframes space-travel { from { transform: translateY(0); } to { transform: translateY(500px); } }
+
+        /* LAYOUT & GLASSMORPHISM */
         .layout { display: grid; grid-template-columns: 380px 1fr 320px; gap: 1.5rem; height: 100vh; padding: 1.5rem; max-width: 1920px; margin: 0 auto; transition: filter 0.3s; }
-        .layout.blur { filter: blur(4px) brightness(0.6); pointer-events: none; }
+        .layout.blur { filter: blur(5px) brightness(0.7); pointer-events: none; }
 
-        /* PANNEAUX MÉTAL ROUILLÉ */
         .panel { 
-            background: var(--panel-metal); 
-            border: 2px solid var(--border);
-            border-radius: 4px; 
+            background: var(--panel-glass); 
+            border: 1px solid var(--border);
+            border-radius: 12px; 
             display: flex; flex-direction: column; overflow: hidden; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.1), inset 0 0 50px rgba(14, 165, 233, 0.05);
+            backdrop-filter: blur(10px);
         }
-        /* Effet vis rouillées aux coins */
-        .panel::after {
-            content: '+'; position: absolute; top: 5px; right: 5px; color: var(--rust); font-weight: bold; pointer-events: none;
-        }
-        .panel::before {
-            content: '+'; position: absolute; bottom: 5px; left: 5px; color: var(--rust); font-weight: bold; pointer-events: none;
-        }
-
+        
         .head { 
-            padding: 15px 20px; background: #000;
-            border-bottom: 2px solid var(--rust); color: var(--rust); 
+            padding: 15px 20px; background: rgba(14, 165, 233, 0.1);
+            border-bottom: 1px solid var(--border); color: var(--holo-cyan); 
             display: flex; justify-content: space-between; align-items: center;
-            font-family: var(--font-title); font-size: 20px; letter-spacing: 2px;
+            font-family: var(--font-title); font-weight: 700; letter-spacing: 2px;
         }
 
-        /* ZONE HERO */
+        /* HERO ZONE */
         .hero-zone { 
             height: 320px; position: relative; display: flex; align-items: center; justify-content: center;
-            background: radial-gradient(circle, #44403c 0%, #1c1917 90%); border-bottom: 2px solid var(--border);
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%); border-bottom: 1px solid var(--border);
         }
-        .hero-img { font-size: 130px; filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.5)); transition: 0.2s; cursor: pointer; z-index: 10; }
-        .hero-img:hover { transform: scale(1.05); }
-        .pet-img { font-size: 50px; position: absolute; bottom: 10px; left: 10px; animation: bounce 2s infinite; z-index: 5; }
+        .hero-img { font-size: 130px; filter: drop-shadow(0 0 20px var(--holo-blue)); transition: 0.2s; cursor: pointer; z-index: 10; }
+        .hero-img:hover { transform: scale(1.05); filter: drop-shadow(0 0 30px var(--holo-cyan)); }
+        .pet-img { font-size: 50px; position: absolute; bottom: 10px; left: 10px; animation: float 3s infinite ease-in-out; z-index: 5; }
 
-        /* BOUTONS INDUSTRIELS */
+        /* BOUTONS HOLO */
         .btn-main { 
-            width: 100%; background: repeating-linear-gradient(45deg, #b45309, #b45309 10px, #92400e 10px, #92400e 20px); 
-            border: 2px solid #f59e0b; color: #fff; 
-            font-family: var(--font-title); font-size: 28px; 
-            border-radius: 2px; padding: 15px; letter-spacing: 2px; transition: 0.1s;
-            text-shadow: 2px 2px 0 #000; box-shadow: 0 5px 0 #78350f;
+            width: 100%; background: linear-gradient(180deg, #0284c7, #0369a1); 
+            border: 1px solid #38bdf8; border-bottom: 4px solid #075985;
+            color: #fff; font-family: var(--font-title); font-weight: 900; font-size: 26px; 
+            border-radius: 6px; padding: 15px; letter-spacing: 3px; transition: 0.1s;
+            text-transform: uppercase;
         }
-        .btn-main:active { transform: translateY(4px); box-shadow: 0 1px 0 #78350f; }
-        .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; transform: none; box-shadow: none; border: 2px solid #555; background: #333; }
+        .btn-main:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; transform: none; border-bottom-width: 4px; opacity: 0.5; }
 
         .btn-mini { 
-            flex: 1; background: #44403c; border: 1px solid var(--border); border-radius: 2px; 
-            color: var(--sand); font-family: var(--font-body); font-weight: bold; font-size: 12px; 
-            transition: 0.2s; text-transform: uppercase; 
+            flex: 1; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); border-radius: 4px; 
+            color: #94a3b8; font-family: var(--font-title); font-size: 12px; 
+            transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn-mini:hover { color: var(--rust); border-color: var(--rust); background: #292524; }
-        .btn-mini.active { background: var(--rust); color: black; border-color: white; }
+        .btn-mini:hover { color: var(--holo-cyan); border-color: var(--holo-cyan); background: rgba(14, 165, 233, 0.1); }
+        .btn-mini.active { background: rgba(14, 165, 233, 0.2); border-color: var(--holo-cyan); color: var(--holo-cyan); box-shadow: 0 0 10px var(--holo-blue); }
 
         /* MENU BUTTON */
         .btn-menu {
             position: absolute; top: 1rem; right: 1rem; z-index: 100;
-            background: #292524; border: 2px solid var(--rust); color: var(--rust);
-            width: 50px; height: 50px; border-radius: 4px; font-size: 24px;
+            background: rgba(15, 23, 42, 0.9); border: 1px solid var(--holo-cyan); color: var(--holo-cyan);
+            width: 50px; height: 50px; border-radius: 50%; font-size: 24px;
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
         }
-        .btn-menu:hover { background: var(--rust); color: black; }
+        .btn-menu:hover { background: var(--holo-cyan); color: #000; box-shadow: 0 0 20px var(--holo-cyan); }
 
         /* SLOTS */
         .slot { 
-            width: 100%; height: 60px; background: #1c1917; border: 2px dashed var(--border); 
-            display: flex; align-items: center; justify-content: center; font-size: 28px; 
-            cursor: pointer; transition: 0.2s; border-radius: 4px;
+            width: 100%; height: 50px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; font-size: 26px; cursor: pointer; transition: 0.2s; 
         }
-        .slot:hover { border-color: var(--rad); background: #292524; transform: scale(1.05); }
-        .r-rare { border-color: var(--rad); border-style: solid; box-shadow: inset 0 0 10px rgba(74, 222, 128, 0.2); } 
-        .r-legendary { border-color: var(--rust); border-style: solid; animation: pulse 2s infinite; }
+        .slot:hover { border-color: var(--holo-cyan); background: rgba(34, 211, 238, 0.1); transform: scale(1.05); }
+        .r-common { border-color: #64748b; } 
+        .r-rare { border-color: #3b82f6; box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.3); } 
+        .r-legendary { border-color: #f59e0b; animation: pulse 2s infinite; box-shadow: inset 0 0 10px rgba(245, 158, 11, 0.3); }
 
         /* ECRAN TITRE */
         .screen-overlay { 
-            position: fixed; inset: 0; background: #1c1917; z-index: 2000; 
+            position: fixed; inset: 0; background: #020617; z-index: 2000; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: opacity 0.5s; 
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, #000 3px);
-            background-size: 100% 4px;
+            background-image: radial-gradient(circle at center, #0f172a 0%, #000 100%);
         }
         .screen-overlay.hidden { opacity: 0; pointer-events: none; }
         
-        .title-wasted { 
-            font-family: var(--font-title); font-size: 90px; color: var(--rust); 
-            text-transform: uppercase; letter-spacing: 10px; margin-bottom: 1rem;
-            text-shadow: 5px 5px 0 #000; border-bottom: 4px solid var(--rad); padding-bottom: 20px;
+        .title-sci { 
+            font-family: var(--font-title); font-size: 80px; font-weight: 900; color: #fff; 
+            text-shadow: 0 0 20px var(--holo-blue), 0 0 40px var(--holo-cyan); 
+            letter-spacing: 10px; margin-bottom: 2rem;
         }
 
         .menu-input { 
-            background: #000; border: 2px solid var(--rust); color: var(--rust); 
+            background: rgba(15, 23, 42, 0.8); border: 1px solid var(--holo-cyan); color: var(--holo-cyan); 
             padding: 15px; width: 350px; text-align: center; font-size: 24px; 
-            font-family: var(--font-title); margin-bottom: 20px; outline: none; text-transform: uppercase;
+            font-family: var(--font-title); margin-bottom: 20px; border-radius: 4px; 
+            outline: none; text-transform: uppercase; letter-spacing: 2px;
         }
         .menu-btn { 
-            background: #292524; border: 2px solid #57534e; color: #a8a29e; 
-            font-size: 24px; padding: 12px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; 
-            font-family: var(--font-title); transition: 0.2s; 
+            background: transparent; border: 1px solid var(--holo-blue); color: var(--holo-blue); 
+            font-size: 20px; padding: 12px 40px; width: 350px; margin-bottom: 15px; cursor: pointer; 
+            font-family: var(--font-title); transition: 0.2s; letter-spacing: 2px;
         }
-        .menu-btn:hover { background: var(--rust); color: #000; border-color: #fff; }
+        .menu-btn:hover { background: var(--holo-blue); color: #fff; box-shadow: 0 0 20px var(--holo-blue); }
 
         /* SETTINGS SLIDER */
-        input[type=range] { width: 100%; accent-color: var(--rust); margin: 15px 0; }
+        input[type=range] { width: 100%; accent-color: var(--holo-cyan); margin: 15px 0; }
 
         /* FX */
-        .dmg { position: absolute; font-weight: 900; font-size: 40px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; font-family: var(--font-title); }
-        @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-50px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
-        @keyframes pulse { 50% { border-color: var(--rust); box-shadow: 0 0 15px var(--rust); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .dmg { position: absolute; font-weight: 900; font-size: 36px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 0 0 10px var(--alert); font-family: var(--font-title); }
+        @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-20px) scale(1.2); opacity: 1; } 100% { transform: translateY(-80px) scale(1); opacity: 0; } }
+        @keyframes pulse { 50% { border-color: #fcd34d; box-shadow: 0 0 20px #fcd34d; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         .shake-anim { animation: shake 0.2s; }
         
-        .bar-container { background: #000; height: 16px; border: 1px solid #57534e; margin-top: 5px; position: relative; }
+        /* BARRES */
+        .bar-container { background: rgba(0,0,0,0.5); height: 10px; border-radius: 2px; margin-top: 5px; position: relative; overflow: hidden; }
         .bar-fill { height: 100%; transition: width 0.2s; }
-        .hp { background: var(--blood); }
+        .hp { background: linear-gradient(90deg, #be123c, #f43f5e); box-shadow: 0 0 10px #f43f5e; }
         
-        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #000; padding: 15px 30px; border: 2px solid var(--rad); color: var(--rad); font-family: var(--font-body); font-weight: bold; font-size: 18px; animation: slideDown 0.3s; z-index: 3000; box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
+        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(2, 6, 23, 0.95); padding: 15px 30px; border: 1px solid var(--holo-cyan); color: var(--holo-cyan); font-family: var(--font-title); font-size: 16px; animation: slideDown 0.3s; z-index: 3000; box-shadow: 0 0 30px rgba(34, 211, 238, 0.3); }
         @keyframes slideDown { from { opacity:0; transform:translateY(-20px) translateX(-50%); } to { opacity:1; transform:translateY(0) translateX(-50%); } }
         
         /* MODAL */
-        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .modal-box { background: var(--panel-metal); border: 2px solid var(--rust); padding: 30px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 50px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
-        
-        /* SKILL & EVENT STYLES */
-        .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
-        .skill-card { background: #1c1917; border: 1px solid var(--border); padding: 15px; cursor: pointer; transition: 0.2s; text-align: left; }
-        .skill-card:hover { border-color: var(--rad); background: #292524; }
-        .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #1c1917; border: 1px solid var(--rust); color: var(--rust); font-family: var(--font-title); font-size: 20px; cursor: pointer; transition: 0.2s; }
-        .choice-btn:hover { background: var(--rust); color: black; }
-        
-        /* HUB UPGRADES */
-        .card-upg { background: #1c1917; border: 1px solid var(--border); padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-        .card-upg:hover { transform: translateY(-5px); border-color: var(--rust); }
-        .cost-badge { background: #000; color: var(--rust); border: 1px solid var(--rust); padding: 4px 10px; font-size: 12px; display: inline-block; margin-top: 8px; }
-
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-box { background: rgba(15, 23, 42, 0.95); border: 1px solid var(--holo-cyan); padding: 40px; border-radius: 16px; text-align: center; max-width: 800px; width: 95%; box-shadow: 0 0 100px rgba(14, 165, 233, 0.2); }
         .hidden { display: none !important; }
-        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: #000; border: 1px solid var(--rad); padding: 12px; font-size: 14px; max-width: 250px; color: var(--rad); display: none; font-family: var(--font-body); }
+        
+        /* CARDS */
+        .card-upg { background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card-upg:hover { transform: translateY(-5px); border-color: var(--holo-cyan); box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
+        .cost-badge { background: rgba(0,0,0,0.5); color: var(--star-white); border: 1px solid var(--holo-blue); padding: 4px 10px; border-radius: 4px; font-size: 12px; display: inline-block; margin-top: 8px; }
+        
+        .skill-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .skill-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; text-align: left; }
+        .skill-card:hover { border-color: var(--holo-cyan); background: rgba(34, 211, 238, 0.1); }
+        .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: rgba(14, 165, 233, 0.1); border: 1px solid var(--holo-blue); color: var(--holo-cyan); font-family: var(--font-title); font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .choice-btn:hover { background: var(--holo-blue); color: white; }
+
+        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: rgba(2, 6, 23, 0.95); border: 1px solid var(--holo-cyan); padding: 12px; border-radius: 6px; font-size: 14px; max-width: 250px; color: var(--star-white); display: none; box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
         #tooltip.visible { display: block; }
     </style>
 </head>
 <body>
 
+    <div class="star-field"></div>
+
     <div id="start-screen" class="screen-overlay">
-        <h1 class="title-wasted">WASTELAND</h1>
-        <div class="text-orange-500 mb-8 font-mono text-xl tracking-widest">SURVIVAL EDITION V33</div>
-        <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU SURVIVANT" maxlength="12">
-        <button onclick="Core.bootGame()" class="menu-btn">LANCER LA SURVIE</button>
-        <button onclick="Core.hardReset()" class="menu-btn text-red-600 border-red-900 hover:bg-red-900">RESET TOTAL</button>
+        <h1 class="title-sci">GALACTIC<br>ODYSSEY</h1>
+        <div class="text-sky-400 mb-8 font-mono text-xl tracking-widest">MISSION START V34</div>
+        <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU COMMANDANT" maxlength="12">
+        <button onclick="Core.bootGame()" class="menu-btn">DÉCOLLAGE</button>
+        <button onclick="Core.hardReset()" class="menu-btn text-red-500 border-red-500 hover:bg-red-500 hover:text-white">RESET SYSTÈME</button>
     </div>
 
     <button onclick="UI.modal('settings')" class="btn-menu">⚙️</button>
@@ -186,59 +194,59 @@
     <div id="game-ui" class="layout blur">
         
         <div class="panel">
-            <div class="head"><span>SURVIVANT</span> <span id="ui-pseudo" class="text-green-400">...</span></div>
+            <div class="head"><span>COMMANDANT</span> <span id="ui-pseudo" class="text-white">...</span></div>
             <div class="hero-zone">
                 <div id="vis-hero" class="hero-img">?</div>
                 <div id="vis-pet" class="pet-img"></div>
-                <div class="absolute top-2 right-2 text-2xl font-title text-orange-500">NIV <span id="ui-lvl">1</span></div>
+                <div class="absolute top-2 right-2 text-2xl font-title text-sky-400">NIV <span id="ui-lvl">1</span></div>
             </div>
             <div class="p-4 space-y-4">
                 <div>
-                    <div class="flex justify-between text-xs text-gray-400 font-bold mb-1 uppercase">Santé <span id="ui-hp-txt" class="text-white">100/100</span></div>
+                    <div class="flex justify-between text-xs text-sky-200 font-bold mb-1 uppercase">Bouclier (PV) <span id="ui-hp-txt" class="text-white">100/100</span></div>
                     <div class="bar-container"><div id="ui-hp-bar" class="bar-fill hp"></div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-center text-lg font-title">
-                    <div class="bg-black/30 p-2 border border-gray-700"><div class="text-xs text-gray-500 font-sans">FORCE</div><div id="ui-atk" class="text-red-500">10</div></div>
-                    <div class="bg-black/30 p-2 border border-gray-700"><div class="text-xs text-gray-500 font-sans">BLINDAGE</div><div id="ui-def" class="text-gray-300">0</div></div>
+                    <div class="bg-white/5 p-2 rounded border border-sky-900"><div class="text-xs text-sky-400 font-sans">PUISSANCE</div><div id="ui-atk" class="text-white">10</div></div>
+                    <div class="bg-white/5 p-2 rounded border border-sky-900"><div class="text-xs text-sky-400 font-sans">DÉFENSE</div><div id="ui-def" class="text-white">0</div></div>
                 </div>
             </div>
-            <div class="mt-auto p-4 border-t border-gray-700 bg-black/40">
+            <div class="mt-auto p-4 border-t border-sky-900 bg-black/20">
                 <div class="flex gap-2">
-                    <div id="s-w" class="slot text-gray-500">🔧</div>
-                    <div id="s-h" class="slot text-gray-500">🪖</div>
-                    <div id="s-p" class="slot text-gray-500">🐕</div>
+                    <div id="s-w" class="slot text-sky-600">🔫</div>
+                    <div id="s-h" class="slot text-sky-600">⛑️</div>
+                    <div id="s-p" class="slot text-sky-600">🤖</div>
                 </div>
             </div>
         </div>
 
         <div class="panel">
             <div class="head">
-                <span>SECTEUR <span id="ui-zone" class="text-gray-400">1-1</span></span>
-                <div class="flex gap-4">
-                    <span class="text-orange-500 drop-shadow-sm">🔩 <span id="ui-gold">0</span></span>
-                    <span class="text-green-400 drop-shadow-sm">🟢 <span id="ui-perls">0</span></span>
+                <div class="text-xl">CYCLE <span id="ui-day" class="text-white">1</span></div>
+                <div class="flex gap-4 text-sm">
+                    <span class="text-yellow-400 drop-shadow-sm">💳 <span id="ui-gold">0</span></span>
+                    <span class="text-purple-400 drop-shadow-sm">⚛️ <span id="ui-perls">0</span></span>
                 </div>
             </div>
             
-            <div class="flex-grow bg-[#151210] relative flex flex-col items-center justify-center">
+            <div class="flex-grow relative flex flex-col items-center justify-center">
                 <div id="enemy-box" class="text-center hidden relative z-10">
-                    <div class="w-32 h-4 bg-black border border-red-900 mx-auto mb-4 overflow-hidden"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
-                    <div id="vis-enemy" class="text-[120px] filter drop-shadow-lg transition-transform">☣️</div>
-                    <div id="name-enemy" class="font-bold text-red-500 text-2xl font-title mt-4 inline-block tracking-widest bg-black px-2">MUTANT</div>
+                    <div class="w-32 h-4 bg-black border border-red-500 rounded-full mx-auto mb-4 overflow-hidden"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
+                    <div id="vis-enemy" class="text-[120px] filter drop-shadow-[0_0_30px_rgba(244,63,94,0.5)] transition-transform">👽</div>
+                    <div id="name-enemy" class="font-bold text-red-400 text-2xl font-title mt-4 inline-block tracking-widest">CIBLE</div>
                 </div>
                 <div id="text-box" class="text-center z-0">
-                    <h1 id="txt-1" class="text-5xl text-orange-500 mb-2 font-title">DÉSERT...</h1>
-                    <p id="txt-2" class="text-gray-500 text-sm italic">Le vent souffle.</p>
+                    <h1 id="txt-1" class="text-5xl text-sky-400 mb-2 font-title">ORBITE STABLE</h1>
+                    <p id="txt-2" class="text-sky-200 text-sm tracking-widest">En attente des ordres.</p>
                 </div>
             </div>
 
-            <div class="h-48 bg-[#1c1917] border-t border-gray-600 grid grid-cols-12">
-                <div class="col-span-8 p-3 overflow-y-auto border-r border-gray-600">
-                    <div class="flex justify-between mb-2 text-[12px] font-bold text-gray-500 uppercase"><span>Sac à Dos</span> <button onclick="Core.chest()" class="text-[10px] bg-green-900 text-green-200 border border-green-700 px-2 rounded hover:bg-green-800 font-bold">COFFRE RADIOACTIF (5🟢)</button></div>
+            <div class="h-48 bg-slate-900/50 border-t border-sky-900 grid grid-cols-12 backdrop-blur">
+                <div class="col-span-8 p-3 overflow-y-auto border-r border-sky-900">
+                    <div class="flex justify-between mb-2 text-[12px] font-bold text-sky-500 uppercase"><span>Soute</span> <button onclick="Core.chest()" class="text-[10px] bg-purple-900 text-purple-200 border border-purple-500 px-2 rounded hover:bg-purple-800 font-bold">DÉCODER (5⚛️)</button></div>
                     <div id="inv-grid" class="grid grid-cols-6 gap-1"></div>
                 </div>
                 <div class="col-span-4 p-3 flex flex-col gap-2">
-                    <button id="btn-act" onclick="Core.click()" class="btn-main">EXPLORER</button>
+                    <button id="btn-act" onclick="Core.click()" class="btn-main">SCANNER</button>
                     <div class="flex gap-2 h-8">
                         <button id="btn-auto" onclick="Core.toggleAuto()" class="btn-mini">AUTO: OFF</button>
                         <button id="btn-speed" onclick="Core.toggleSpeed()" class="btn-mini">VIT: x1</button>
@@ -248,40 +256,37 @@
         </div>
 
         <div class="panel">
-            <div class="head">RADIO</div>
-            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto h-1/3 bg-black/30 border-b border-gray-700"></div>
-            <div id="logs" class="p-3 font-body text-xs text-green-500 overflow-y-auto flex-grow bg-black space-y-1"></div>
-            <div class="flex border-t border-gray-700">
-                <button onclick="UI.tab('adv')" class="flex-1 p-3 hover:bg-gray-800 text-sm text-orange-500 font-title uppercase transition">Route</button>
-                <button onclick="UI.tab('hub')" class="flex-1 p-3 hover:bg-gray-800 text-sm text-gray-400 font-title uppercase border-l border-gray-700 transition">Bunker</button>
+            <div class="head">LOGS DU VAISSEAU</div>
+            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto h-1/3 bg-black/20 border-b border-sky-900"></div>
+            <div id="logs" class="p-3 font-mono text-xs text-sky-300 overflow-y-auto flex-grow bg-black/20 space-y-1"></div>
+            <div class="flex border-t border-sky-900">
+                <button onclick="UI.tab('adv')" class="flex-1 p-3 hover:bg-sky-900/50 text-sm text-sky-400 font-title uppercase transition">Radar</button>
+                <button onclick="UI.tab('hub')" class="flex-1 p-3 hover:bg-sky-900/50 text-sm text-slate-400 font-title uppercase border-l border-sky-900 transition">Station</button>
             </div>
         </div>
 
     </div>
 
-    <div id="view-hub" class="hidden absolute inset-0 bg-black/95 z-40 flex flex-col items-center justify-center p-10">
-        <h2 class="text-6xl text-orange-500 font-title mb-10 tracking-widest border-b-4 border-orange-500 pb-2">BUNKER</h2>
+    <div id="view-hub" class="hidden absolute inset-0 bg-slate-950/95 z-40 flex flex-col items-center justify-center p-10">
+        <h2 class="text-6xl text-sky-400 font-title mb-10 tracking-widest drop-shadow-[0_0_20px_rgba(14,165,233,0.5)]">STATION ORBITALE</h2>
         <div class="grid grid-cols-3 gap-6 w-full max-w-4xl">
             <div onclick="Core.upg('hp')" class="card-upg">
-                <div class="text-5xl mb-2 text-red-600">❤️</div>
-                <div class="text-white font-title text-2xl">SANTÉ</div>
-                <div class="text-gray-500 text-xs">PV Max +20</div>
-                <div class="cost-badge" id="cost-hp">100 🔩</div>
+                <div class="text-5xl mb-2 text-red-500">❤️</div>
+                <div class="text-white font-title text-2xl">COQUE</div>
+                <div class="cost-badge" id="cost-hp">100 💳</div>
             </div>
             <div onclick="Core.upg('atk')" class="card-upg">
-                <div class="text-5xl mb-2 text-purple-400">⚔️</div>
-                <div class="text-white font-title text-2xl">DÉGÂTS</div>
-                <div class="text-gray-500 text-xs">Attaque +5</div>
-                <div class="cost-badge" id="cost-atk">100 🔩</div>
+                <div class="text-5xl mb-2 text-sky-400">⚡</div>
+                <div class="text-white font-title text-2xl">LASERS</div>
+                <div class="cost-badge" id="cost-atk">100 💳</div>
             </div>
             <div onclick="Core.upg('def')" class="card-upg">
-                <div class="text-5xl mb-2 text-gray-400">🛡️</div>
-                <div class="text-white font-title text-2xl">BLINDAGE</div>
-                <div class="text-gray-500 text-xs">Défense +2</div>
-                <div class="cost-badge" id="cost-def">100 🔩</div>
+                <div class="text-5xl mb-2 text-slate-400">🛡️</div>
+                <div class="text-white font-title text-2xl">BOUCLIER</div>
+                <div class="cost-badge" id="cost-def">100 💳</div>
             </div>
         </div>
-        <button onclick="UI.tab('adv')" class="mt-16 text-gray-500 hover:text-white font-title text-2xl transition">Sortir du bunker</button>
+        <button onclick="UI.tab('adv')" class="mt-16 text-slate-400 hover:text-white font-title text-2xl transition">Retour au vaisseau</button>
     </div>
 
     <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
@@ -290,7 +295,7 @@
     <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
 
     <script>
-        // --- AUDIO ENGINE V3 (VOLUME CONTROL) ---
+        // --- AUDIO ENGINE SCI-FI ---
         const AudioSys = {
             ctx: null, vol: 0.5,
             init: () => { window.AudioContext = window.AudioContext || window.webkitAudioContext; AudioSys.ctx = new AudioContext(); },
@@ -299,64 +304,59 @@
                 if(!AudioSys.ctx || AudioSys.vol <= 0) return;
                 const o = AudioSys.ctx.createOscillator(); const g = AudioSys.ctx.createGain();
                 o.connect(g); g.connect(AudioSys.ctx.destination);
-                
-                // Volume global appliqué
                 const v = AudioSys.vol;
-
-                if(type==='coin'){ // Bruit de métal/Ferraille
-                    o.type='square'; o.frequency.setValueAtTime(300,AudioSys.ctx.currentTime); 
-                    o.frequency.exponentialRampToValueAtTime(600,AudioSys.ctx.currentTime+0.1); 
-                    g.gain.setValueAtTime(0.1 * v, AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); 
+                
+                if(type==='coin'){ // Bip High Tech
+                    o.type='sine'; o.frequency.setValueAtTime(1000,AudioSys.ctx.currentTime); 
+                    o.frequency.exponentialRampToValueAtTime(2000,AudioSys.ctx.currentTime+0.1); 
+                    g.gain.setValueAtTime(0.1*v,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.15); 
                 }
-                else if(type==='hit'){ // Bruit sourd
-                    o.type='sawtooth'; o.frequency.setValueAtTime(80,AudioSys.ctx.currentTime); 
-                    g.gain.setValueAtTime(0.2 * v, AudioSys.ctx.currentTime); 
-                    g.gain.exponentialRampToValueAtTime(0.01,AudioSys.ctx.currentTime+0.2);
-                    o.start(); o.stop(AudioSys.ctx.currentTime+0.2); 
+                else if(type==='hit'){ // Laser Hit
+                    o.type='sawtooth'; o.frequency.setValueAtTime(200,AudioSys.ctx.currentTime); 
+                    o.frequency.exponentialRampToValueAtTime(50,AudioSys.ctx.currentTime+0.2);
+                    g.gain.setValueAtTime(0.1*v,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.2); 
                 }
             }
         };
 
-        // --- DATA WASTELAND ---
+        // --- DATA GALAXY ---
         const DB = {
-            chars: [{id:"🤠",n:"Mercenaire"}, {id:"👩‍🔧",n:"Mécano"}, {id:"🧟",n:"Goule"}, {id:"🐕",n:"Chien Errant"}],
+            chars: [{id:"👨‍🚀",n:"Marine"}, {id:"👽",n:"Xeno"}, {id:"🤖",n:"Androïde"}, {id:"🔮",n:"Psionique"}],
             enemies: {
-                common: [{n:"Pillard",hp:50,atk:5,i:"👺"}, {n:"Rad-Scorpion",hp:40,atk:8,i:"🦂"}, {n:"Robot Fou",hp:60,atk:10,i:"🤖"}],
-                boss: [{n:"CHEF DE GANG",hp:600,atk:25,i:"🏍️"}, {n:"BÉHÉMOTH",hp:800,atk:35,i:"🦍"}]
+                common: [{n:"Drone Pirate",hp:50,atk:5,i:"🛸"}, {n:"Alien",hp:40,atk:8,i:"👾"}, {n:"Robot Tueur",hp:60,atk:10,i:"🦾"}],
+                boss: [{n:"LÉVIATHAN",hp:800,atk:30,i:"🐋"}, {n:"VAISSEAU MÈRE",hp:1000,atk:25,i:"🚀"}]
             },
             skills: {
-                'fire': {n:"Molotov",i:"🔥",d:"Dégâts de feu (+5 ATK/nv)"}, 
-                'heal':{n:"Premiers Secours",i:"🩹",d:"Chance de soin au coup"},
-                'bolt':{n:"Tir Précis",i:"🎯",d:"Coups critiques"}, 
-                'shield':{n:"Plaques de Fer",i:"⛓️",d:"Armure renforcée (+2 DEF/nv)"},
-                'luck':{n:"Recycleur",i:"♻️",d:"Plus de ferraille"}
+                'fire': {n:"Plasma",i:"🔫",d:"Dégâts thermiques"}, 'heal':{n:"Auto-Réparation",i:"🔧",d:"Soin par tour"},
+                'bolt':{n:"Surcharge",i:"⚡",d:"Critique augmenté"}, 'shield':{n:"Champ de Force",i:"🛡️",d:"Armure +"},
+                'luck':{n:"Scanner",i:"📡",d:"Plus de butin"}
             },
-            events: [ // 20 EVENTS DIVERSIFIÉS
-                {t:"Abri Abandonné", d:"La porte est entrouverte.", c:[{t:"Fouiller",a:"loot_gold"},{t:"Partir",a:"leave"}]},
-                {t:"Eau Trouble", d:"Une flaque radioactive.", c:[{t:"Boire",a:"mutate"},{t:"Ignorer",a:"leave"}]},
-                {t:"Caravane", d:"Des marchands passent.", c:[{t:"Voler",a:"fight"},{t:"Saluer",a:"heal_low"}]},
-                {t:"Chien Blessé", d:"Il gémit doucement.", c:[{t:"Soigner",a:"pet_bonus"},{t:"Laisser",a:"leave"}]},
-                {t:"Orage Radiactif", d:"Le ciel devient vert.", c:[{t:"S'abriter",a:"leave"},{t:"Courir",a:"dmg_low"}]},
-                {t:"Cadavre", d:"Il a un sac à dos.", c:[{t:"Prendre",a:"loot_item"},{t:"Respecter",a:"leave"}]},
-                {t:"Distributeur", d:"Il reste une boisson.", c:[{t:"Frapper",a:"loot_gold"},{t:"Pièce",a:"heal_mid"}]},
-                {t:"Piège à Ours", d:"Caché sous le sable.", c:[{t:"Désamorcer",a:"skill_xp"},{t:"Marcher dessus",a:"dmg_mid"}]},
-                {t:"Ermite Fou", d:"Il parle aux cailloux.", c:[{t:"Ecouter",a:"skill_xp"},{t:"Tuer",a:"fight"}]},
-                {t:"Mine d'Or", d:"Une vieille galerie.", c:[{t:"Creuser",a:"loot_gold_big"},{t:"Trop risqué",a:"leave"}]},
-                {t:"Coffre Verrouillé", d:"Besoin d'un code.", c:[{t:"Forcer",a:"dmg_low"},{t:"Hacker",a:"loot_gold"}]},
-                {t:"Oasis", d:"De l'eau pure !", c:[{t:"Boire",a:"heal_high"},{t:"Remplir gourde",a:"buff_atk"}]},
-                {t:"Signal Radio", d:"S.O.S lointain.", c:[{t:"Répondre",a:"quest"},{t:"Couper",a:"leave"}]},
-                {t:"Robots en panne", d:"Ils fument.", c:[{t:"Réparer",a:"pet_bot"},{t:"Démonter",a:"loot_gold"}]},
-                {t:"Bandits", d:"La bourse ou la vie ?", c:[{t:"Se battre",a:"fight"},{t:"Payer",a:"pay_gold"}]},
-                {t:"Mutant Amical", d:"Il veut échanger.", c:[{t:"Commerce",a:"trade"},{t:"Refuser",a:"leave"}]},
-                {t:"Zone Rouge", d:"Radiation extrême.", c:[{t:"Traverser",a:"dmg_high"},{t:"Contourner",a:"leave"}]},
-                {t:"Livre Ancien", d:"Un manuel technique.", c:[{t:"Lire",a:"skill_xp"},{t:"Brûler",a:"leave"}]},
-                {t:"Statue", d:"Une idole étrange.", c:[{t:"Prier",a:"heal_full"},{t:"Renverser",a:"curse"}]},
-                {t:"Nid de Scorpions", d:"Ça grouille.", c:[{t:"Brûler",a:"loot_gold"},{t:"Fuir",a:"leave"}]}
+            events: [ // 20 EVENTS SCI-FI
+                {t:"Épave Spatiale", d:"Un vieux vaisseau flotte.", c:[{t:"Fouiller",a:"loot_gold"},{t:"Ignorer",a:"leave"}]},
+                {t:"Astéroïdes", d:"Champ dense devant.", c:[{t:"Esquiver",a:"skill_xp"},{t:"Foncer",a:"dmg_low"}]},
+                {t:"Signal S.O.S", d:"Origine inconnue.", c:[{t:"Répondre",a:"quest"},{t:"Couper",a:"leave"}]},
+                {t:"Trou Noir", d:"Gravité immense.", c:[{t:"Sonde",a:"skill_xp"},{t:"Fuir",a:"leave"}]},
+                {t:"Marchand Alien", d:"Il a 4 bras.", c:[{t:"Commercer",a:"trade"},{t:"Attaquer",a:"fight"}]},
+                {t:"Nanobots", d:"Nuage réparateur.", c:[{t:"Traverser",a:"heal_full"},{t:"Éviter",a:"leave"}]},
+                {t:"Pirates", d:"Ils scannent votre soute.", c:[{t:"Combattre",a:"fight"},{t:"Payer",a:"pay_gold"}]},
+                {t:"Planète Océan", d:"De l'eau pure.", c:[{t:"Remplir",a:"heal_high"},{t:"Partir",a:"leave"}]},
+                {t:"Anomaly", d:"Le temps se plie.", c:[{t:"Observer",a:"buff_atk"},{t:"Fuir",a:"curse"}]},
+                {t:"Caisse larguée", d:"Flotte dans le vide.", c:[{t:"Ouvrir",a:"loot_item"},{t:"Détruire",a:"leave"}]},
+                {t:"IA Rebelle", d:"Elle vous parle.", c:[{t:"Hacker",a:"loot_gold_big"},{t:"Écouter",a:"dmg_low"}]},
+                {t:"Pluie de Météores", d:"Impact imminent !", c:[{t:"Boucliers",a:"leave"},{t:"Tirer",a:"loot_gold"}]},
+                {t:"Vaisseau Fantôme", d:"Aucun signe de vie.", c:[{t:"Aborder",a:"fight_ghost"},{t:"Scanner",a:"skill_xp"}]},
+                {t:"Base Lunaire", d:"Abandonnée.", c:[{t:"Se poser",a:"heal_mid"},{t:"Orbite",a:"leave"}]},
+                {t:"Solaire", d:"Éruption proche.", c:[{t:"Charger",a:"buff_atk"},{t:"Cacher",a:"leave"}]},
+                {t:"Capsule de Survie", d:"Quelqu'un dort.", c:[{t:"Réveiller",a:"loot_gold"},{t:"Laisser",a:"leave"}]},
+                {t:"Cristaux", d:"Flottent dans l'espace.", c:[{t:"Miner",a:"loot_gold"},{t:"Admirer",a:"leave"}]},
+                {t:"Portail Warp", d:"Instable.", c:[{t:"Entrer",a:"boss_warp"},{t:"Détour",a:"leave"}]},
+                {t:"Parasite", d:"Sur la coque !", c:[{t:"Enlever",a:"dmg_mid"},{t:"Brûler",a:"leave"}]},
+                {t:"Transmission", d:"Code crypté.", c:[{t:"Décrypter",a:"skill_xp"},{t:"Ignorer",a:"leave"}]}
             ],
-            items: [{n:"Pied de Biche",e:"🥢",s:8,t:"weapon",r:"r-common",d:"Ouvre tout."}, {n:"Fusil Laser",e:"🔫",s:50,t:"weapon",r:"r-legendary",d:"Technologie perdue."}]
+            items: [{n:"Pistolet Laser",e:"🔫",s:10,t:"weapon",r:"r-common"}, {n:"Sabre Plasma",e:"⚔️",s:100,t:"weapon",r:"r-legendary"}]
         };
 
-        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"SURVIVANT" };
+        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"COMMANDANT" };
         let R = { active:false, day:0, hp:100, max:100, atk:10, def:0, skills:[] };
         let C = { active:false, hp:0, max:0, atk:0, boss:false };
         let Conf = { auto:false, speed:1, pause: false };
@@ -372,16 +372,16 @@
                 Core.init();
             },
             init: () => {
-                let s = localStorage.getItem('distory_v33');
+                let s = localStorage.getItem('distory_v34');
                 if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 document.getElementById('ui-pseudo').innerText = D.pseudo;
                 if(!D.char) UI.modal('char');
-                else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("EXPLORER", Core.start); }
+                else { Core.calc(); UI.upd(); if(R.active && !C.active) UI.btn("CONTINUER", Core.next); else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } else UI.btn("DÉCOLLER", Core.start); }
             },
             resetGame: () => { localStorage.clear(); location.reload(); },
-            hardReset: () => { if(confirm("Tout effacer ?")) Core.resetGame(); },
+            hardReset: () => { if(confirm("Reset total ?")) Core.resetGame(); },
             returnToTitle: () => { Core.save(); location.reload(); },
-            save: () => localStorage.setItem('distory_v33', JSON.stringify(D)),
+            save: () => localStorage.setItem('distory_v34', JSON.stringify(D)),
             
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = 0 + (D.stats.def*2);
@@ -393,31 +393,34 @@
             
             upg: (t) => {
                 let cost = 100 + (D.stats[t] * 50);
-                if(D.gold >= cost) { D.gold -= cost; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("AMÉLIORÉ !", "success"); AudioSys.play('coin'); } 
-                else UI.toast("PAS ASSEZ DE FERRAILLE", "err");
+                if(D.gold >= cost) { D.gold -= cost; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("AMÉLIORATION OK", "success"); AudioSys.play('coin'); } 
+                else UI.toast("CRÉDITS INSUFFISANTS", "err");
             },
 
             pick: (c) => { 
                 D.char = c; 
-                // STARTER KIT WASTELAND
-                if(c==='🤠'){D.weapon={n:"Couteau",e:"🔪",s:5,t:"weapon",r:"r-common",d:"Aiguisé"}; D.head={n:"Bandana",e:"🧣",s:5,t:"head",r:"r-common",d:"Sale"}; D.pet={n:"Chien",e:"🐕",s:5,t:"pet",r:"r-common",d:"Fidèle"};}
-                else if(c==='👩‍🔧'){D.weapon={n:"Clé à Molette",e:"🔧",s:5,t:"weapon",r:"r-common",d:"Lourde"}; D.head={n:"Lunettes",e:"🥽",s:5,t:"head",r:"r-common",d:"Soudure"}; D.pet={n:"Drone",e:"🛸",s:5,t:"pet",r:"r-common",d:"Volant"};}
-                else {D.weapon={n:"Tuyau",e:"➖",s:5,t:"weapon",r:"r-common",d:"En plomb"}; D.head={n:"Masque à Gaz",e:"😷",s:5,t:"head",r:"r-common",d:"Filtre"}; D.pet={n:"Rat",e:"🐀",s:5,t:"pet",r:"r-common",d:"Géant"};}
+                // STARTER KIT SPACE
+                if(c==='👨‍🚀'){D.weapon={n:"Fusil d'Assaut",e:"🔫",s:5,t:"weapon",r:"r-common",d:"Standard"}; D.head={n:"Casque",e:"🪖",s:5,t:"head",r:"r-common",d:"Visière"}; D.pet={n:"Drone",e:"🚁",s:5,t:"pet",r:"r-common",d:"Support"};}
+                else if(c==='👽'){D.weapon={n:"Griffes",e:"💅",s:5,t:"weapon",r:"r-common",d:"Acérées"}; D.head={n:"Carapace",e:"🐞",s:5,t:"head",r:"r-common",d:"Dure"}; D.pet={n:"Larve",e:"🐛",s:5,t:"pet",r:"r-common",d:"Visqueuse"};}
+                else if(c==='🤖'){D.weapon={n:"Laser",e:"🔦",s:5,t:"weapon",r:"r-common",d:"Précis"}; D.head={n:"Antenne",e:"📡",s:5,t:"head",r:"r-common",d:"Radar"}; D.pet={n:"Bot",e:"🦾",s:5,t:"pet",r:"r-common",d:"Mini"};}
+                else {D.weapon={n:"Bâton",e:"🦯",s:5,t:"weapon",r:"r-common",d:"Force"}; D.head={n:"Capuche",e:"🧥",s:5,t:"head",r:"r-common",d:"Mystique"}; D.pet={n:"Orbe",e:"🔮",s:5,t:"pet",r:"r-common",d:"Flottant"};}
 
-                Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("COMMENCER", Core.start); AudioSys.play('coin'); 
+                Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("INITIATION", Core.start); AudioSys.play('coin'); 
             },
-            start: () => { Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("JOUR 1","Sortie de l'abri"); UI.modal('skill-choice'); },
             
-            // --- LOGIQUE WASTELAND ---
+            start: () => { 
+                Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; 
+                UI.scene('adv'); UI.btn("PROCHAIN CYCLE", Core.next); UI.txt("CYCLE 1","Lancement"); 
+                UI.modal('skill-choice'); 
+            },
+            
             next: () => { 
                 if(Conf.pause) return;
                 R.day++; Core.calc(); UI.upd(); 
                 
-                // EVENTS FIXES
-                if(R.day % 50 === 0) { Core.fight(true); return; } // BOSS RARE
-                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("MARCHAND","Troc possible"); return; }
+                if(R.day === 60) { Core.fight(true); return; }
+                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("COMMERCE","Station Spatiale"); return; }
                 
-                // EVENTS ALEATOIRES (80% EVENT, 20% COMBAT)
                 let roll = Math.random();
                 if(roll < 0.2) Core.fight(false); 
                 else if (roll < 0.9) Core.triggerEvent(); 
@@ -429,26 +432,36 @@
             
             resolveEvent: (a) => {
                 document.getElementById('modal-overlay').classList.add('hidden');
-                let res = "Rien ne se passe.";
+                let res = "Calme plat.";
                 let bad = false;
 
-                // LOGIQUE EVENTS SIMPLIFIÉE
-                if(a.includes('loot')) { D.gold += 30; res = "Ferraille trouvée (+30 🔩)"; }
-                else if(a.includes('dmg')) { R.hp -= 15; res = "Blessure (-15 Santé)."; bad=true; }
-                else if(a.includes('heal')) { R.hp = Math.min(R.max, R.hp+40); res = "Repos (+40 Santé)."; }
+                if(a.includes('loot')) { D.gold += 30; res = "Crédits récupérés (+30 💳)"; }
+                else if(a.includes('dmg')) { R.hp -= 15; res = "Coque endommagée (-15 PV)."; bad=true; }
+                else if(a.includes('heal')) { R.hp = Math.min(R.max, R.hp+40); res = "Réparations (+40 PV)."; }
                 else if(a === 'fight') { Core.fight(false); return; }
-                else if(a === 'skill_xp') { D.gold += 50; res = "Connaissances (+50 🔩)."; }
-                else if(a === 'mutate') { R.hp -= 5; res = "Irradiation (-5 Santé)"; bad=true; }
-                else if(a === 'leave') { res = "Vous continuez votre route."; }
+                else if(a === 'skill_xp') { D.gold += 50; res = "Données vendues (+50 💳)."; }
+                else if(a === 'curse') { R.hp -= 5; res = "Fuite de radiation (-5 PV)"; bad=true; }
+                else if(a === 'leave') { res = "Vous continuez l'orbite."; }
                 
                 UI.log(res); UI.toast(res, bad?'err':'success'); UI.upd(); Core.checkAuto();
+            },
+
+            bloodPact: () => {
+                if(R.max > 20) {
+                    D.stats.hp--; 
+                    Core.calc(); 
+                    UI.toast("MODULE INSTALLÉ", "err");
+                    UI.modal('skill-choice'); 
+                } else {
+                    UI.toast("ÉNERGIE TROP BASSE", "err");
+                }
             },
 
             addSkill: (id) => {
                 let s = R.skills.find(x=>x.id===id);
                 if(s) s.lvl++; else R.skills.push({id:id, lvl:1});
                 document.getElementById('modal-overlay').classList.add('hidden');
-                UI.toast("COMPÉTENCE ACQUISE !", "loot");
+                UI.toast("SYSTÈME UPGRADÉ", "loot");
                 Core.calc(); UI.upd(); Core.checkAuto();
             },
 
@@ -458,20 +471,20 @@
                 let en = pool[Math.floor(Math.random() * pool.length)]; 
                 let scale = 1 + (R.day * 0.1);
                 C.max = Math.floor(en.hp * scale * (boss?3:1)); C.hp = C.max; C.atk = Math.floor(en.atk * scale * (boss?1.5:1)); 
-                UI.scene('com'); document.getElementById('vis-enemy').innerText = en.i; document.getElementById('name-enemy').innerText = boss ? "BOSS : "+en.n : en.n;
-                UI.btn(boss ? "BOSS !" : "RIPOSTER", null, true); 
+                UI.scene('com'); document.getElementById('vis-enemy').innerText = en.i; document.getElementById('name-enemy').innerText = boss ? "ALERTE : "+en.n : en.n;
+                UI.btn(boss ? "BOSS !" : "TIRER", null, true); 
                 setTimeout(Core.turn, 800/Conf.speed); 
             },
             
             turn: () => { 
                 if(!C.active || Conf.pause) return; 
                 let dmg = R.atk; 
-                let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("SOIN URGENCE"); }
-                C.hp -= dmg; UI.fx(dmg, '#d97706', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
+                let vamp = R.skills.find(s=>s.id==='heal'); if(vamp && Math.random()<0.3) { R.hp += (2*vamp.lvl); UI.toast("AUTO-REPAIR"); }
+                C.hp -= dmg; UI.fx(dmg, '#0ea5e9', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); 
                 if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500/Conf.speed); return; } 
                 setTimeout(()=>{ 
                     if(!C.active || Conf.pause) return; 
-                    let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#ef4444', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); 
+                    let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#f43f5e', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); 
                     if(R.hp <= 0) Core.end(false); else setTimeout(Core.turn, 800/Conf.speed); 
                 }, 500/Conf.speed); 
             },
@@ -480,10 +493,10 @@
                 C.active = false; 
                 if(win) { 
                     let gain = 15 + R.day + (C.boss ? 50 : 0); D.gold += gain; 
-                    if(C.boss) { D.perls += 5; UI.toast("BOSS ÉLIMINÉ ! (+5 🟢)", "loot"); }
-                    UI.log(`Ennemi vaincu ! (+${gain} 🔩)`); UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
+                    if(C.boss) { D.perls += 5; UI.toast("BOSS DÉTRUIT ! (+5 ⚛️)", "loot"); }
+                    UI.log(`Menace éliminée ! (+${gain} Crédits)`); UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); Core.checkAuto(); 
                 } 
-                else { R.active = false; UI.log("Mort dans le désert..."); UI.btn("RENAÎTRE", Core.start); } 
+                else { R.active = false; UI.log("Signal perdu..."); UI.btn("REBOOT", Core.start); } 
                 Core.save(); UI.scene('adv'); 
             },
             
@@ -491,63 +504,63 @@
             checkAuto: () => { if(Conf.auto && R.active && !C.active && !Conf.pause && document.getElementById('modal-overlay').classList.contains('hidden')) setTimeout(() => { let b=document.getElementById('btn-act'); if(!b.disabled) b.click(); }, 1000/Conf.speed); },
             toggleAuto: () => { Conf.auto = !Conf.auto; document.getElementById('btn-auto').innerText = Conf.auto ? "AUTO: ON" : "AUTO: OFF"; document.getElementById('btn-auto').classList.toggle('active'); if(Conf.auto) Core.checkAuto(); },
             toggleSpeed: () => { Conf.speed = Conf.speed === 1 ? 2 : 1; document.getElementById('btn-speed').innerText = `VIT: x${Conf.speed}`; },
-            chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("LOOT TROUVÉ !", "loot"); AudioSys.play('coin'); } },
-            equip: (idx) => { let it = D.inv[idx]; if(D[it.t]) D.inv.push(D[it.t]); D[it.t] = it; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); AudioSys.play('click'); }
+            chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("ITEM REÇU !", "loot"); AudioSys.play('coin'); } },
+            equip: (idx) => { let it = D.inv[idx]; if(D[it.t]) D.inv.push(D[it.t]); D[it.t] = it; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); AudioSys.play('coin'); }
         };
 
         const UI = {
             upd: () => {
                 document.getElementById('ui-gold').innerText = D.gold;
                 document.getElementById('ui-perls').innerText = D.perls;
+                document.getElementById('ui-day').innerText = R.day;
                 document.getElementById('ui-lvl').innerText = D.level || 1;
-                ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 🔩");
+                ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 💳");
                 if(R.active || D.char) { document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`; document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%"; document.getElementById('ui-atk').innerText = R.atk; document.getElementById('ui-def').innerText = R.def; }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
                 let sl = document.getElementById('list-skills'); sl.innerHTML = '';
-                if(R.skills.length === 0) sl.innerHTML = '<div class="text-gray-500 text-xs text-center italic">Aucune aptitude</div>';
-                R.skills.forEach(s => { let inf = DB.skills[s.id]; sl.innerHTML += `<div class="bg-stone-800 p-1 mb-1 rounded flex justify-between text-xs border border-gray-600 cursor-help" onmouseenter="UI.tip(event, '${inf.n}', '${inf.d}')" onmouseleave="UI.untip()"><span class="text-orange-400">${inf.i} ${inf.n}</span><span class="text-white">Nv.${s.lvl}</span></div>`; });
+                if(R.skills.length === 0) sl.innerHTML = '<div class="text-slate-500 text-xs text-center italic">Aucun module</div>';
+                R.skills.forEach(s => { let inf = DB.skills[s.id]; sl.innerHTML += `<div class="bg-sky-900/30 p-1 mb-1 rounded flex justify-between text-xs border border-sky-800"><span class="text-sky-400">${inf.i} ${inf.n}</span><span class="text-white">v.${s.lvl}</span></div>`; });
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
-                D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d + "<br>Bonus: "+it.s); d.onmouseleave=UI.untip; g.appendChild(d); });
-                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`; el.onmouseenter=(e)=>UI.tip(e,it.n,it.d+"<br>Stats: "+it.s); el.onmouseleave=UI.untip;}else{el.innerText=def;el.className='slot text-stone-700';el.onmouseenter=null;}};
-                set('s-w',D.weapon,'🔧'); set('s-h',D.head,'🪖'); set('s-p',D.pet,'🐕');
+                D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d); d.onmouseleave=UI.untip; g.appendChild(d); });
+                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-slate-700';}};
+                set('s-w',D.weapon,'🔫'); set('s-h',D.head,'⛑️'); set('s-p',D.pet,'🤖');
             },
             bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
             scene: (t) => { let e=document.getElementById('enemy-box'), tx=document.getElementById('text-box'); if(t==='com'){e.classList.remove('hidden'); tx.classList.add('hidden');}else{e.classList.add('hidden'); tx.classList.remove('hidden');} },
             btn: (t,a,dis) => { let b=document.getElementById('btn-act'); b.innerText=t; Act=a; b.disabled=dis; },
             txt: (t,s) => { document.getElementById('txt-1').innerText=t; document.getElementById('txt-2').innerText=s; },
-            log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div class="mb-1 border-b border-gray-700 pb-1">> ${m}</div>`+l.innerHTML; },
+            log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div class="mb-1 border-b border-sky-900 pb-1">> ${m}</div>`+l.innerHTML; },
             fx: (t,c,id) => { let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t; let r=document.getElementById(id).getBoundingClientRect(); el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px'; document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800); },
             shake: (id) => { let el=document.getElementById(id); el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim'); },
-            toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-500':'border-green-600 text-green-500'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
-            
+            toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-600 text-red-200':'border-sky-600 text-sky-200'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
             modal: (t, data) => { 
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden'); 
                 if(t==='settings') {
                     Conf.pause = true;
                     c.innerHTML=`<h2 class="text-white text-3xl font-title mb-6">PARAMÈTRES</h2>
-                    <div class="mb-4 text-left"><label class="text-gray-400 text-sm">VOLUME SONORE</label><input type="range" min="0" max="1" step="0.1" value="${AudioSys.vol}" oninput="AudioSys.setVol(this.value)"></div>
-                    <button onclick="UI.closeModal()" class="w-full p-3 bg-gray-800 border border-green-600 text-green-500 font-bold mb-2">REPRENDRE</button>
-                    <button onclick="Core.returnToTitle()" class="w-full p-3 bg-gray-800 border border-blue-600 text-blue-500 font-bold mb-2">MENU PRINCIPAL</button>
-                    <button onclick="Core.hardReset()" class="w-full p-3 bg-gray-800 border border-red-600 text-red-500 font-bold">RESET TOTAL</button>`;
-                } else if(t==='char') c.innerHTML=`<h2 class="text-orange-500 text-4xl font-title mb-8">QUI ÊTES-VOUS ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#292524] rounded border-2 border-orange-500 hover:scale-110 transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
-                else if(t==='shop') c.innerHTML=`<h2 class="text-orange-500 text-3xl font-title mb-4">MARCHAND ITINÉRANT</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#292524] border border-green-500 text-green-400 font-bold mb-2 font-title text-xl">💉 Stimpak (50 PV)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Rien acheter</button>`;
+                    <div class="mb-4 text-left"><label class="text-gray-400 text-sm">VOLUME</label><input type="range" min="0" max="1" step="0.1" value="${AudioSys.vol}" oninput="AudioSys.setVol(this.value)"></div>
+                    <button onclick="UI.closeModal()" class="w-full p-3 bg-slate-800 border border-green-500 text-green-400 font-bold mb-2">REPRENDRE</button>
+                    <button onclick="Core.returnToTitle()" class="w-full p-3 bg-slate-800 border border-sky-500 text-sky-400 font-bold mb-2">MENU PRINCIPAL</button>
+                    <button onclick="Core.hardReset()" class="w-full p-3 bg-slate-800 border border-red-500 text-red-500 font-bold">RESET TOTAL</button>`;
+                } else if(t==='char') c.innerHTML=`<h2 class="text-sky-400 text-4xl font-title mb-8">CLASSE</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-slate-900 rounded border-2 border-sky-500 hover:scale-110 transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
+                else if(t==='shop') c.innerHTML=`<h2 class="text-sky-400 text-3xl font-title mb-4">COMMERCE</h2><button onclick="Core.bloodPact()" class="w-full p-4 bg-slate-900 border border-red-500 text-red-400 font-bold mb-2 font-title text-xl">⚠️ Vendre Organe (-20 MAX HP = Module)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-slate-500 underline">Quitter</button>`;
                 else if(t==='skill-choice') {
                     let k1=Object.keys(DB.skills)[Math.floor(Math.random()*5)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*5)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*5)];
-                    c.innerHTML=`<h2 class="text-green-400 text-3xl font-title mb-4">NOUVELLE APTITUDE</h2><div class="skill-grid">
-                        <div class="skill-card" onclick="Core.addSkill('${k1}')"><span class="block text-3xl mb-1">${DB.skills[k1].i}</span><div class="font-bold text-orange-500">${DB.skills[k1].n}</div><div class="text-xs text-gray-400">${DB.skills[k1].d}</div></div>
-                        <div class="skill-card" onclick="Core.addSkill('${k2}')"><span class="block text-3xl mb-1">${DB.skills[k2].i}</span><div class="font-bold text-orange-500">${DB.skills[k2].n}</div><div class="text-xs text-gray-400">${DB.skills[k2].d}</div></div>
-                        <div class="skill-card" onclick="Core.addSkill('${k3}')"><span class="block text-3xl mb-1">${DB.skills[k3].i}</span><div class="font-bold text-orange-500">${DB.skills[k3].n}</div><div class="text-xs text-gray-400">${DB.skills[k3].d}</div></div>
+                    c.innerHTML=`<h2 class="text-purple-400 text-3xl font-title mb-4">MODULE TROUVÉ</h2><div class="skill-grid">
+                        <div class="skill-card" onclick="Core.addSkill('${k1}')"><span class="block text-3xl mb-1">${DB.skills[k1].i}</span><div class="font-bold text-sky-400">${DB.skills[k1].n}</div><div class="text-xs text-slate-400">${DB.skills[k1].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k2}')"><span class="block text-3xl mb-1">${DB.skills[k2].i}</span><div class="font-bold text-sky-400">${DB.skills[k2].n}</div><div class="text-xs text-slate-400">${DB.skills[k2].d}</div></div>
+                        <div class="skill-card" onclick="Core.addSkill('${k3}')"><span class="block text-3xl mb-1">${DB.skills[k3].i}</span><div class="font-bold text-sky-400">${DB.skills[k3].n}</div><div class="text-xs text-slate-400">${DB.skills[k3].d}</div></div>
                     </div>`;
                 }
                 else if(t==='event') {
-                    c.innerHTML=`<h2 class="text-orange-500 text-3xl font-title mb-4">${data.t}</h2><p class="text-gray-300 mb-6 text-xl font-body">${data.d}</p>
+                    c.innerHTML=`<h2 class="text-sky-400 text-3xl font-title mb-4">${data.t}</h2><p class="text-slate-300 mb-6 text-xl font-body">${data.d}</p>
                     <button onclick="Core.resolveEvent('${data.c[0].a}')" class="choice-btn">${data.c[0].t}</button>
-                    <button onclick="Core.resolveEvent('${data.c[1].a}')" class="choice-btn text-gray-500 border-gray-600">${data.c[1].t}</button>`;
+                    <button onclick="Core.resolveEvent('${data.c[1].a}')" class="choice-btn text-slate-500 border-slate-600">${data.c[1].t}</button>`;
                 }
             },
             closeModal: () => { document.getElementById('modal-overlay').classList.add('hidden'); Conf.pause = false; if(R.active && !C.active) Core.checkAuto(); },
             tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
-            tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-orange-500 pb-1 mb-1 text-green-400 font-title">${t}</div><div>${d}</div>`; tt.classList.add('visible'); tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
+            tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-sky-500 pb-1 mb-1 text-sky-400 font-title">${t}</div><div>${d}</div>`; tt.classList.add('visible'); tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
             untip: () => document.getElementById('tooltip').classList.remove('visible')
         };
         
