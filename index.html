@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V20 SYSTEM</title>
+    <title>Distory Go - V21 IDENTITY</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* === DESIGN SYSTEM === */
-        :root { --bg: #020617; --panel: #0f172a; --border: #1e293b; --neon: #3b82f6; --glass: rgba(15, 23, 42, 0.95); }
+        :root { --bg: #020617; --panel: #0f172a; --border: #1e293b; --neon: #3b82f6; }
         body { background: var(--bg); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; }
         
-        /* LAYOUT & PANELS */
-        .layout { display: grid; grid-template-columns: 350px 1fr 300px; gap: 1rem; height: 100vh; padding: 1rem; max-width: 1920px; margin: 0 auto; filter: blur(0px); transition: filter 0.3s; }
+        /* LAYOUT */
+        .layout { display: grid; grid-template-columns: 350px 1fr 300px; gap: 1rem; height: 100vh; padding: 1rem; max-width: 1920px; margin: 0 auto; transition: filter 0.3s; }
         .layout.blur { filter: blur(5px); pointer-events: none; }
-        
         .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); position: relative; }
         .head { padding: 12px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-family: 'Share Tech Mono'; font-weight: bold; color: #64748b; display: flex; justify-content: space-between; align-items: center; }
         
-        /* HERO & VISUALS */
+        /* HERO */
         .hero-zone { height: 280px; background: radial-gradient(circle, #1e3a8a 0%, #020617 100%); display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
         .hero-img { font-size: 110px; filter: drop-shadow(0 0 20px rgba(59,130,246,0.6)); transition: 0.2s; cursor: pointer; z-index: 10; }
         .hero-img:hover { transform: scale(1.1); }
@@ -29,31 +28,32 @@
         .btn-main:active { transform: translateY(4px); border-bottom: 0; }
         .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.5; transform: none; border-bottom: 4px solid #334155; }
         
-        .btn-menu { position: absolute; top: 1rem; right: 1rem; z-index: 100; background: var(--panel); border: 1px solid var(--border); color: #64748b; width: 40px; height: 40px; border-radius: 8px; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .btn-menu:hover { color: white; border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
-
         .slot { width: 100%; height: 50px; background: #020617; border: 2px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; position: relative; }
         .slot:hover { border-color: var(--neon); background: #1e293b; transform: scale(1.05); z-index: 20; box-shadow: 0 0 15px var(--neon); }
         .r-common { border-color: #64748b; } .r-rare { border-color: #3b82f6; box-shadow: inset 0 0 5px #3b82f6; } 
         .r-legendary { border-color: #f59e0b; animation: pulse 2s infinite; box-shadow: inset 0 0 5px #f59e0b; }
         
-        /* MENUS & MODALS */
+        /* START SCREEN & INPUT */
         .screen-overlay { position: fixed; inset: 0; background: #020617; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
         .screen-overlay.hidden { opacity: 0; pointer-events: none; }
-        
         .title-glitch { font-family: 'Share Tech Mono'; font-size: 80px; font-weight: 900; color: white; text-shadow: 4px 4px 0 #3b82f6; letter-spacing: -2px; margin-bottom: 2rem; }
-        
+        .menu-input { background: rgba(255,255,255,0.05); border: 2px solid #3b82f6; color: white; padding: 15px; width: 300px; text-align: center; font-size: 20px; font-family: 'Share Tech Mono'; margin-bottom: 20px; border-radius: 8px; outline: none; text-transform: uppercase; }
+        .menu-input:focus { box-shadow: 0 0 20px #3b82f6; background: rgba(59,130,246,0.1); }
         .menu-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 20px; padding: 15px 40px; width: 300px; margin-bottom: 10px; cursor: pointer; font-family: 'Rajdhani'; font-weight: bold; letter-spacing: 2px; transition: 0.2s; text-transform: uppercase; }
         .menu-btn:hover { background: white; color: black; box-shadow: 0 0 20px white; transform: scale(1.05); }
-        
-        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #0f172a; border: 2px solid var(--neon); padding: 40px; border-radius: 16px; text-align: center; max-width: 500px; width: 90%; box-shadow: 0 0 50px rgba(59,130,246,0.2); }
-        
+
+        /* UPGRADES (HUB) */
+        .card-upg { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card-upg:hover { transform: translateY(-5px); border-color: var(--neon); box-shadow: 0 5px 20px rgba(59,130,246,0.3); }
+        .cost-badge { background: #eab308; color: black; font-weight: bold; font-size: 12px; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 5px; font-family: 'Share Tech Mono'; }
+
         /* FX */
         .dmg { position: absolute; font-weight: 900; font-size: 32px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; }
         @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-20px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
         @keyframes pulse { 50% { border-color: #fbbf24; box-shadow: 0 0 15px #fbbf24; } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake-anim { animation: shake 0.3s; }
         
         .bar-container { background: #000; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #334155; margin-top: 5px; position: relative; }
         .bar-fill { height: 100%; transition: width 0.2s; }
@@ -62,35 +62,31 @@
         .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: rgba(15,23,42,0.95); padding: 10px 20px; border-radius: 6px; border-left: 4px solid #3b82f6; color: white; font-weight: bold; animation: slideDown 0.3s; z-index: 3000; font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         @keyframes slideDown { from { opacity:0; transform:translateY(-20px) translateX(-50%); } to { opacity:1; transform:translateY(0) translateX(-50%); } }
         
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #0f172a; border: 2px solid var(--neon); padding: 40px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; }
         .hidden { display: none !important; }
+        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: rgba(15,23,42,0.98); border: 1px solid #475569; padding: 10px; border-radius: 8px; font-size: 12px; max-width: 250px; color: #e2e8f0; display: none; }
+        #tooltip.visible { display: block; }
     </style>
 </head>
 <body>
 
     <div id="start-screen" class="screen-overlay">
         <h1 class="title-glitch">DISTORY GO</h1>
+        <input type="text" id="player-pseudo" class="menu-input" placeholder="ENTREZ PSEUDO" maxlength="12">
         <button onclick="Core.bootGame()" class="menu-btn">JOUER</button>
-        <button onclick="Core.resetGame()" class="menu-btn text-red-500 border-red-900 hover:bg-red-600 hover:text-white hover:shadow-red-500">NOUVELLE PARTIE</button>
-        <div class="mt-8 text-xs text-slate-600 font-mono">V20.0 - SYSTEM READY</div>
+        <button onclick="Core.resetGame()" class="menu-btn text-red-500 border-red-900 hover:bg-red-600 hover:text-white">NOUVELLE PARTIE</button>
+        <div class="mt-8 text-xs text-slate-600 font-mono">V21.0 - IDENTITY</div>
     </div>
-
-    <div id="modal-overlay" class="hidden">
-        <div id="modal-content" class="modal-box"></div>
-    </div>
-
-    <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
-    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-[60] flex flex-col gap-2 w-80"></div>
-    <div id="tooltip" class="fixed hidden z-[100] bg-slate-900 border border-slate-600 p-3 rounded shadow-xl text-xs max-w-xs pointer-events-none text-white"></div>
-
-    <button onclick="UI.modal('settings')" class="btn-menu">⚙️</button>
 
     <div id="game-ui" class="layout blur">
         
         <div class="panel">
-            <div class="head"><span>PILOTE</span> <span id="ui-lvl">LVL 1</span></div>
+            <div class="head"><span>PILOTE</span> <span id="ui-pseudo" class="text-neon font-mono">...</span></div>
             <div class="hero-zone">
                 <div id="vis-hero" class="hero-img">?</div>
                 <div id="vis-pet" class="pet-img"></div>
+                <div class="absolute top-2 right-2 text-2xl font-bold font-tech">LVL <span id="ui-lvl">1</span></div>
             </div>
             <div class="p-4 space-y-4">
                 <div>
@@ -146,192 +142,132 @@
         <div class="panel">
             <div class="head">JOURNAL</div>
             <div id="logs" class="p-2 font-mono text-[10px] text-gray-400 overflow-y-auto flex-grow bg-black/20"></div>
+            <div class="flex border-t border-white/10">
+                <button onclick="UI.tab('adv')" class="flex-1 p-2 bg-slate-900 hover:bg-slate-800 text-xs text-white">AVENTURE</button>
+                <button onclick="UI.tab('hub')" class="flex-1 p-2 bg-slate-800 hover:bg-slate-700 text-xs text-gray-400 border-l border-white/10">BASE</button>
+            </div>
         </div>
 
     </div>
 
+    <div id="view-hub" class="hidden absolute inset-0 bg-slate-950 z-40 flex flex-col items-center justify-center p-10">
+        <h2 class="text-4xl text-white font-bold mb-10 font-tech tracking-widest">CENTRE D'AMÉLIORATION</h2>
+        <div class="grid grid-cols-3 gap-6 w-full max-w-4xl">
+            <div onclick="Core.upg('hp')" class="card-upg">
+                <div class="text-5xl mb-2">❤️</div>
+                <div class="text-white font-bold text-xl">VITALITÉ</div>
+                <div class="text-slate-400 text-xs">Max PV +20</div>
+                <div class="cost-badge" id="cost-hp">100 🪙</div>
+            </div>
+            <div onclick="Core.upg('atk')" class="card-upg">
+                <div class="text-5xl mb-2">⚔️</div>
+                <div class="text-white font-bold text-xl">FORCE</div>
+                <div class="text-slate-400 text-xs">Attaque +5</div>
+                <div class="cost-badge" id="cost-atk">100 🪙</div>
+            </div>
+            <div onclick="Core.upg('def')" class="card-upg">
+                <div class="text-5xl mb-2">🛡️</div>
+                <div class="text-white font-bold text-xl">DÉFENSE</div>
+                <div class="text-slate-400 text-xs">Armure +2</div>
+                <div class="cost-badge" id="cost-def">100 🪙</div>
+            </div>
+        </div>
+        <button onclick="UI.tab('adv')" class="mt-12 text-slate-400 hover:text-white underline cursor-pointer font-bold tracking-widest">RETOUR MISSION</button>
+    </div>
+
+    <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
+    <div id="toast-container" class="fixed top-20 left-1/2 -translate-x-1/2 z-[60] flex flex-col gap-2 w-80"></div>
+    <div id="tooltip"></div>
+    <div id="modal-overlay" class="hidden"><div id="modal-content" class="modal-box"></div></div>
+
     <script>
-        // --- AUDIO ---
         const AudioSys = {
             ctx: null, muted: false,
             init: () => { window.AudioContext = window.AudioContext || window.webkitAudioContext; AudioSys.ctx = new AudioContext(); },
             play: (type) => {
                 if(AudioSys.muted || !AudioSys.ctx) return;
-                if(AudioSys.ctx.state === 'suspended') AudioSys.ctx.resume();
-                const o = AudioSys.ctx.createOscillator();
-                const g = AudioSys.ctx.createGain();
+                const o = AudioSys.ctx.createOscillator(); const g = AudioSys.ctx.createGain();
                 o.connect(g); g.connect(AudioSys.ctx.destination);
-                
-                if(type === 'hit') {
-                    o.type = 'sawtooth'; o.frequency.setValueAtTime(150, AudioSys.ctx.currentTime);
-                    g.gain.setValueAtTime(0.1, AudioSys.ctx.currentTime);
-                    o.start(); o.stop(AudioSys.ctx.currentTime + 0.1);
-                } else if(type === 'coin') {
-                    o.type = 'sine'; o.frequency.setValueAtTime(1200, AudioSys.ctx.currentTime);
-                    g.gain.setValueAtTime(0.05, AudioSys.ctx.currentTime);
-                    o.start(); o.stop(AudioSys.ctx.currentTime + 0.15);
-                }
-            },
-            toggle: () => { AudioSys.muted = !AudioSys.muted; UI.toast(AudioSys.muted ? "Son désactivé" : "Son activé"); }
+                if(type==='coin'){ o.type='sine'; o.frequency.setValueAtTime(1200,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.05,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); }
+                else { o.type='sawtooth'; o.frequency.setValueAtTime(150,AudioSys.ctx.currentTime); g.gain.setValueAtTime(0.05,AudioSys.ctx.currentTime); o.start(); o.stop(AudioSys.ctx.currentTime+0.1); }
+            }
         };
 
-        // --- DATA ---
         const DB = {
             chars: [{id:"🐙",n:"Poulpe"}, {id:"🦈",n:"Requin"}, {id:"🐢",n:"Tortue"}, {id:"👽",n:"Alien"}],
             enemies: [{n:"Crabe",hp:50,atk:5,i:"🦀"}, {n:"Poisson",hp:40,atk:8,i:"🐟"}],
-            items: [
-                {n:"Dague",e:"🗡️",s:10,t:"weapon",r:"r-common",d:"Arme simple"}, 
-                {n:"Bouclier",e:"🛡️",s:20,t:"head",r:"r-rare",d:"Protection++"},
-                {n:"Dragon",e:"🐉",s:15,t:"pet",r:"r-legendary",d:"Familier rare"}
-            ]
+            items: [{n:"Dague",e:"🗡️",s:10,t:"weapon",r:"r-common",d:"Arme simple"}, {n:"Bouclier",e:"🛡️",s:20,t:"head",r:"r-rare",d:"Def+"}]
         };
 
-        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null };
+        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"JOUEUR" };
         let R = { active:false, day:0, hp:100, max:100, atk:10, def:0 };
         let C = { active:false, hp:0, max:0, atk:0 };
         let Act = null;
 
         const Core = {
-            init: () => {
-                // Ecran titre actif par défaut
-            },
-
             bootGame: () => {
                 AudioSys.init();
+                const inputName = document.getElementById('player-pseudo').value.trim();
+                if(inputName) D.pseudo = inputName.toUpperCase();
+                
                 document.getElementById('start-screen').classList.add('hidden');
                 document.getElementById('game-ui').classList.remove('blur');
+                Core.init();
+            },
+            init: () => {
+                let s = localStorage.getItem('distory_v21');
+                if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 
-                let s = localStorage.getItem('distory_v20');
-                if(s) {
-                    try { D = JSON.parse(s); } catch(e) { console.error(e); }
-                }
-
-                if(!D.char) {
-                    UI.modal('char');
-                } else {
+                document.getElementById('ui-pseudo').innerText = D.pseudo;
+                
+                if(!D.char) UI.modal('char');
+                else {
                     Core.calc(); UI.upd();
                     if(R.active && !C.active) UI.btn("CONTINUER", Core.next);
-                    else if(C.active) { C.active = false; UI.btn("REPRENDRE", Core.next); } 
+                    else if(C.active) { C.active=false; UI.btn("REPRENDRE", Core.next); } 
                     else UI.btn("DÉMARRER", Core.start);
                 }
             },
-
-            resetGame: () => {
-                localStorage.removeItem('distory_v20');
-                location.reload();
-            },
-
-            save: () => localStorage.setItem('distory_v20', JSON.stringify(D)),
-
+            resetGame: () => { localStorage.clear(); location.reload(); },
+            save: () => localStorage.setItem('distory_v21', JSON.stringify(D)),
+            
             calc: () => {
                 R.max = 100 + (D.stats.hp*20);
                 R.atk = 10 + (D.stats.atk*5);
-                R.def = 0;
+                R.def = 0 + (D.stats.def*2);
                 if(D.weapon) R.atk += D.weapon.s;
                 if(D.head) { R.def += D.head.s; R.max += D.head.s; }
                 if(D.pet) R.atk += D.pet.s;
                 R.hp = Math.min(R.hp, R.max);
             },
-
-            pick: (c) => { 
-                D.char = c; Core.save(); 
-                document.getElementById('modal-overlay').classList.add('hidden'); 
-                UI.upd(); UI.btn("DÉMARRER", Core.start);
-                AudioSys.play('coin'); 
-            },
-
-            start: () => {
-                Core.calc(); R.hp=R.max; R.day=0; R.active=true;
-                UI.scene('adv'); UI.btn("JOUR SUIVANT", Core.next); UI.txt("MISSION","Zone 1");
-                Core.next();
-            },
-
-            next: () => {
-                R.day++; Core.calc(); UI.upd();
-                AudioSys.play('coin');
-                if(Math.random()<0.5) Core.fight();
-                else {
-                    D.gold += 20; UI.log("Ressources trouvées (+20 Or)");
-                    UI.upd();
-                }
-            },
-
-            fight: () => {
-                C.active = true;
-                let en = DB.enemies[Math.floor(Math.random()*DB.enemies.length)];
-                let sc = 1 + (R.day*0.1);
-                C.max = Math.floor(en.hp * sc); C.hp = C.max; C.atk = Math.floor(en.atk * sc);
-                
-                UI.scene('com');
-                document.getElementById('vis-enemy').innerText = en.i;
-                document.getElementById('name-enemy').innerText = en.n;
-                UI.btn("COMBAT...", null, true);
-                setTimeout(Core.turn, 800);
-            },
-
-            turn: () => {
-                if(!C.active) return;
-                
-                let dmg = R.atk;
-                C.hp -= dmg; 
-                UI.fx(dmg, '#fbbf24', 'vis-enemy');
-                UI.bar();
-                AudioSys.play('hit');
-
-                if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500); return; }
-
-                setTimeout(()=>{
-                    if(!C.active) return;
-                    let edmg = Math.max(1, C.atk - R.def);
-                    R.hp -= edmg;
-                    UI.fx(edmg, '#f00', 'vis-hero');
-                    UI.upd();
-                    AudioSys.play('hit');
-                    
-                    if(R.hp <= 0) Core.end(false);
-                    else setTimeout(Core.turn, 800);
-                }, 500);
-            },
-
-            end: (win) => {
-                C.active = false;
-                if(win) {
-                    D.gold += 15 + R.day;
-                    UI.log("Victoire !");
-                    UI.btn("CONTINUER", Core.next);
-                } else {
-                    R.active = false;
-                    UI.log("Echec mission.");
-                    UI.btn("RELANCER", Core.start);
-                }
-                Core.save(); UI.scene('adv');
-            },
-
-            click: () => { if(Act) Act(); },
             
-            chest: () => {
-                if(D.perls >= 5) {
-                    D.perls -= 5;
-                    let i = DB.items[Math.floor(Math.random()*DB.items.length)];
-                    D.inv.push({...i, uid:Date.now()});
-                    Core.save(); UI.upd();
-                    UI.fx(i.e, '#a855f7', 'btn-act');
-                    AudioSys.play('coin');
-                }
+            upg: (t) => {
+                let cost = 100 + (D.stats[t] * 50);
+                if(D.gold >= cost) {
+                    D.gold -= cost; D.stats[t]++;
+                    Core.save(); Core.calc(); UI.upd(); UI.toast("AMÉLIORÉ !", "success"); AudioSys.play('coin');
+                } else UI.toast("PAS ASSEZ D'OR", "err");
             },
-            equip: (idx) => {
-                let it = D.inv[idx];
-                if(D[it.t]) D.inv.push(D[it.t]);
-                D[it.t] = it; D.inv.splice(idx,1);
-                Core.save(); Core.calc(); UI.upd();
-                AudioSys.play('coin');
-            }
+
+            pick: (c) => { D.char = c; Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("DÉMARRER", Core.start); AudioSys.play('coin'); },
+            start: () => { Core.calc(); R.hp=R.max; R.day=0; R.active=true; UI.scene('adv'); UI.btn("JOUR SUIVANT", Core.next); UI.txt("MISSION","Zone 1"); AudioSys.play('coin'); Core.next(); },
+            next: () => { R.day++; Core.calc(); UI.upd(); if(Math.random()<0.5) Core.fight(); else { D.gold += 20; UI.log("Trouvé +20 Or"); AudioSys.play('coin'); UI.upd(); } },
+            fight: () => { C.active = true; let en = DB.enemies[Math.floor(Math.random()*2)]; C.max = Math.floor(en.hp * (1+R.day*0.1)); C.hp = C.max; C.atk = Math.floor(en.atk * (1+R.day*0.1)); UI.scene('com'); document.getElementById('vis-enemy').innerText = en.i; UI.btn("COMBAT...", null, true); setTimeout(Core.turn, 800); },
+            turn: () => { if(!C.active) return; let dmg = R.atk; C.hp -= dmg; UI.fx(dmg, '#fbbf24', 'vis-enemy'); UI.shake('vis-enemy'); UI.bar(); AudioSys.play('hit'); if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500); return; } setTimeout(()=>{ if(!C.active) return; let edmg = Math.max(1, C.atk - R.def); R.hp -= edmg; UI.fx(edmg, '#f00', 'vis-hero'); UI.shake('vis-hero'); UI.upd(); AudioSys.play('hit'); if(R.hp <= 0) Core.end(false); else setTimeout(Core.turn, 800); }, 500); },
+            end: (win) => { C.active = false; if(win) { D.gold += 15 + R.day; UI.log("Victoire !"); UI.btn("CONTINUER", Core.next); AudioSys.play('coin'); } else { R.active = false; UI.log("Echec."); UI.btn("RELANCER", Core.start); } Core.save(); UI.scene('adv'); },
+            click: () => { if(Act) Act(); },
+            chest: () => { if(D.perls >= 5) { D.perls -= 5; let i = DB.items[Math.floor(Math.random()*DB.items.length)]; D.inv.push({...i, uid:Date.now()}); Core.save(); UI.upd(); UI.toast("LOOT !", "loot"); AudioSys.play('coin'); } },
+            equip: (idx) => { let it = D.inv[idx]; if(D[it.t]) D.inv.push(D[it.t]); D[it.t] = it; D.inv.splice(idx,1); Core.save(); Core.calc(); UI.upd(); AudioSys.play('coin'); }
         };
 
         const UI = {
             upd: () => {
                 document.getElementById('ui-gold').innerText = D.gold;
                 document.getElementById('ui-perls').innerText = D.perls;
+                document.getElementById('ui-lvl').innerText = D.level || 1;
+                
+                ['hp','atk','def'].forEach(k => document.getElementById('cost-'+k).innerText = (100 + D.stats[k]*50) + " 🪙");
+
                 if(R.active || D.char) {
                     document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`;
                     document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%";
@@ -339,69 +275,25 @@
                     document.getElementById('ui-def').innerText = R.def;
                 }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
-                if(D.pet) document.getElementById('vis-pet').innerText = D.pet.e;
-                
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
-                D.inv.forEach((it,i) => {
-                    let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e;
-                    d.onclick=()=>Core.equip(i); 
-                    d.onmouseenter=(e)=>UI.tip(e, it.n, it.d + "<br>Atk: +" + it.s);
-                    d.onmouseleave=UI.untip;
-                    g.appendChild(d);
-                });
-                
+                D.inv.forEach((it,i) => { let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e; d.onclick=()=>Core.equip(i); d.onmouseenter=(e)=>UI.tip(e, it.n, it.d); d.onmouseleave=UI.untip; g.appendChild(d); });
                 const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-gray-600';}};
                 set('s-w',D.weapon,'⚔️'); set('s-h',D.head,'🛡️'); set('s-p',D.pet,'🐾');
             },
             bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
-            scene: (t) => {
-                let e=document.getElementById('enemy-box'), tx=document.getElementById('text-box');
-                if(t==='com'){e.classList.remove('hidden'); tx.classList.add('hidden');}
-                else{e.classList.add('hidden'); tx.classList.remove('hidden');}
-            },
+            scene: (t) => { let e=document.getElementById('enemy-box'), tx=document.getElementById('text-box'); if(t==='com'){e.classList.remove('hidden'); tx.classList.add('hidden');}else{e.classList.add('hidden'); tx.classList.remove('hidden');} },
             btn: (t,a,dis) => { let b=document.getElementById('btn-act'); b.innerText=t; Act=a; b.disabled=dis; },
             txt: (t,s) => { document.getElementById('txt-1').innerText=t; document.getElementById('txt-2').innerText=s; },
             log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div>> ${m}</div>`+l.innerHTML; },
-            fx: (t,c,id) => {
-                let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t;
-                let r=document.getElementById(id).getBoundingClientRect();
-                el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px';
-                document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800);
-            },
-            toast: (m, t) => {
-                let d=document.createElement('div'); 
-                let c = t==='loot'?'border-purple-500':(t==='err'?'border-red-500':'border-green-500');
-                d.className=`toast ${c}`; d.innerText=m;
-                document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500);
-            },
-            modal: (t) => {
-                let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content');
-                l.classList.remove('hidden');
-                
-                if(t==='char') {
-                    c.innerHTML=`<h2 class="text-white text-2xl font-bold mb-4 font-tech">IDENTIFICATION</h2><div class="flex gap-2 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-4 bg-slate-800 rounded hover:scale-110 border border-blue-500/50">${x.id}</button>`).join('')}</div>`;
-                } else if (t==='settings') {
-                    c.innerHTML=`<h2 class="text-white text-xl font-bold mb-4">OPTIONS</h2><button onclick="AudioSys.toggle()" class="w-full p-3 bg-slate-800 border rounded mb-2 text-white">🎵 SON ON/OFF</button><button onclick="Core.resetGame()" class="w-full p-3 border border-red-500 text-red-500 rounded hover:bg-red-900">EFFACER SAUVEGARDE</button><button onclick="UI.closeModal()" class="mt-4 text-slate-400 underline">Fermer</button>`;
-                }
-            },
-            closeModal: () => document.getElementById('modal-overlay').classList.add('hidden'),
-            tip: (e, t, d) => {
-                let tt = document.getElementById('tooltip');
-                tt.innerHTML = `<div class="font-bold border-b border-gray-600 pb-1 mb-1">${t}</div><div>${d}</div>`;
-                tt.classList.remove('hidden');
-                tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px';
-            },
-            untip: () => document.getElementById('tooltip').classList.add('hidden')
+            fx: (t,c,id) => { let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t; let r=document.getElementById(id).getBoundingClientRect(); el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px'; document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800); },
+            shake: (id) => { let el=document.getElementById(id); el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim'); },
+            toast: (m,t) => { let d=document.createElement('div'); let c = t==='err'?'border-red-500':'border-green-500'; d.className=`toast ${c}`; d.innerText=m; document.getElementById('toast-container').appendChild(d); setTimeout(()=>d.remove(),2500); },
+            modal: (t) => { let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content'); l.classList.remove('hidden'); if(t==='char') c.innerHTML=`<h2 class="text-white text-3xl font-bold mb-8">AVATAR</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-4 bg-slate-800 rounded hover:scale-110 border border-blue-500/50">${x.id}</button>`).join('')}</div>`; },
+            tab: (t) => document.getElementById('view-hub').classList.toggle('hidden', t!=='hub'),
+            tip: (e, t, d) => { let tt = document.getElementById('tooltip'); tt.innerHTML = `<div class="font-bold border-b border-gray-600 pb-1 mb-1">${t}</div><div>${d}</div>`; tt.classList.add('visible'); tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; },
+            untip: () => document.getElementById('tooltip').classList.remove('visible')
         };
-
-        // EVENT MOUSE
-        document.addEventListener('mousemove', (e) => {
-            let tt = document.getElementById('tooltip');
-            if(!tt.classList.contains('hidden')) { tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; }
-        });
-
-        // INIT
-        window.onload = Core.init;
+        document.addEventListener('mousemove', (e) => { let tt = document.getElementById('tooltip'); if(tt.classList.contains('visible')) { tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; } });
     </script>
 </body>
 </html>
