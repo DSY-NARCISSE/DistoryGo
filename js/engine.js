@@ -1,222 +1,217 @@
-const Core = {
+/* --- MOTEUR (ENGINE) --- */
+window.Core = {
     init: () => {
-        console.log("INIT DISTORY GO");
-        let s = localStorage.getItem('distory_save_v1');
-        if(s) try { 
-            let loaded = JSON.parse(s);
-            D = { ...D, ...loaded }; // Merge pour sécurité
-            if(!Array.isArray(D.inv)) D.inv = []; 
-        } catch(e) { console.error(e); }
-        
-        if(!D.char) UI.modal('char');
-        else {
-            Core.calc(); 
-            UI.upd();
-            if(R.active && !C.active) UI.btn("CONTINUER", Core.next);
-            else if(C.active) { 
-                C.active = false; // Reset combat crash
-                UI.btn("REPRENDRE", Core.next); 
-                UI.log("Récupération système...", "sys");
-            } 
+        console.log("INIT ENGINE V16.1");
+        const s = localStorage.getItem('distory_save_fix');
+        if(s) {
+            try { 
+                const loaded = JSON.parse(s);
+                State.data = { ...State.data, ...loaded };
+                if(!Array.isArray(State.data.inventory)) State.data.inventory = [];
+            } catch(e) { console.error(e); }
+        }
+
+        if (!State.data.char) {
+            UI.modal('char');
+        } else {
+            Core.calc();
+            UI.update();
+            // Restauration du bouton
+            if(State.run.active && !State.combat.active) UI.btn("CONTINUER", Core.next);
+            else if(State.combat.active) { State.combat.active = false; UI.btn("REPRENDRE", Core.next); }
             else UI.btn("DÉMARRER", Core.start);
         }
     },
 
-    save: () => localStorage.setItem('distory_save_v1', JSON.stringify(D)),
+    save: () => localStorage.setItem('distory_save_fix', JSON.stringify(State.data)),
     
     hardReset: () => { 
         if(confirm("RESET TOTAL ?")) { localStorage.clear(); location.reload(); } 
     },
-    
-    calc: () => {
-        let hp = 100 + (D.stats.hp * 20);
-        let atk = 10 + (D.stats.atk * 5);
-        let def = 0 + (D.stats.def * 2);
-        
-        if(D.weapon) atk += D.weapon.s;
-        if(D.head) { def += D.head.s; hp += D.head.s * 2; }
-        if(D.pet) atk += D.pet.s;
 
-        // Passifs
-        if(R.active) {
-            let chi = R.skills.find(s => s.id === 'chi');
-            if(chi) { let m = 1 + (0.05 * chi.lvl); hp *= m; atk *= m; }
-        }
-
-        R.max = Math.floor(hp);
-        R.atk = Math.floor(atk);
-        R.def = Math.floor(def);
-        if(R.hp > R.max) R.hp = R.max;
+    // --- LOGIQUE DE JEU ---
+    click: () => {
+        if(State.conf.action) State.conf.action();
     },
 
-    pick: (c) => { 
-        D.char = c; 
-        Core.save(); 
-        document.getElementById('modal-layer').classList.remove('show'); 
-        UI.upd(); 
-        UI.btn("DÉMARRER", Core.start); 
+    pickChar: (c) => {
+        State.data.char = c;
+        Core.save();
+        UI.closeModal();
+        UI.update();
+        UI.btn("DÉMARRER", Core.start);
     },
 
     start: () => {
-        Core.calc(); 
-        R.hp = R.max; 
-        R.day = 0; 
-        R.skills = []; 
-        R.active = true;
+        Core.calc();
+        State.run.hp = State.run.maxHp;
+        State.run.day = 0;
+        State.run.active = true;
+        State.run.skills = [];
         
-        // Pet skill
-        if(D.pet && D.pet.elem) {
-            let map = {'FIRE':'fire', 'LIGHT':'bolt', 'EARTH':'shield'};
-            let sk = map[D.pet.elem] || 'chi';
-            R.skills.push({id:sk, lvl:1});
-        }
-
-        UI.scene('adv'); 
-        UI.btn("JOUR SUIVANT", Core.next); 
-        UI.txt("MISSION", "Zone 1");
-        Core.next();
+        UI.scene('adv');
+        UI.btn("JOUR SUIVANT", Core.next);
+        UI.txt("DÉPLOIEMENT", "Zone 1-1");
+        Core.next(); // Lance direct le jour 1
     },
 
     next: () => {
-        if(!R.active) return;
-        R.day++; 
-        Core.calc(); 
-        UI.upd();
-        
-        if(R.day % 20 === 0) { Core.fight(true); return; }
-        
-        let r = Math.random();
-        if(R.day % 10 === 0) { UI.modal('shop'); UI.txt("REPOS", "Maintenance"); }
-        else if(r < 0.6) Core.fight(false);
-        else {
-            let ev = Math.random();
-            if(ev < 0.4) { D.gold += 30; UI.log("Coffre trouvé (+30 Or)"); UI.toast("+30 Or", "loot"); }
-            else if(ev < 0.7) { UI.modal('skill'); }
-            else { Core.heal(R.max / 2); }
-            UI.upd(); 
+        State.run.day++;
+        Core.calc();
+        UI.update();
+
+        // 1 chance sur 2 de combat
+        if(Math.random() < 0.5) {
+            Core.combatStart(false);
+        } else {
+            // Event simple
+            let r = Math.random();
+            if(r < 0.4) {
+                State.data.gold += 20;
+                UI.log("Crédits trouvés (+20)");
+                UI.toast("+20 🪙");
+            } else if (r < 0.7) {
+                UI.modal('skill');
+            } else {
+                Core.heal(50);
+            }
+            UI.update();
             Core.auto();
         }
     },
 
-    fight: (boss) => {
-        C.active = true; 
-        C.boss = boss;
-        let pool = boss ? DB.enemies.boss : DB.enemies.z1;
-        let en = pool[Math.floor(Math.random() * pool.length)];
-        let sc = 1 + (R.day * 0.1);
+    // --- COMBAT ---
+    combatStart: (boss) => {
+        State.combat.active = true;
+        State.combat.boss = boss;
         
-        C.max = Math.floor(en.hp * sc); 
-        C.hp = C.max; 
-        C.atk = Math.floor(en.atk * sc);
+        // Ennemi basique
+        let en = DB.enemies.z1[Math.floor(Math.random() * DB.enemies.z1.length)];
+        let scale = 1 + (State.run.day * 0.1);
         
-        UI.scene('com');
+        State.combat.max = Math.floor(en.hp * scale);
+        State.combat.hp = State.combat.max;
+        State.combat.atk = Math.floor(en.atk * scale);
+        
+        UI.scene('combat');
         document.getElementById('vis-enemy').innerText = en.i;
-        document.getElementById('name-enemy').innerText = en.n;
-        UI.txt(boss ? "ALERTE BOSS" : "HOSTILE", en.n);
-        UI.btn("COMBAT...", null, true);
+        document.getElementById('enemy-name').innerText = en.n;
+        UI.txt("HOSTILE", en.n);
+        UI.btn("COMBAT...", null, true); // Désactive bouton
         
-        setTimeout(Core.turn, 1000 / Conf.spd);
+        setTimeout(Core.combatTurn, 1000);
     },
 
-    turn: () => {
-        if(!C.active) return;
-        
+    combatTurn: () => {
+        if(!State.combat.active) return;
+
         // Player Hit
-        let dmg = R.atk;
-        let fire = R.skills.find(s => s.id === 'fire'); 
-        if(fire) dmg += 10 * fire.lvl;
-        let crit = Math.random() < 0.1; 
-        if(crit) dmg *= 2;
-        
-        C.hp -= dmg; 
-        UI.fx(dmg, crit ? '#fbbf24' : '#fff', 'vis-enemy');
+        let dmg = State.run.atk;
+        State.combat.hp -= dmg;
+        UI.fx(dmg, '#fbbf24', 'vis-enemy');
         UI.bar();
 
-        if(C.hp <= 0) { setTimeout(() => Core.end(true), 500 / Conf.spd); return; }
+        if(State.combat.hp <= 0) {
+            setTimeout(() => Core.endCombat(true), 500);
+            return;
+        }
 
         // Enemy Hit
         setTimeout(() => {
-            if(!C.active) return;
-            let edmg = Math.max(1, C.atk - R.def);
-            R.hp -= edmg;
-            UI.fx(edmg, '#f00', 'vis-hero');
-            UI.upd();
-            
-            if(R.hp <= 0) Core.end(false);
-            else setTimeout(Core.turn, 500 / Conf.spd);
-        }, 500 / Conf.spd);
+            if(!State.combat.active) return;
+            let edmg = Math.max(1, State.combat.atk - State.run.def);
+            State.run.hp -= edmg;
+            UI.fx(edmg, '#ef4444', 'vis-hero');
+            UI.update();
+
+            if(State.run.hp <= 0) Core.endCombat(false);
+            else setTimeout(Core.combatTurn, 800);
+        }, 500);
     },
 
-    end: (win) => {
-        C.active = false;
+    endCombat: (win) => {
+        State.combat.active = false;
         if(win) {
-            D.gold += 15 + R.day;
-            let reg = R.skills.find(s => s.id === 'heal');
-            if(reg) Core.heal(reg.lvl * 5);
-
-            if(C.boss) { D.perls += 10; UI.log("BOSS VAINCU (+10 Perles)"); Core.save(); UI.btn("RETOUR", Core.start); }
-            else { UI.btn("CONTINUER", Core.next); Core.auto(); }
+            State.data.gold += 10 + State.run.day;
+            UI.log("Victoire !");
+            UI.txt("SUCCÈS", "Zone sécurisée");
+            UI.btn("CONTINUER", Core.next);
+            Core.auto();
         } else {
-            R.active = false; 
-            UI.log("Echec mission.", "err"); 
+            State.run.active = false;
+            UI.log("Échec mission.");
+            UI.txt("ÉCHEC", "Rapatriement");
             UI.btn("RELANCER", Core.start);
         }
-        Core.save(); 
+        Core.save();
         UI.scene('adv');
     },
 
-    // ACTIONS
-    click: () => { if(Conf.act) Conf.act(); },
-    
-    heal: (v) => { R.hp = Math.min(R.max, R.hp + v); UI.updateAll(); UI.toast(`+${Math.floor(v)} PV`, "success"); },
-    
-    chest: () => { 
-        if(D.perls >= 5){ 
-            D.perls -= 5; 
-            let i = JSON.parse(JSON.stringify(DB.items[Math.floor(Math.random() * DB.items.length)]));
-            i.uid = Date.now(); 
-            D.inv.push(i); 
-            Core.save(); 
-            UI.upd(); 
-            UI.toast(`Loot: ${i.n}`, "loot");
-        } else UI.toast("Manque 5 Perles", "err");
+    // --- ACTIONS DIVERSES ---
+    chest: () => {
+        if(State.data.perls >= 5) {
+            State.data.perls -= 5;
+            let item = JSON.parse(JSON.stringify(DB.items[Math.floor(Math.random() * DB.items.length)]));
+            State.data.inventory.push(item);
+            Core.save();
+            UI.update();
+            UI.toast(`Loot: ${item.n}`);
+        } else {
+            UI.toast("Pas assez de perles !");
+        }
     },
-    
-    equip: (i) => { 
-        let it = D.inv[i]; 
-        if(D[it.t]) D.inv.push(D[it.t]); 
-        D[it.t] = it; 
-        D.inv.splice(i, 1); 
-        Core.save(); 
-        Core.calc(); 
-        UI.upd(); 
+
+    equip: (idx) => {
+        let item = State.data.inventory[idx];
+        let type = item.t === 'pet' ? 'pet' : (item.t === 'weapon' ? 'weapon' : 'head');
+        
+        // Swap
+        if(State.data[type]) State.data.inventory.push(State.data[type]);
+        State.data[type] = item;
+        State.data.inventory.splice(idx, 1);
+        
+        Core.calc();
+        Core.save();
+        UI.update();
         UI.toast("Équipé");
     },
-    
-    addSkill: (k) => { 
-        let x = R.skills.find(s => s.id === k); 
-        if(x) x.lvl++; else R.skills.push({id: k, lvl: 1}); 
-        document.getElementById('modal-layer').classList.remove('show'); 
-        UI.upd(); 
-        Core.auto(); 
+
+    heal: (v) => {
+        State.run.hp = Math.min(State.run.maxHp, State.run.hp + v);
+        UI.update();
+        UI.toast(`+${v} PV`);
     },
-    
-    upg: (t) => { 
-        if(D.gold >= 100){ D.gold -= 100; D.stats[t]++; Core.save(); Core.calc(); UI.upd(); UI.toast("Amélioré", "success"); }
-        else UI.toast("Pas assez d'or", "err");
+
+    calc: () => {
+        // Stats de base
+        State.run.maxHp = 100 + (State.data.stats.hp * 20);
+        State.run.atk = 10 + (State.data.stats.atk * 5);
+        
+        // Ajout équipement
+        if(State.data.weapon) State.run.atk += State.data.weapon.s;
+        if(State.data.head) State.run.maxHp += State.data.head.s * 2;
+        if(State.data.pet) State.run.atk += State.data.pet.s;
+        
+        // Clamp HP
+        if(State.run.hp > State.run.maxHp) State.run.hp = State.run.maxHp;
     },
-    
-    auto: () => { 
-        Conf.auto = !Conf.auto;
-        document.getElementById('btn-auto').innerText = Conf.auto ? "AUTO: ON" : "AUTO: OFF";
-        document.getElementById('btn-auto').classList.toggle('active');
-        if(Conf.auto && R.active && !C.active) setTimeout(() => { let b = document.getElementById('btn-act'); if(!b.disabled) b.click(); }, 800 / Conf.spd); 
+
+    addSkill: (id) => {
+        let s = State.run.skills.find(x => x.id === id);
+        if(s) s.lvl++; else State.run.skills.push({id:id, lvl:1});
+        UI.closeModal();
+        UI.update();
+        Core.auto();
     },
-    
-    speed: () => {
-        Conf.spd = Conf.spd === 1 ? 2 : 1;
-        document.getElementById('btn-spd').innerText = `VIT: x${Conf.spd}`;
+
+    // Auto-play basic
+    auto: () => {
+        State.conf.auto = !State.conf.auto;
+        document.getElementById('btn-auto').innerText = State.conf.auto ? "AUTO: ON" : "AUTO: OFF";
+        if(State.conf.auto && !State.combat.active) {
+            setTimeout(() => {
+                if(!document.getElementById('btn-act').disabled) Core.click();
+            }, 1000);
+        }
     }
 };
-
-window.onload = Core.init;
