@@ -3,133 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V46 ZERO</title>
+    <title>Distory Go - V47 SPECIES</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { 
-            --bg: #05010d; --panel: rgba(10, 2, 20, 0.8);
-            --border: #4c1d95; --accent: #a855f7; --cyan: #22d3ee;
+            --bg: #03010a; --panel: rgba(15, 5, 35, 0.9);
+            --border: #581c87; --accent: #a855f7; --cyan: #22d3ee;
         }
         body { 
             background: var(--bg); color: #f5f3ff; font-family: 'JetBrains Mono', monospace; 
             overflow: hidden; height: 100vh; user-select: none;
-            background-image: linear-gradient(rgba(168, 85, 247, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
-            background-size: 100px 100px;
+            background-image: radial-gradient(circle at 50% 50%, #150a2e 0%, #03010a 100%);
         }
 
-        /* HUD ELEMENTS */
-        .layout { display: grid; grid-template-columns: 350px 1fr 350px; height: 100vh; gap: 0; }
-        .layout.blur { filter: blur(15px); pointer-events: none; }
+        .layout { display: grid; grid-template-columns: 320px 1fr 320px; height: 100vh; gap: 1px; background: var(--border); }
+        .layout.blur { filter: blur(20px); pointer-events: none; }
 
-        .side-panel { background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-        .side-panel.right { border-right: none; border-left: 1px solid var(--border); }
-
-        .header-box { padding: 20px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.4); }
-        .label-tech { font-size: 10px; color: var(--accent); letter-spacing: 3px; font-weight: 800; text-transform: uppercase; }
+        .side-panel { background: var(--panel); display: flex; flex-direction: column; padding: 20px; }
+        .label-tech { font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
 
         /* VIEWPORT */
-        .main-view { display: flex; flex-direction: column; position: relative; background: radial-gradient(circle at center, #1a0b2e 0%, transparent 100%); }
-        .display-area { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .main-view { background: var(--bg); display: flex; flex-direction: column; position: relative; }
+        .display-area { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 1px solid rgba(168, 85, 247, 0.1); margin: 15px; border-radius: 8px; }
 
-        /* BARS MINIMALISTES */
-        .integrity-bar { width: 100%; height: 4px; background: #1e1b4b; margin: 10px 0; position: relative; }
-        .integrity-fill { height: 100%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 0.4s; }
+        /* HERO & ENEMY DISPLAY */
+        .entity-img { font-size: 100px; filter: drop-shadow(0 0 20px var(--accent)); transition: 0.3s; }
+        .entity-img.small { font-size: 120px; }
 
-        /* BOUTON D'ACTION TYPE TERMINAL */
-        .action-bar { padding: 30px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.6); }
+        /* BUTTONS */
         .btn-exe { 
-            width: 100%; padding: 20px; background: transparent; border: 1px solid var(--accent);
-            color: var(--accent); font-weight: 800; font-size: 18px; letter-spacing: 10px;
-            cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+            width: 100%; padding: 20px; background: #000; border: 1px solid var(--accent);
+            color: var(--accent); font-weight: 800; font-size: 18px; letter-spacing: 5px;
+            cursor: pointer; transition: 0.2s; text-transform: uppercase;
         }
         .btn-exe:hover { background: var(--accent); color: white; box-shadow: 0 0 30px var(--accent); }
-        .btn-exe:active { transform: scale(0.98); }
+        .btn-exe:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* SLOTS STUFF */
+        /* SLOTS */
         .item-slot { 
-            width: 100%; height: 80px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
+            width: 100%; height: 70px; background: rgba(0,0,0,0.5); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer;
         }
         .item-slot:hover { border-color: var(--cyan); background: rgba(34, 211, 238, 0.05); }
-        .rarity-rare { color: var(--cyan); border-color: var(--cyan); }
-        .rarity-legend { color: #fbbf24; border-color: #fbbf24; animation: glow-gold 2s infinite; }
-        @keyframes glow-gold { 50% { box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.2); } }
 
-        /* MODULES */
-        .skill-item { padding: 12px; border-left: 2px solid var(--accent); background: rgba(255,255,255,0.02); margin-bottom: 8px; font-size: 12px; cursor: help; }
+        /* BARS */
+        .bar-wrap { width: 100%; height: 6px; background: #1e1b4b; border-radius: 3px; overflow: hidden; margin-top: 10px; }
+        .bar-fill { height: 100%; background: var(--accent); transition: width 0.4s; }
 
-        /* TOAST & POPUP */
-        .toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); border: 1px solid var(--cyan); background: black; padding: 15px 40px; font-weight: 700; color: var(--cyan); z-index: 99999; box-shadow: 0 0 30px rgba(34, 211, 238, 0.2); }
-        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: #000; border: 1px solid var(--border); padding: 12px; font-size: 11px; color: #94a3b8; display: none; }
+        /* SELECTION CARD */
+        .species-card { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; 
+            border-radius: 12px; cursor: pointer; transition: 0.2s; text-align: center;
+        }
+        .species-card:hover { border-color: var(--cyan); background: rgba(34, 211, 238, 0.1); transform: translateY(-5px); }
 
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); border: 1px solid var(--cyan); background: #000; padding: 10px 30px; font-weight: bold; color: var(--cyan); z-index: 100000; }
+        #tooltip { position: fixed; pointer-events: none; z-index: 10000; background: #000; border: 1px solid var(--accent); padding: 10px; font-size: 11px; display: none; }
         .hidden { display: none !important; }
-        .modal-full { position: fixed; inset: 0; background: rgba(5, 1, 13, 0.98); z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .modal-full { position: fixed; inset: 0; background: #05010d; z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
     </style>
 </head>
 <body>
 
     <div id="tooltip"></div>
     <div id="modal-container" class="hidden"></div>
-    <div id="toast-layer" class="fixed inset-x-0 top-10 flex flex-col items-center pointer-events-none z-[50000]"></div>
+    <div id="toast-layer" class="fixed inset-x-0 top-5 flex flex-col items-center pointer-events-none z-[60000]"></div>
 
     <div id="boot-screen" class="modal-full">
-        <div class="text-xs text-purple-500 mb-2 font-bold tracking-[15px] uppercase">System Awakening</div>
-        <h1 class="text-8xl font-black text-white mb-12 tracking-tighter">OCTO<span class="text-purple-600">.</span>ZERO</h1>
-        <input type="text" id="input-pseudo" class="bg-transparent border-b-2 border-purple-900 text-white p-4 w-96 text-center text-2xl font-bold mb-10 outline-none focus:border-purple-500 transition" placeholder="ENTER_ID">
-        <button onclick="Core.initGame()" class="btn-exe w-96">INITIALIZE</button>
-        <button onclick="Core.wipeData()" class="mt-20 text-[10px] text-gray-700 hover:text-red-500 tracking-[5px] uppercase">Wipe_Memory_Cache</button>
+        <h1 class="text-6xl font-black text-white mb-2 italic">OCTO.ZERO</h1>
+        <div class="text-purple-500 font-bold tracking-[10px] mb-12 uppercase">Species Selection</div>
+        
+        <div class="grid grid-cols-3 gap-6 w-full max-w-4xl mb-12" id="species-grid">
+            </div>
+
+        <input type="text" id="input-pseudo" class="bg-transparent border-b border-purple-900 text-white p-2 w-64 text-center mb-8 outline-none focus:border-cyan-400" placeholder="PILOT_ID" maxlength="10">
+        <button onclick="Core.hardReset()" class="text-[10px] text-gray-700 hover:text-red-500 uppercase tracking-widest">Wipe_System_Data</button>
     </div>
 
     <div id="game-ui" class="layout blur">
         
         <div class="side-panel">
-            <div class="header-box">
-                <div class="label-tech">Pilot_Identifier</div>
-                <div id="ui-pseudo" class="text-2xl font-black text-white">---</div>
-            </div>
-            
-            <div class="p-6">
-                <div class="label-tech mb-4">Core_Integrity</div>
-                <div class="flex justify-between text-xs mb-1">
-                    <span id="ui-hp-txt">100/100</span>
-                    <span id="ui-lvl" class="text-purple-400">LVL.01</span>
-                </div>
-                <div class="integrity-bar"><div id="ui-hp-fill" class="integrity-fill"></div></div>
-
-                <div class="grid grid-cols-1 gap-4 mt-10">
-                    <div class="border-l-2 border-cyan-500 pl-4">
-                        <div class="label-tech" style="color:var(--cyan)">Offense_Loadout</div>
-                        <div id="ui-atk" class="text-3xl font-black">10</div>
-                    </div>
-                    <div class="border-l-2 border-purple-500 pl-4">
-                        <div class="label-tech">Defense_Matrix</div>
-                        <div id="ui-def" class="text-3xl font-black">0</div>
-                    </div>
-                </div>
+            <div class="mb-10">
+                <div class="label-tech">Pilot_Bio_Unit</div>
+                <div id="ui-pseudo" class="text-xl font-black text-white mb-2">---</div>
+                <div id="ui-avatar-display" class="text-8xl py-4 flex justify-center">🐙</div>
             </div>
 
-            <div class="mt-auto grid grid-cols-1 border-t border-purple-900">
-                <div id="slot-weapon" class="item-slot">
-                    <span class="label-tech" style="font-size:8px">Weapon</span>
-                    <span class="text-2xl">⚔️</span>
+            <div class="label-tech">Integrity</div>
+            <div class="flex justify-between text-[10px] mb-1">
+                <span id="ui-hp-txt">100/100</span>
+                <span class="text-purple-400 font-bold">LVL.<span id="ui-lvl">1</span></span>
+            </div>
+            <div class="bar-wrap"><div id="ui-hp-fill" class="bar-fill"></div></div>
+
+            <div class="grid grid-cols-1 gap-6 mt-12">
+                <div>
+                    <div class="label-tech" style="color:var(--cyan)">Firepower</div>
+                    <div id="ui-atk" class="text-4xl font-black">10</div>
                 </div>
-                <div id="slot-head" class="item-slot border-t border-purple-900">
-                    <span class="label-tech" style="font-size:8px">Armor</span>
-                    <span class="text-2xl">🛡️</span>
+                <div>
+                    <div class="label-tech">Defense_Matrix</div>
+                    <div id="ui-def" class="text-4xl font-black">0</div>
                 </div>
-                <div id="slot-pet" class="item-slot border-t border-purple-900">
-                    <span class="label-tech" style="font-size:8px">Support</span>
-                    <span class="text-2xl">🐾</span>
+            </div>
+
+            <div class="mt-auto space-y-2">
+                <div class="label-tech text-center opacity-40">Active_Equipment</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div id="slot-weapon" class="item-slot">⚔️</div>
+                    <div id="slot-head" class="item-slot">🛡️</div>
+                    <div id="slot-pet" class="item-slot">🐾</div>
                 </div>
             </div>
         </div>
 
         <div class="main-view">
-            <div class="flex justify-between p-4 border-b border-purple-900/30 bg-black/20">
-                <div class="text-xs font-bold text-white tracking-[3px]">SECTOR_SCAN // CYCLE <span id="ui-day">0</span></div>
-                <div class="flex gap-10 text-xs font-bold">
+            <div class="p-4 flex justify-between bg-black/40 border-b border-purple-900/30">
+                <div class="label-tech" style="margin:0">Cycle_<span id="ui-day">0</span></div>
+                <div class="flex gap-6 text-[10px] font-bold">
                     <span class="text-yellow-500">CREDITS: <span id="ui-gold">0</span></span>
                     <span class="text-cyan-400">MATTER: <span id="ui-perls">0</span></span>
                 </div>
@@ -137,107 +129,113 @@
 
             <div class="display-area">
                 <div id="enemy-box" class="hidden text-center">
-                    <div id="ui-en-img" class="text-9xl mb-8 filter drop-shadow-2xl">👾</div>
-                    <div id="ui-en-name" class="text-red-500 text-xl font-black tracking-[10px] uppercase">Target_Locked</div>
-                    <div class="w-64 h-1 bg-red-900/30 mt-4 mx-auto"><div id="ui-en-hp" class="h-full bg-red-600"></div></div>
+                    <div id="ui-en-img" class="entity-img mb-4">👾</div>
+                    <div id="ui-en-name" class="text-red-500 text-xs font-bold tracking-[5px] uppercase">Target_Found</div>
+                    <div class="w-48 h-1 bg-red-900/20 mt-4 mx-auto"><div id="ui-en-hp" class="h-full bg-red-600"></div></div>
                 </div>
                 <div id="story-box" class="text-center">
-                    <div id="ui-story-title" class="text-6xl font-black text-white mb-4 uppercase">Exploration</div>
-                    <div id="ui-story-desc" class="text-xs text-purple-400 tracking-[8px] uppercase">Scanning deep space radiation...</div>
+                    <div id="ui-hero-center" class="entity-img small mb-6">🐙</div>
+                    <div id="ui-story-title" class="text-4xl font-black text-white uppercase mb-2">Deep_Space</div>
+                    <div id="ui-story-desc" class="text-[10px] text-purple-400 tracking-[5px] uppercase">Awaiting orbital commands...</div>
                 </div>
             </div>
 
-            <div class="action-bar">
+            <div class="p-6 bg-black/60 border-t border-purple-900">
                 <div class="flex gap-4 mb-4">
-                    <button onclick="Core.toggleAuto()" id="ui-auto" class="flex-1 py-2 border border-purple-900 text-[10px] font-bold uppercase tracking-[3px]">Auto: OFF</button>
-                    <button onclick="Core.toggleSpeed()" id="ui-speed" class="flex-1 py-2 border border-purple-900 text-[10px] font-bold uppercase tracking-[3px]">Spd: x1</button>
+                    <button onclick="Core.toggleAuto()" id="ui-auto" class="flex-1 py-2 border border-purple-900 text-[9px] font-bold uppercase">Auto: OFF</button>
+                    <button onclick="Core.toggleSpeed()" id="ui-speed" class="flex-1 py-2 border border-purple-900 text-[9px] font-bold uppercase">Spd: x1</button>
                     <button onclick="UI.modal('settings')" class="w-12 border border-purple-900 text-xs">⚙️</button>
                 </div>
-                <button id="main-btn" onclick="Core.processScanner()" class="btn-exe uppercase">Scan_Sector</button>
+                <button id="main-btn" onclick="Core.processScanner()" class="btn-exe">Scan_Sector</button>
             </div>
         </div>
 
-        <div class="side-panel right">
-            <div class="header-box">
-                <div class="label-tech">Internal_Systems</div>
-                <div class="text-xs text-gray-500 font-bold mt-1">Active_Modules</div>
-            </div>
-            
-            <div class="p-4 flex-grow overflow-y-auto" id="skill-list"></div>
+        <div class="side-panel">
+            <div class="label-tech mb-4">Internal_Modules</div>
+            <div id="skill-list" class="flex-grow overflow-y-auto pr-2"></div>
 
-            <div class="p-4 border-t border-purple-900">
+            <div class="border-t border-purple-900 pt-6 mt-4">
                 <div class="flex justify-between items-center mb-4">
                     <div class="label-tech">Cargo_Hold</div>
-                    <button onclick="Core.fusion()" class="text-[9px] bg-cyan-600 text-black px-2 py-1 font-bold">MERGE_3X</button>
+                    <button onclick="Core.fusion()" class="text-[8px] bg-cyan-600 text-black px-2 py-1 font-bold">MERGE_3X</button>
                 </div>
-                <div id="inv-grid" class="grid grid-cols-3 gap-2 h-48 overflow-y-auto mb-4"></div>
-                <button onclick="Core.chest()" class="w-full py-4 bg-purple-900 text-white text-xs font-bold tracking-[5px] hover:bg-purple-700 transition uppercase">Decrypt_Crate (5⚛️)</button>
-                <button onclick="UI.showHub()" class="w-full mt-2 py-2 text-[10px] text-gray-500 hover:text-cyan-400 uppercase tracking-[3px]">Base_Maintenance</button>
+                <div id="inv-grid" class="grid grid-cols-3 gap-2 h-40 overflow-y-auto mb-4"></div>
+                <button onclick="Core.chest()" class="btn-exe !py-3 !text-xs !bg-purple-900 !text-white border-none">Decrypt_Box (5⚛️)</button>
+                <button onclick="UI.showHub()" class="w-full mt-4 text-[9px] text-gray-500 hover:text-cyan-400 uppercase tracking-widest">Base_Maintenance</button>
             </div>
         </div>
     </div>
 
     <div id="hub-view" class="modal-full hidden">
-        <h2 class="text-4xl font-black mb-20 tracking-[20px] uppercase">Base_Upgrade</h2>
-        <div class="grid grid-cols-1 gap-10 w-96">
-            <div onclick="Core.upgradeBase('hp')" class="border-l-4 border-purple-900 p-6 bg-white/5 hover:bg-purple-500/10 cursor-pointer group">
-                <div class="label-tech group-hover:text-white">Core_Integrity</div>
-                <div class="text-2xl font-black mt-2">HP +20</div>
-                <div class="text-yellow-500 font-bold mt-2" id="up-hp-cost">100 🪙</div>
+        <h2 class="text-4xl font-black mb-16 tracking-[15px] uppercase">Base_Upgrades</h2>
+        <div class="grid grid-cols-1 gap-6 w-80">
+            <div onclick="Core.upgradeBase('hp')" class="border-l-2 border-purple-600 p-4 bg-white/5 hover:bg-purple-500/10 cursor-pointer">
+                <div class="label-tech">Core_Integrity</div>
+                <div class="text-xl font-black">HP +20 <span class="text-yellow-500 text-xs float-right" id="up-hp-cost">100</span></div>
             </div>
-            <div onclick="Core.upgradeBase('atk')" class="border-l-4 border-purple-900 p-6 bg-white/5 hover:bg-purple-500/10 cursor-pointer group">
-                <div class="label-tech group-hover:text-white">Firepower</div>
-                <div class="text-2xl font-black mt-2">ATK +5</div>
-                <div class="text-yellow-500 font-bold mt-2" id="up-atk-cost">100 🪙</div>
+            <div onclick="Core.upgradeBase('atk')" class="border-l-2 border-purple-600 p-4 bg-white/5 hover:bg-purple-500/10 cursor-pointer">
+                <div class="label-tech">Firepower</div>
+                <div class="text-xl font-black">ATK +5 <span class="text-yellow-500 text-xs float-right" id="up-atk-cost">100</span></div>
             </div>
-            <div onclick="Core.upgradeBase('def')" class="border-l-4 border-purple-900 p-6 bg-white/5 hover:bg-purple-500/10 cursor-pointer group">
-                <div class="label-tech group-hover:text-white">Shield_Matrix</div>
-                <div class="text-2xl font-black mt-2">DEF +2</div>
-                <div class="text-yellow-500 font-bold mt-2" id="up-def-cost">100 🪙</div>
+            <div onclick="Core.upgradeBase('def')" class="border-l-2 border-purple-600 p-4 bg-white/5 hover:bg-purple-500/10 cursor-pointer">
+                <div class="label-tech">Defense_Matrix</div>
+                <div class="text-xl font-black">DEF +2 <span class="text-yellow-500 text-xs float-right" id="up-def-cost">100</span></div>
             </div>
         </div>
-        <button onclick="UI.hideHub()" class="mt-20 border-b border-purple-500 text-purple-500 pb-2 hover:text-white tracking-[10px] uppercase">Close_Terminal</button>
+        <button onclick="UI.hideHub()" class="mt-20 text-purple-500 hover:text-white uppercase tracking-[5px]">Exit_Terminal</button>
     </div>
 
     <script>
-        // --- DATA ---
+        const SPECIES = [
+            {id:"🐙", n:"Poulpe"}, {id:"🐹", n:"Capybara"}, {id:"🦊", n:"Panda Roux"},
+            {id:"deer", n:"Cerf", e:"🦌"}, {id:"dog", n:"Chien", e:"🐕"}, {id:"cat", n:"Chat", e:"🐱"}
+        ];
+
         const DATA = {
-            enemies: [{n:"Drone Pirate", i:"🛸", h:50, a:5}, {n:"Xéno-Virus", i:"👾", h:70, a:9}, {n:"Sonde Fugitive", i:"🛰️", h:40, a:12}],
-            boss: [{n:"KRAKEN VIOLET", i:"🦑", h:800, a:30}],
+            enemies: [{n:"Drone", i:"🛸", h:50, a:5}, {n:"Virus", i:"👾", h:70, a:9}, {n:"Sonde", i:"🛰️", h:40, a:12}],
+            boss: [{n:"KRAKEN", i:"🦑", h:800, a:30}],
             items: [
-                {n:"Pistolet Laser", e:"🔫", s:10, t:"weapon", r:"r-common", d:"Arme à énergie pulsée."},
-                {n:"Blindage Composite", e:"🛡️", s:20, t:"head", r:"r-common", d:"Couche protectrice dense."},
-                {n:"Sonde Tactique", e:"🤖", s:5, t:"pet", r:"r-common", d:"IA d'analyse de combat."}
+                {n:"Laser", e:"🔫", s:10, t:"weapon", r:"r-common", d:"Arme de base."},
+                {n:"Blindage", e:"🛡️", s:20, t:"head", r:"r-common", d:"Protection structurelle."},
+                {n:"Sonde", e:"🤖", s:5, t:"pet", r:"r-common", d:"Support IA."}
             ],
             skills: {
-                'fire': {n:"Feu Plasma", i:"🔥", d:"+5 Puissance par niveau."},
-                'heal': {n:"Auto-Réparation", i:"💉", d:"+5% PV par cycle."},
-                'shield': {n:"Déflecteur", i:"🛡️", d:"+2 Blindage par niveau."}
+                'fire': {n:"Feu", i:"🔥", d:"+5 ATK par niveau."},
+                'heal': {n:"Soin", i:"💉", d:"+5% PV par tour."},
+                'shield': {n:"Holo", i:"🛡️", d:"+2 DEF par niveau."}
             }
         };
 
-        // --- STATE ---
-        let Player = { pseudo:"PILOTE", gold:0, perls:20, char:"🐙", stats:{hp:0, atk:0, def:0}, inv:[], eq:{weapon:null, head:null, pet:null}, skills:[] };
+        let Player = { pseudo:"PILOT", gold:0, perls:20, char:null, stats:{hp:0, atk:0, def:0}, inv:[], eq:{weapon:null, head:null, pet:null}, skills:[] };
         let Run = { active:false, day:0, hp:100, max:100, atk:10, def:0, auto:false, speed:1 };
         let Combat = { active:false, h:0, m:0, a:0 };
 
-        // --- LOGIQUE ---
         const Core = {
             initGame: () => {
                 let p = document.getElementById('input-pseudo').value.trim();
                 if(p) Player.pseudo = p.toUpperCase();
-                let save = localStorage.getItem('distory_v46');
+                if(!Player.char) { UI.toast("SELECT_UNIT_FIRST"); return; }
+                
+                let save = localStorage.getItem('distory_v47');
                 if(save) Player = JSON.parse(save);
+
                 document.getElementById('boot-screen').classList.add('hidden');
                 document.getElementById('game-ui').classList.remove('blur');
                 UI.refresh();
-                if(!Player.char) UI.showCharSelect();
             },
+
+            selectSpecies: (emoji) => {
+                Player.char = emoji;
+                UI.refresh();
+                UI.toast("UNIT_SELECTED_" + emoji);
+            },
+
             processScanner: () => {
                 if(!Run.active) { Core.startRun(); return; }
                 if(Combat.active) return;
                 Core.nextCycle();
             },
+
             startRun: () => {
                 Run.active = true; Run.day = 1;
                 Core.updateStats();
@@ -245,26 +243,30 @@
                 UI.scene('adv');
                 UI.showSkillChoice();
             },
+
             nextCycle: () => {
-                Run.day++; Core.updateStats();
+                Run.day++;
+                Core.updateStats();
                 if(Run.day % 10 === 0) Core.startCombat(true);
                 else if(Run.day % 5 === 0) Core.startCombat(false);
                 else {
                     if(Math.random() < 0.25) UI.showSkillChoice();
-                    else { Player.gold += 30; UI.toast("CREDITS_RECOVERED"); UI.refresh(); Core.checkAuto(); }
+                    else { Player.gold += 30; UI.toast("CREDITS+30"); UI.refresh(); Core.checkAuto(); }
                 }
             },
+
             startCombat: (isBoss) => {
                 Combat.active = true;
                 let pool = isBoss ? DATA.boss : DATA.enemies;
                 let en = pool[Math.floor(Math.random()*pool.length)];
-                let mult = 1 + (Run.day * 0.1);
-                Combat.m = en.h * mult; Combat.h = Combat.m; Combat.a = en.a * mult;
+                Combat.m = en.h * (1 + Run.day*0.1); Combat.h = Combat.m;
+                Combat.a = en.a * (1 + Run.day*0.05);
                 UI.scene('com');
                 document.getElementById('ui-en-img').innerText = en.i;
                 UI.refresh();
                 setTimeout(Core.combatTurn, 1000/Run.speed);
             },
+
             combatTurn: () => {
                 if(!Combat.active) return;
                 Combat.h -= Run.atk;
@@ -276,6 +278,7 @@
                     else setTimeout(Core.combatTurn, 800/Run.speed);
                 }, 400/Run.speed);
             },
+
             endCombat: () => { Combat.active = false; Player.gold += 50; UI.scene('adv'); UI.refresh(); Core.saveGame(); Core.checkAuto(); },
             failRun: () => { Run.active = false; Combat.active = false; UI.scene('adv'); UI.refresh(); },
             updateStats: () => {
@@ -294,14 +297,12 @@
                         let it = Player.inv.find(x => x.n === n);
                         Player.inv = Player.inv.filter(x => x.n !== n);
                         Player.inv.push({...it, s: it.s * 2, n: it.n + "+"});
-                        UI.toast("FUSION_COMPLETE"); Core.fusion(); break;
+                        UI.toast("MERGE_COMPLETE"); Core.fusion(); break;
                     }
                 }
                 UI.refresh(); Core.saveGame();
             },
-            chest: () => {
-                if(Player.perls >= 5) { Player.perls -= 5; Player.inv.push({...DATA.items[Math.floor(Math.random()*DATA.items.length)], uid: Date.now()}); UI.refresh(); Core.saveGame(); }
-            },
+            chest: () => { if(Player.perls >= 5) { Player.perls -= 5; Player.inv.push({...DATA.items[Math.floor(Math.random()*DATA.items.length)], uid: Date.now()}); UI.refresh(); Core.saveGame(); } },
             equip: (uid) => {
                 let idx = Player.inv.findIndex(x => x.uid === uid); let it = Player.inv[idx]; let type = it.t;
                 if(Player.eq[type]) Player.inv.push(Player.eq[type]); Player.eq[type] = it; Player.inv.splice(idx, 1);
@@ -319,28 +320,39 @@
             toggleAuto: () => { Run.auto = !Run.auto; UI.refresh(); if(Run.auto) Core.checkAuto(); },
             toggleSpeed: () => { Run.speed = (Run.speed === 1) ? 2 : 1; UI.refresh(); },
             checkAuto: () => { if(Run.auto && Run.active && !Combat.active && document.getElementById('modal-container').classList.contains('hidden')) setTimeout(() => Core.processScanner(), 1000/Run.speed); },
-            saveGame: () => localStorage.setItem('distory_v46', JSON.stringify(Player)),
+            saveGame: () => localStorage.setItem('distory_v47', JSON.stringify(Player)),
             wipeData: () => { localStorage.clear(); location.reload(); }
         };
 
         const UI = {
+            initSpecies: () => {
+                const grid = document.getElementById('species-grid');
+                grid.innerHTML = SPECIES.map(s => `
+                    <div class="species-card" onclick="Core.selectSpecies('${s.e || s.id}')">
+                        <div class="text-5xl mb-2">${s.e || s.id}</div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest">${s.n}</div>
+                    </div>
+                `).join('');
+            },
             refresh: () => {
                 document.getElementById('ui-pseudo').innerText = Player.pseudo;
+                document.getElementById('ui-avatar-display').innerText = Player.char || "?";
+                document.getElementById('ui-hero-center').innerText = Player.char || "?";
                 document.getElementById('ui-gold').innerText = Player.gold;
                 document.getElementById('ui-perls').innerText = Player.perls;
                 document.getElementById('ui-day').innerText = Run.day;
-                document.getElementById('ui-atk').innerText = Run.atk;
-                document.getElementById('ui-def').innerText = Run.def;
+                document.getElementById('ui-lvl').innerText = Math.floor(Run.day/5) + 1;
                 document.getElementById('ui-hp-txt').innerText = Math.floor(Run.hp) + "/" + Run.max;
                 document.getElementById('ui-hp-fill').style.width = (Run.hp/Run.max*100) + "%";
-                
+                document.getElementById('ui-atk').innerText = Run.atk;
+                document.getElementById('ui-def').innerText = Run.def;
                 document.getElementById('ui-auto').innerText = "AUTO: " + (Run.auto ? "ON" : "OFF");
-                document.getElementById('ui-auto').style.color = Run.auto ? "var(--cyan)" : "#4c1d95";
+                document.getElementById('ui-auto').style.color = Run.auto ? "var(--cyan)" : "var(--accent)";
                 document.getElementById('ui-speed').innerText = "SPD: x" + Run.speed;
 
                 let g = document.getElementById('inv-grid'); g.innerHTML = '';
                 Player.inv.forEach(i => {
-                    let d = document.createElement('div'); d.className = "item-slot"; d.innerText = i.e;
+                    let d = document.createElement('div'); d.className = "item-slot text-lg"; d.innerText = i.e;
                     d.onclick = () => Core.equip(i.uid);
                     d.onmouseenter = (e) => UI.tip(e, i.n, i.d + " (+" + i.s + ")");
                     d.onmouseleave = UI.untip;
@@ -349,8 +361,8 @@
 
                 const set = (id, it, def) => {
                     let el = document.getElementById(id);
-                    if(it) { el.innerHTML = `<span class="label-tech" style="font-size:6px">Active</span><span class="text-2xl">${it.e}</span>`; el.className = "item-slot rarity-rare"; el.onmouseenter = (e) => UI.tip(e, it.n, it.d); el.onmouseleave = UI.untip; }
-                    else { el.innerHTML = `<span class="label-tech" style="font-size:6px">Empty</span><span class="text-2xl">${def}</span>`; el.className = "item-slot"; el.onmouseenter = null; }
+                    if(it) { el.innerText = it.e; el.style.borderColor = "var(--cyan)"; el.onmouseenter = (e) => UI.tip(e, it.n, it.d); el.onmouseleave = UI.untip; }
+                    else { el.innerText = def; el.style.borderColor = "var(--border)"; el.onmouseenter = null; }
                 };
                 set('slot-weapon', Player.eq.weapon, "⚔️");
                 set('slot-head', Player.eq.head, "🛡️");
@@ -359,38 +371,32 @@
                 let sl = document.getElementById('skill-list'); sl.innerHTML = '';
                 Player.skills.forEach(s => {
                     let info = DATA.skills[s.id];
-                    sl.innerHTML += `<div class="skill-item" onmouseenter="UI.tip(event, '${info.n}', '${info.d}')" onmouseleave="UI.untip()">
-                        <div class="font-bold text-white uppercase">${info.n} <span class="text-purple-500 float-right">v.${s.lvl}</span></div>
+                    sl.innerHTML += `<div class="p-3 border-l-2 border-purple-500 bg-white/5 mb-2 cursor-help" onmouseenter="UI.tip(event, '${info.n}', '${info.d}')" onmouseleave="UI.untip()">
+                        <div class="font-bold text-[10px] text-white uppercase">${info.n} <span class="float-right text-purple-500">v.${s.lvl}</span></div>
                     </div>`;
                 });
 
-                document.getElementById('up-hp-cost').innerText = (100 + Player.stats.hp * 50) + " 🪙";
-                document.getElementById('up-atk-cost').innerText = (100 + Player.stats.atk * 50) + " 🪙";
-                document.getElementById('up-def-cost').innerText = (100 + Player.stats.def * 50) + " 🪙";
+                document.getElementById('up-hp-cost').innerText = (100 + Player.stats.hp * 50);
+                document.getElementById('up-atk-cost').innerText = (100 + Player.stats.atk * 50);
+                document.getElementById('up-def-cost').innerText = (100 + Player.stats.def * 50);
             },
             scene: (s) => { document.getElementById('enemy-box').classList.toggle('hidden', s !== 'com'); document.getElementById('story-box').classList.toggle('hidden', s === 'com'); },
             showSkillChoice: () => {
                 let keys = Object.keys(DATA.skills);
                 let m = document.getElementById('modal-container'); m.classList.remove('hidden');
-                m.innerHTML = `<div class="modal-full"><h2 class="text-xs tracking-[10px] mb-10 text-cyan-400">DATA_NODE_DETERMINED</h2><div class="grid grid-cols-1 gap-4 w-96">
-                        ${keys.map(k => `<div onclick="Core.addSkill('${k}')" class="p-6 border border-purple-900 bg-white/5 hover:border-cyan-400 cursor-pointer">
-                            <div class="text-3xl mb-2">${DATA.skills[k].i}</div><div class="font-black text-white uppercase">${DATA.skills[k].n}</div>
-                            <div class="text-[10px] text-gray-500 mt-2">${DATA.skills[k].d}</div>
+                m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-8">System_Expansion_Required</h2><div class="grid grid-cols-1 gap-4 w-80">
+                        ${keys.map(k => `<div onclick="Core.addSkill('${k}')" class="p-4 border border-purple-900 bg-white/5 hover:border-cyan-400 cursor-pointer">
+                            <div class="text-2xl mb-2">${DATA.skills[k].i}</div><div class="font-bold text-white uppercase text-xs">${DATA.skills[k].n}</div>
+                            <div class="text-[9px] text-gray-500 mt-1">${DATA.skills[k].d}</div>
                         </div>`).join('')}
-                    </div></div>`;
-            },
-            showCharSelect: () => {
-                let m = document.getElementById('modal-container'); m.classList.remove('hidden');
-                m.innerHTML = `<div class="modal-full"><h2 class="text-xs tracking-[10px] mb-10">SELECT_PILOT_UNIT</h2><div class="flex gap-10">
-                        ${DATA.chars.map(c => `<button onclick="Player.char='${c}';Core.saveGame();UI.hideModal();UI.refresh()" class="text-7xl p-10 border border-purple-900 hover:border-purple-400 transition">${c}</button>`).join('')}
                     </div></div>`;
             },
             modal: (t) => {
                 if(t==='settings') {
                     let m = document.getElementById('modal-container'); m.classList.remove('hidden');
-                    m.innerHTML = `<div class="modal-full"><h2 class="text-xs tracking-[10px] mb-10">CORE_SETTINGS</h2>
-                        <button onclick="UI.hideModal()" class="btn-exe w-96 mb-4">RESUME</button>
-                        <button onclick="location.reload()" class="text-xs text-gray-600 hover:text-white">REBOOT_SYSTEM</button>
+                    m.innerHTML = `<div class="modal-full"><h2 class="label-tech mb-10">Terminal_Control</h2>
+                        <button onclick="UI.hideModal()" class="btn-exe w-64 mb-4">Resume</button>
+                        <button onclick="location.reload()" class="text-[10px] text-gray-600 hover:text-white uppercase tracking-widest">Reboot_Core</button>
                     </div>`;
                 }
             },
@@ -402,7 +408,7 @@
             untip: () => document.getElementById('tooltip').style.display="none"
         };
 
-        window.onload = () => { UI.refresh(); };
+        window.onload = () => { UI.initSpecies(); UI.refresh(); };
     </script>
 </body>
 </html>
