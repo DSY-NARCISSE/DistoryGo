@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V29 STARTER</title>
+    <title>Distory Go - V30 ULTIMATE</title>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* === THÈME HALLOWEEN === */
         :root { 
-            --bg-void: #0f0518; --panel-bg: #1a0b2e;
+            --bg-void: #05020a; --panel-bg: #140824;
             --pumpkin: #ff7b00; --slime: #76ff03; --ghost: #e2e8f0; --blood: #ff0000;
             --border: #4a1d96;
             --font-title: 'Creepster', cursive; --font-body: 'Roboto Condensed', sans-serif;
@@ -80,9 +80,7 @@
             display: flex; align-items: center; justify-content: center; font-size: 26px; cursor: pointer; transition: 0.2s; 
         }
         .slot:hover { border-color: var(--pumpkin); background: rgba(255, 123, 0, 0.2); transform: scale(1.05); z-index: 20; }
-        .r-common { border-color: #64748b; } .r-rare { border-color: #3b82f6; box-shadow: inset 0 0 5px #3b82f6; } 
-        .r-legendary { border-color: #f59e0b; animation: pulse 2s infinite; box-shadow: inset 0 0 5px #f59e0b; }
-
+        
         /* ECRAN TITRE */
         .screen-overlay { 
             position: fixed; inset: 0; background: #0f0518; z-index: 2000; 
@@ -98,8 +96,6 @@
         /* FX */
         .dmg { position: absolute; font-weight: 900; font-size: 40px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 3px 3px 0 black; font-family: var(--font-title); }
         @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-50px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
-        @keyframes pulse { 50% { border-color: #fcd34d; box-shadow: 0 0 15px #fcd34d; } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         @keyframes text-flicker { 0%, 100% { opacity: 1; } 92% { opacity: 0.5; } 96% { opacity: 1; } 98% { opacity: 0.2; } }
@@ -126,6 +122,7 @@
         .skill-card:hover { border-color: var(--slime); background: #220f38; transform: translateY(-5px); }
         .choice-btn { width: 100%; padding: 15px; margin-bottom: 10px; background: #2d1b4e; border: 2px solid var(--pumpkin); color: var(--pumpkin); font-family: var(--font-title); font-size: 20px; cursor: pointer; transition: 0.2s; }
         .choice-btn:hover { background: var(--pumpkin); color: black; }
+        .choice-btn-flee { border-color: #555; color: #888; } .choice-btn-flee:hover { background: #333; color: white; }
         
         /* HUB UPGRADES */
         .card-upg { background: #1a0b2e; border: 2px solid var(--border); padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.2s; }
@@ -141,7 +138,7 @@
 
     <div id="start-screen" class="screen-overlay">
         <h1 class="title-spooky">HALLOWEEN<br>NIGHTMARE</h1>
-        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">STARTER PACK EDITION</div>
+        <div class="text-green-400 mb-8 font-mono text-xl tracking-widest">CHAPTER 1: THE AWAKENING</div>
         <input type="text" id="player-pseudo" class="menu-input" placeholder="NOM DU SURVIVANT" maxlength="12">
         <button onclick="Core.bootGame()" class="menu-btn">ENTRER DANS LA NUIT</button>
         <button onclick="Core.hardReset()" class="menu-btn text-red-600 border-red-600 hover:bg-red-900">EFFACER DONNÉES</button>
@@ -267,24 +264,42 @@
             toggle: () => { AudioSys.muted = !AudioSys.muted; UI.toast(AudioSys.muted ? "SON DÉSACTIVÉ 🔇" : "SON ACTIVÉ 🔊"); }
         };
 
-        // --- DATA ---
+        // --- DATA (20 EVENTS) ---
         const DB = {
             chars: [{id:"🧙‍♀️",n:"Sorcière"}, {id:"🧛‍♂️",n:"Vampire"}, {id:"🧟",n:"Zombie"}, {id:"💀",n:"Squelette"}],
             enemies: {
-                common: [{n:"Fantôme",hp:50,atk:5,i:"👻"}, {n:"Araignée",hp:40,atk:8,i:"🕷️"}, {n:"Loup-Garou",hp:60,atk:10,i:"🐺"}],
-                boss: [{n:"ROI CITROUILLE",hp:500,atk:20,i:"🎃"}, {n:"GRIM REAPER",hp:600,atk:25,i:"☠️"}]
+                common: [{n:"Fantôme",hp:50,atk:5,i:"👻"}, {n:"Araignée",hp:40,atk:8,i:"🕷️"}, {n:"Loup-Garou",hp:60,atk:10,i:"🐺"}, {n:"Poupée Vaudou",hp:35,atk:15,i:"🎎"}],
+                boss: [{n:"LE BOUCHER",hp:800,atk:30,i:"🐷"}, {n:"REINE ARAIGNÉE",hp:1000,atk:25,i:"🕸️"}]
             },
             skills: {
                 'fire': {n:"Feu Follet",i:"🔥",d:"Dégâts de feu"}, 'heal':{n:"Vampirisme",i:"🩸",d:"Vole de la vie"},
                 'bolt':{n:"Eclair Noir",i:"⚡",d:"Gros dégâts"}, 'shield':{n:"Ossement",i:"🦴",d:"Armure +"},
-                'curse':{n:"Malédiction",i:"🕸️",d:"Affaiblit l'ennemi"}, 'luck':{n:"Chance",i:"🍀",d:"Plus de bonbons"}
+                'curse':{n:"Malédiction",i:"👁️",d:"Affaiblit l'ennemi"}, 'luck':{n:"Amulette",i:"🧿",d:"Plus de loot"}
             },
+            // LES 20 ÉVÉNEMENTS
             events: [
-                {t:"Cimetière Profané", d:"Vous trouvez une tombe ouverte.", c:[{t:"Fouiller",a:"loot"},{t:"Partir",a:"leave"}]},
-                {t:"Miroir Hanté", d:"Un visage vous regarde.", c:[{t:"Briser",a:"break"},{t:"Parler",a:"talk"}]},
-                {t:"Chat Noir", d:"Il miaule tristement.", c:[{t:"Caresser",a:"pet"},{t:"Ignorer",a:"leave"}]}
+                {t:"Cimetière", d:"Une tombe est ouverte.", c:[{t:"Fouiller",a:"loot_gold"},{t:"Partir",a:"leave"}]},
+                {t:"Miroir Hanté", d:"Votre reflet sourit.", c:[{t:"Briser",a:"dmg_low"},{t:"Parler",a:"loot_gold"}]},
+                {t:"Chat Noir", d:"Il semble perdu.", c:[{t:"Caresser",a:"heal_low"},{t:"Chasser",a:"curse"}]},
+                {t:"Pluie de Sang", d:"Le ciel devient rouge.", c:[{t:"Boire",a:"heal_high"},{t:"S'abriter",a:"leave"}]},
+                {t:"Vampire Affamé", d:"Il demande du sang.", c:[{t:"Donner (-PV)",a:"dmg_mid_loot"},{t:"Attaquer",a:"fight"}]},
+                {t:"Citrouille Géante", d:"Elle luit étrangement.", c:[{t:"Manger",a:"heal_mid"},{t:"Écraser",a:"loot_gold"}]},
+                {t:"Poupée Maudite", d:"Elle vous suit du regard.", c:[{t:"Prendre",a:"dmg_low_loot"},{t:"Brûler",a:"leave"}]},
+                {t:"Brouillard", d:"Vous ne voyez rien.", c:[{t:"Avancer",a:"rand"},{t:"Attendre",a:"leave"}]},
+                {t:"Chaudron", d:"Un liquide vert bouillonne.", c:[{t:"Goûter",a:"rand_pot"},{t:"Renverser",a:"dmg_low"}]},
+                {t:"Corbeau", d:"Il tient un objet brillant.", c:[{t:"Attraper",a:"loot_gold"},{t:"Saluer",a:"leave"}]},
+                {t:"Livre Volant", d:"Il bat des pages.", c:[{t:"Lire",a:"skill_xp"},{t:"Ignorer",a:"leave"}]},
+                {t:"Mains de Zombie", d:"Elles sortent du sol !", c:[{t:"Écraser",a:"loot_gold"},{t:"Courir",a:"dmg_low"}]},
+                {t:"Lune Rouge", d:"Vous sentez une rage monter.", c:[{t:"Hurler",a:"buff_atk"},{t:"Calmer",a:"leave"}]},
+                {t:"Épouvantail", d:"Il a un joli chapeau.", c:[{t:"Voler",a:"loot_item"},{t:"Laisser",a:"leave"}]},
+                {t:"Portail du Vide", d:"Il aspire la lumière.", c:[{t:"Entrer",a:"boss_warp"},{t:"Fuir",a:"leave"}]},
+                {t:"Marchand Fou", d:"Il vend n'importe quoi.", c:[{t:"Acheter (10🍬)",a:"buy_rand"},{t:"Partir",a:"leave"}]},
+                {t:"Autel Profane", d:"Sacrifier pour la puissance ?", c:[{t:"Oui (-PV)",a:"dmg_high_buff"},{t:"Non",a:"leave"}]},
+                {t:"Fantôme Triste", d:"Il cherche son ours.", c:[{t:"Aider",a:"loot_gold"},{t:"Moquer",a:"curse"}]},
+                {t:"Toile Géante", d:"Le passage est bloqué.", c:[{t:"Couper",a:"fight_spider"},{t:"Brûler",a:"leave"}]},
+                {t:"Bonbons au sol", d:"Un piège ?", c:[{t:"Manger",a:"heal_low"},{t:"Ramasser",a:"loot_gold"}]}
             ],
-            items: [{n:"Os Pointu",e:"🦴",s:10,t:"weapon",r:"r-common",d:"Ça pique"}, {n:"Faux Maudite",e:"⛏️",s:100,t:"weapon",r:"r-legendary",d:"L'arme de la mort"}]
+            items: [{n:"Os Pointu",e:"🦴",s:10,t:"weapon",r:"r-common"}, {n:"Faux Maudite",e:"⛏️",s:100,t:"weapon",r:"r-legendary"}]
         };
 
         let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null, pseudo:"SURVIVANT" };
@@ -303,7 +318,7 @@
                 Core.init();
             },
             init: () => {
-                let s = localStorage.getItem('distory_v29');
+                let s = localStorage.getItem('distory_v30');
                 if(s) { try { let l = JSON.parse(s); if(l.char) D = l; } catch(e) {} }
                 document.getElementById('ui-pseudo').innerText = D.pseudo;
                 if(!D.char) UI.modal('char');
@@ -312,7 +327,7 @@
             resetGame: () => { localStorage.clear(); location.reload(); },
             hardReset: () => { if(confirm("Tout effacer ?")) Core.resetGame(); },
             returnToTitle: () => { Core.save(); location.reload(); },
-            save: () => localStorage.setItem('distory_v29', JSON.stringify(D)),
+            save: () => localStorage.setItem('distory_v30', JSON.stringify(D)),
             
             calc: () => {
                 R.max = 100 + (D.stats.hp*20); R.atk = 10 + (D.stats.atk*5); R.def = 0 + (D.stats.def*2);
@@ -338,13 +353,24 @@
 
                 Core.save(); document.getElementById('modal-overlay').classList.add('hidden'); UI.upd(); UI.btn("COMMENCER", Core.start); AudioSys.play('coin'); 
             },
-            start: () => { Core.calc(); R.hp=R.max; R.day=0; R.active=true; R.skills=[]; UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("NUIT TOMBÉE","Entrée du cimetière"); AudioSys.play('coin'); Core.next(); },
+            
+            // JOUR 1 = GRIMOIRE
+            start: () => { 
+                Core.calc(); R.hp=R.max; R.day=1; R.active=true; R.skills=[]; 
+                UI.scene('adv'); UI.btn("AVANCER", Core.next); UI.txt("JOUR 1","Le Grimoire Perdu"); 
+                UI.modal('skill-choice'); // FORCE LE CHOIX
+            },
             
             next: () => { 
                 if(Conf.pause) return;
                 R.day++; Core.calc(); UI.upd(); 
-                if(R.day % 10 === 0) { Core.fight(true); return; } 
-                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("SORCIÈRE","Elle vend des potions"); return; }
+                
+                // BOSS JOUR 60
+                if(R.day === 60) { Core.fight(true); return; }
+                
+                // SHOP JOUR 5
+                if(R.day % 5 === 0) { UI.modal('shop'); UI.txt("SORCIÈRE","Pacte de Sang"); return; }
+                
                 let roll = Math.random();
                 if(roll < 0.5) Core.fight(false); 
                 else if (roll < 0.8) Core.triggerEvent(); 
@@ -354,15 +380,34 @@
             
             triggerEvent: () => { let ev = DB.events[Math.floor(Math.random()*DB.events.length)]; UI.modal('event', ev); },
             
-            resolveEvent: (action) => {
+            resolveEvent: (a) => {
                 document.getElementById('modal-overlay').classList.add('hidden');
-                let res = "";
-                if(action === 'loot') { D.gold += 40; res = "Vous trouvez 40 Bonbons !"; }
-                else if(action === 'leave') { res = "Vous passez votre chemin."; }
-                else if(action === 'break') { R.hp -= 10; res = "Aïe ! 7 ans de malheur (-10 PV)."; }
-                else if(action === 'talk') { D.gold += 20; res = "L'esprit vous donne 20 Bonbons."; }
-                else if(action === 'pet') { R.hp = Math.min(R.max, R.hp+30); res = "Il ronronne (+30 PV)."; }
-                UI.log(res); UI.toast(res, action==='break'?'err':'success'); UI.upd(); Core.checkAuto();
+                let res = "Rien ne se passe.";
+                let bad = false;
+
+                // LOGIQUE DES 20 EVENTS
+                if(a.includes('loot')) { D.gold += 30; res = "Vous trouvez 30 Bonbons !"; }
+                else if(a.includes('dmg')) { R.hp -= 15; res = "Vous êtes blessé (-15 PV)."; bad=true; }
+                else if(a.includes('heal')) { R.hp = Math.min(R.max, R.hp+40); res = "Soin (+40 PV)."; }
+                else if(a === 'fight' || a === 'fight_spider') { Core.fight(false); return; }
+                else if(a === 'skill_xp') { D.gold += 50; res = "Savoir ancien (+50 Bonbons)."; }
+                else if(a === 'curse') { R.hp -= 5; res = "Maudit ! (-5 PV)"; bad=true; }
+                else if(a === 'boss_warp') { Core.fight(true); return; } // Very bad luck
+                else if(a === 'buy_rand') { if(D.gold>=10){D.gold-=10; res="Acheté !";} else res="Pas assez d'or."; }
+                else if(a === 'buff_atk') { res="Rage ! (Prochain combat boosté)"; }
+                
+                UI.log(res); UI.toast(res, bad?'err':'success'); UI.upd(); Core.checkAuto();
+            },
+
+            bloodPact: () => {
+                if(R.max > 20) {
+                    D.stats.hp--; // Reduce permanent stat
+                    Core.calc(); // Recalc max HP
+                    UI.toast("SACRIFICE ACCEPTÉ", "err");
+                    UI.modal('skill-choice'); // Give skill
+                } else {
+                    UI.toast("TROP FAIBLE...", "err");
+                }
             },
 
             addSkill: (id) => {
@@ -450,7 +495,7 @@
                     <button onclick="Core.returnToTitle()" class="btn-settings border-blue-500 text-blue-400">MENU PRINCIPAL</button>
                     <button onclick="Core.hardReset()" class="btn-settings border-red-500 text-red-500">ABANDONNER (RESET)</button>`;
                 } else if(t==='char') c.innerHTML=`<h2 class="text-[#ff7b00] text-4xl font-title mb-8">QUI SURVIVRA ?</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-6 bg-[#2d1b4e] rounded-lg border-2 border-[#ff7b00] hover:scale-110 hover:bg-[#4a1d96] transition shadow-lg">${x.id}</button>`).join('')}</div>`; 
-                else if(t==='shop') c.innerHTML=`<h2 class="text-[#ff7b00] text-3xl font-title mb-4">LA SORCIÈRE</h2><button onclick="Core.heal(50);document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="w-full p-4 bg-[#2d1b4e] border border-green-500 text-green-400 font-bold mb-2 font-title text-xl">🧪 Jus de Citrouille (50 PV)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Fuir</button>`;
+                else if(t==='shop') c.innerHTML=`<h2 class="text-[#ff7b00] text-3xl font-title mb-4">SORCIÈRE</h2><p class="text-gray-300 mb-4">"Je peux te donner un pouvoir... contre ton sang."</p><button onclick="Core.bloodPact()" class="w-full p-4 bg-[#2d1b4e] border border-red-600 text-red-500 font-bold mb-2 font-title text-xl">🩸 PACTE (-20 MAX HP = SORT)</button><button onclick="document.getElementById('modal-overlay').classList.add('hidden');Core.checkAuto()" class="text-gray-500 underline">Refuser</button>`;
                 else if(t==='skill-choice') {
                     let k1=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k2=Object.keys(DB.skills)[Math.floor(Math.random()*6)], k3=Object.keys(DB.skills)[Math.floor(Math.random()*6)];
                     c.innerHTML=`<h2 class="text-purple-400 text-3xl font-title mb-4">CHOIX DU DESTIN</h2><div class="skill-grid">
@@ -476,7 +521,6 @@
         };
         
         document.addEventListener('mousemove', (e) => { let tt = document.getElementById('tooltip'); if(tt.classList.contains('visible')) { tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px'; } });
-        Core.heal = (v) => { R.hp = Math.min(R.max, R.hp+v); UI.upd(); UI.toast(`+${v} PV`, "success"); };
         window.onload = Core.bootGame;
     </script>
 </body>
