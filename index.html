@@ -3,44 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - Alpha</title>
+    <title>Distory Go - V18 FORCE</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* === DESIGN === */
+        :root { --bg: #020617; --panel: #0f172a; --border: #1e293b; --neon: #3b82f6; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; }
+        
+        .layout { display: grid; grid-template-columns: 350px 1fr 300px; gap: 1rem; height: 100vh; padding: 1rem; max-width: 1920px; margin: 0 auto; }
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .head { padding: 12px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-family: 'Share Tech Mono'; font-weight: bold; color: #64748b; display: flex; justify-content: space-between; }
+        
+        .hero-zone { height: 280px; background: radial-gradient(circle, #1e3a8a 0%, #020617 100%); display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
+        .hero-img { font-size: 110px; filter: drop-shadow(0 0 20px rgba(59,130,246,0.6)); transition: 0.3s; cursor: pointer; }
+        .hero-img:hover { transform: scale(1.1); }
+        
+        .btn-main { width: 100%; background: linear-gradient(to bottom, #2563eb, #1d4ed8); border-bottom: 4px solid #1e40af; color: white; font-weight: 900; font-size: 24px; border-radius: 8px; padding: 15px; letter-spacing: 2px; transition: 0.1s; }
+        .btn-main:active { transform: translateY(4px); border-bottom: 0; }
+        .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.5; transform: none; border-bottom: 4px solid #334155; }
+        
+        .slot { width: 100%; height: 50px; background: #020617; border: 2px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; }
+        .slot:hover { border-color: var(--neon); background: #1e293b; }
+        
+        /* MODAL (Crucial pour la sélection) */
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #0f172a; border: 2px solid var(--neon); padding: 40px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; box-shadow: 0 0 50px rgba(59,130,246,0.3); }
+        .hidden { display: none !important; }
+        
+        /* FX */
+        .dmg { position: absolute; font-weight: 900; font-size: 30px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; }
+        @keyframes fly { to { transform: translateY(-80px); opacity: 0; } }
+        
+        .bar-container { background: #000; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #334155; margin-top: 5px; }
+        .bar-fill { height: 100%; width: 100%; transition: width 0.3s; }
+        .hp { background: linear-gradient(90deg, #991b1b, #ef4444); }
+    </style>
 </head>
 <body>
 
-    <div id="particle-layer" class="fixed inset-0 pointer-events-none z-50"></div>
-    <div id="toast-layer"></div>
+    <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
     
-    <div id="modal-layer" class="modal">
+    <div id="modal-overlay" class="hidden">
         <div id="modal-content" class="modal-box"></div>
     </div>
 
     <div class="layout">
         
         <div class="panel">
-            <div class="head"><span>PILOTE</span> <span id="ui-lvl" class="text-white">LVL 1</span></div>
+            <div class="head"><span>PILOTE</span> <span>ID: V18</span></div>
             <div class="hero-zone">
                 <div id="vis-hero" class="hero-img">?</div>
             </div>
             <div class="p-4 space-y-4">
                 <div>
                     <div class="flex justify-between text-xs text-gray-400">PV <span id="ui-hp-txt" class="text-white">100/100</span></div>
-                    <div class="bar-box"><div id="ui-hp-bar" class="bar hp" style="width: 100%;"></div></div>
+                    <div class="bar-container"><div id="ui-hp-bar" class="bar-fill hp"></div></div>
                 </div>
-                <div class="stat-grid">
-                    <div class="stat"><div class="text-[10px] text-gray-500">ATK</div><div id="ui-atk" class="stat-v text-blue-400">-</div></div>
-                    <div class="stat"><div class="text-[10px] text-gray-500">DEF</div><div id="ui-def" class="stat-v text-green-400">-</div></div>
+                <div class="grid grid-cols-2 gap-2 text-center text-sm">
+                    <div class="bg-white/5 p-2 rounded border border-white/5"><div class="text-xs text-gray-500">ATK</div><div id="ui-atk" class="font-bold text-blue-400">10</div></div>
+                    <div class="bg-white/5 p-2 rounded border border-white/5"><div class="text-xs text-gray-500">DEF</div><div id="ui-def" class="font-bold text-green-400">0</div></div>
                 </div>
             </div>
-            <div class="p-4 mt-auto border-t border-white/10">
+            <div class="mt-auto p-4 border-t border-white/10">
                 <div class="flex gap-2">
                     <div id="s-w" class="slot text-gray-600">⚔️</div>
                     <div id="s-h" class="slot text-gray-600">🛡️</div>
                     <div id="s-p" class="slot text-gray-600">🐾</div>
                 </div>
-                <button onclick="Core.hardReset()" class="text-xs text-red-900 hover:text-red-500 w-full text-center mt-2 font-bold cursor-pointer">RESET SYSTÈME</button>
+                <button onclick="Core.hardReset()" class="w-full text-center text-[10px] text-red-500 mt-2 hover:text-white uppercase font-bold cursor-pointer">⚠️ FORCER LE RESET (SI BUG)</button>
             </div>
         </div>
 
@@ -50,58 +81,226 @@
                 <span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span>
             </div>
             
-            <div class="stage">
-                <div class="stage-bg"></div>
-                <div id="enemy-container" class="enemy-box hidden">
-                    <div class="w-32 h-2 bg-black mx-auto mb-2 border border-red-800"><div id="ui-en-bar" class="h-full bg-red-600 w-full"></div></div>
-                    <div id="vis-enemy" class="enemy-img">🦀</div>
-                    <div id="name-enemy" class="mt-2 text-red-400 font-bold bg-black/60 px-2 rounded">CIBLE</div>
+            <div class="flex-grow bg-slate-950 relative flex flex-col items-center justify-center">
+                <div id="enemy-box" class="text-center hidden relative z-10">
+                    <div class="w-32 h-2 bg-black border border-red-800 rounded mx-auto mb-2"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
+                    <div id="vis-enemy" class="text-9xl filter drop-shadow-2xl">🦀</div>
+                    <div id="name-enemy" class="font-bold text-red-400 bg-black/60 px-2 rounded mt-2 inline-block">CIBLE</div>
                 </div>
-                <div id="text-container" class="z-20 text-center">
-                    <h1 id="txt-1" class="text-4xl font-black text-white mb-2 font-tech">DISTORY GO</h1>
-                    <p id="txt-2" class="text-blue-400 font-mono text-sm bg-black/80 px-2 py-1">En attente...</p>
+                
+                <div id="text-box" class="text-center z-0">
+                    <h1 id="txt-1" class="text-4xl font-black text-white mb-2">DISTORY GO</h1>
+                    <p id="txt-2" class="text-blue-400 font-mono text-xs bg-black/80 px-2 py-1 rounded">En attente...</p>
                 </div>
             </div>
 
             <div class="h-48 bg-slate-900 border-t border-white/10 grid grid-cols-12">
-                <div class="col-span-8 p-2 overflow-y-auto border-r border-white/10">
-                    <div class="flex justify-between mb-2 text-xs font-bold text-gray-500"><span>STOCKAGE</span> <button onclick="Core.chest()" class="text-[9px] bg-purple-600 text-white px-2 rounded hover:bg-purple-500">COFFRE (5✨)</button></div>
+                <div class="col-span-8 p-3 overflow-y-auto border-r border-white/10">
+                    <div class="flex justify-between mb-2 text-[10px] font-bold text-gray-500 uppercase"><span>Stockage</span> <button onclick="Core.chest()" class="text-[9px] bg-purple-600 text-white px-2 rounded hover:bg-purple-500">COFFRE (5✨)</button></div>
                     <div id="inv-grid" class="grid grid-cols-6 gap-1"></div>
                 </div>
-                <div class="col-span-4 p-2 flex flex-col gap-2">
+                <div class="col-span-4 p-3 flex flex-col gap-2">
                     <button id="btn-act" onclick="Core.click()" class="btn-main">DÉMARRER</button>
-                    <div class="flex gap-1"><button onclick="Core.auto()" id="btn-auto" class="flex-1 bg-slate-800 text-[10px] text-gray-400 py-1 border border-slate-600 rounded">AUTO: OFF</button></div>
                 </div>
             </div>
         </div>
 
         <div class="panel">
-            <div class="head">MODULES</div>
-            <div id="list-skills" class="p-2 space-y-1 overflow-y-auto flex-grow bg-slate-900/50"></div>
-            <div class="h-1/3 border-t border-white/10 p-2 font-mono text-[10px] text-gray-400 overflow-y-auto" id="logs">
-                <div>[SYS] Chargement...</div>
-            </div>
-            <div class="flex bg-slate-900 p-2 gap-1 border-t border-white/10">
-                <button onclick="UI.tab('adv')" class="flex-1 bg-slate-800 text-white text-xs py-2 rounded">AVENTURE</button>
-                <button onclick="UI.tab('hub')" class="flex-1 bg-slate-800 text-gray-500 text-xs py-2 rounded">BASE</button>
-            </div>
-        </div>
-
-        <div id="view-hub" class="hidden absolute inset-0 bg-slate-950 z-30 flex flex-col items-center justify-center">
-            <h2 class="text-4xl text-white font-bold mb-8 font-tech">AMÉLIORATIONS</h2>
-            <div class="flex gap-4">
-                <button onclick="Core.upg('hp')" class="p-6 bg-slate-800 border border-red-500 rounded text-center"><div class="text-4xl">❤️</div><div class="text-white font-bold">HP</div><div class="text-yellow-400 text-xs">100 🪙</div></button>
-                <button onclick="Core.upg('atk')" class="p-6 bg-slate-800 border border-blue-500 rounded text-center"><div class="text-4xl">⚔️</div><div class="text-white font-bold">ATK</div><div class="text-yellow-400 text-xs">100 🪙</div></button>
-            </div>
-            <button onclick="UI.tab('adv')" class="mt-8 text-slate-400 underline cursor-pointer">RETOUR</button>
+            <div class="head">JOURNAL</div>
+            <div id="logs" class="p-2 font-mono text-[10px] text-gray-400 overflow-y-auto flex-grow bg-black/20"></div>
         </div>
 
     </div>
 
-    <script src="js/database.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/engine.js"></script>
+    <script>
+        const DB = {
+            chars: [{id:"🐙",n:"Poulpe"}, {id:"🦈",n:"Requin"}, {id:"🐢",n:"Tortue"}, {id:"👽",n:"Alien"}],
+            enemies: [{n:"Crabe",hp:50,atk:5,i:"🦀"}, {n:"Poisson",hp:40,atk:8,i:"🐟"}],
+            items: [{n:"Dague",e:"🗡️",s:10,t:"weapon",r:"r-common"}, {n:"Bouclier",e:"🛡️",s:20,t:"head",r:"r-rare"}]
+        };
 
+        let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null };
+        let R = { active:false, day:0, hp:100, max:100, atk:10, def:0 };
+        let C = { active:false, hp:0, max:0, atk:0 };
+        let Act = null;
+
+        const Core = {
+            init: () => {
+                console.log("INIT V18");
+                let s = localStorage.getItem('distory_v18');
+                
+                // --- SÉCURITÉ ANTI-CRASH ---
+                if(s) {
+                    try { 
+                        let loaded = JSON.parse(s);
+                        // Vérifie si la save est valide (a-t-elle un char ?)
+                        if(!loaded.char) throw "Save invalide"; 
+                        D = loaded;
+                    } catch(e) { 
+                        console.error("Save corrompue, reset auto.");
+                        localStorage.removeItem('distory_v18');
+                        s = null; 
+                    }
+                }
+
+                if(!s || !D.char) {
+                    UI.modal('char'); // Force la sélection si pas de char
+                } else {
+                    Core.calc(); 
+                    UI.upd();
+                    if(R.active && !C.active) UI.btn("CONTINUER", Core.next);
+                    else if(C.active) { C.active = false; UI.btn("REPRENDRE", Core.next); } 
+                    else UI.btn("DÉMARRER", Core.start);
+                }
+            },
+
+            save: () => localStorage.setItem('distory_v18', JSON.stringify(D)),
+            hardReset: () => { localStorage.clear(); location.reload(); },
+
+            calc: () => {
+                R.max = 100 + (D.stats.hp*20);
+                R.atk = 10 + (D.stats.atk*5);
+                R.def = 0;
+                if(D.weapon) R.atk += D.weapon.s;
+                if(D.head) { R.def += D.head.s; R.max += D.head.s; }
+                if(D.pet) R.atk += D.pet.s;
+                R.hp = Math.min(R.hp, R.max);
+            },
+
+            pick: (c) => { 
+                D.char = c; 
+                Core.save(); 
+                document.getElementById('modal-overlay').classList.add('hidden'); 
+                UI.upd(); 
+                UI.btn("DÉMARRER", Core.start); 
+            },
+
+            start: () => {
+                Core.calc(); R.hp=R.max; R.day=0; R.active=true;
+                UI.scene('adv'); 
+                UI.btn("JOUR SUIVANT", Core.next); 
+                UI.txt("MISSION","Zone 1");
+                Core.next();
+            },
+
+            next: () => {
+                R.day++; Core.calc(); UI.upd();
+                if(Math.random()<0.5) Core.fight();
+                else {
+                    D.gold += 20; UI.log("Ressources trouvées (+20 Or)");
+                    UI.upd();
+                }
+            },
+
+            fight: () => {
+                C.active = true;
+                let en = DB.enemies[Math.floor(Math.random()*DB.enemies.length)];
+                let sc = 1 + (R.day*0.1);
+                C.max = Math.floor(en.hp * sc); C.hp = C.max; C.atk = Math.floor(en.atk * sc);
+                
+                UI.scene('com');
+                document.getElementById('vis-enemy').innerText = en.i;
+                document.getElementById('name-enemy').innerText = en.n;
+                UI.btn("COMBAT...", null, true);
+                setTimeout(Core.turn, 800);
+            },
+
+            turn: () => {
+                if(!C.active) return;
+                
+                // Player hit
+                let dmg = R.atk;
+                C.hp -= dmg; 
+                UI.fx(dmg, '#fbbf24', 'vis-enemy');
+                UI.bar();
+
+                if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500); return; }
+
+                // Enemy hit
+                setTimeout(()=>{
+                    if(!C.active) return;
+                    let edmg = Math.max(1, C.atk - R.def);
+                    R.hp -= edmg;
+                    UI.fx(edmg, '#f00', 'vis-hero');
+                    UI.upd();
+                    
+                    if(R.hp <= 0) Core.end(false);
+                    else setTimeout(Core.turn, 800);
+                }, 500);
+            },
+
+            end: (win) => {
+                C.active = false;
+                if(win) {
+                    D.gold += 15 + R.day;
+                    UI.log("Victoire !");
+                    UI.btn("CONTINUER", Core.next);
+                } else {
+                    R.active = false;
+                    UI.log("Echec mission.");
+                    UI.btn("RELANCER", Core.start);
+                }
+                Core.save(); UI.scene('adv');
+            },
+
+            click: () => { if(Act) Act(); },
+            
+            chest: () => {
+                if(D.perls >= 5) {
+                    D.perls -= 5;
+                    let i = DB.items[Math.floor(Math.random()*DB.items.length)];
+                    D.inv.push({...i, uid:Date.now()});
+                    Core.save(); UI.upd();
+                }
+            },
+            equip: (idx) => {
+                let it = D.inv[idx];
+                if(D[it.t]) D.inv.push(D[it.t]);
+                D[it.t] = it; D.inv.splice(idx,1);
+                Core.save(); Core.calc(); UI.upd();
+            }
+        };
+
+        const UI = {
+            upd: () => {
+                document.getElementById('ui-gold').innerText = D.gold;
+                if(R.active || D.char) {
+                    document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`;
+                    document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%";
+                    document.getElementById('ui-atk').innerText = R.atk;
+                    document.getElementById('ui-def').innerText = R.def;
+                }
+                if(D.char) document.getElementById('vis-hero').innerText = D.char;
+                
+                let g = document.getElementById('inv-grid'); g.innerHTML='';
+                D.inv.forEach((it,i) => {
+                    let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e;
+                    d.onclick=()=>Core.equip(i); g.appendChild(d);
+                });
+            },
+            bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
+            scene: (t) => {
+                let e=document.getElementById('enemy-box'), tx=document.getElementById('text-box');
+                if(t==='com'){e.classList.remove('hidden'); tx.classList.add('hidden');}
+                else{e.classList.add('hidden'); tx.classList.remove('hidden');}
+            },
+            btn: (t,a,dis) => { let b=document.getElementById('btn-act'); b.innerText=t; Act=a; b.disabled=dis; },
+            txt: (t,s) => { document.getElementById('txt-1').innerText=t; document.getElementById('txt-2').innerText=s; },
+            log: (m) => { let l=document.getElementById('logs'); l.innerHTML=`<div>> ${m}</div>`+l.innerHTML; },
+            fx: (t,c,id) => {
+                let el=document.createElement('div'); el.className='dmg'; el.style.color=c; el.innerText=t;
+                let r=document.getElementById(id).getBoundingClientRect();
+                el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px';
+                document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800);
+            },
+            modal: (t) => {
+                let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content');
+                l.classList.remove('hidden');
+                c.innerHTML=`<h2 class="text-white text-3xl font-bold mb-8">CHOISIS TON PILOTE</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-4 bg-slate-800 rounded-xl border border-blue-500 hover:scale-110 transition shadow-lg shadow-blue-500/50">${x.id}</button>`).join('')}</div>`;
+            }
+        };
+
+        window.onload = Core.init;
+    </script>
 </body>
 </html>
