@@ -3,46 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V18 FORCE</title>
+    <title>Distory Go - V19 SENSORY</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* === DESIGN === */
         :root { --bg: #020617; --panel: #0f172a; --border: #1e293b; --neon: #3b82f6; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; }
+        body { background: var(--bg); color: #e2e8f0; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; cursor: default; }
         
+        /* LAYOUT */
         .layout { display: grid; grid-template-columns: 350px 1fr 300px; gap: 1rem; height: 100vh; padding: 1rem; max-width: 1920px; margin: 0 auto; }
-        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .head { padding: 12px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-family: 'Share Tech Mono'; font-weight: bold; color: #64748b; display: flex; justify-content: space-between; }
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); position: relative; }
+        .head { padding: 12px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border); font-family: 'Share Tech Mono'; font-weight: bold; color: #64748b; display: flex; justify-content: space-between; align-items: center; }
         
+        /* HERO */
         .hero-zone { height: 280px; background: radial-gradient(circle, #1e3a8a 0%, #020617 100%); display: flex; align-items: center; justify-content: center; position: relative; border-bottom: 1px solid var(--border); }
-        .hero-img { font-size: 110px; filter: drop-shadow(0 0 20px rgba(59,130,246,0.6)); transition: 0.3s; cursor: pointer; }
+        .hero-img { font-size: 110px; filter: drop-shadow(0 0 20px rgba(59,130,246,0.6)); transition: 0.2s; cursor: pointer; z-index: 10; }
         .hero-img:hover { transform: scale(1.1); }
+        .pet-img { font-size: 40px; position: absolute; bottom: 10px; left: 10px; animation: bounce 2s infinite; z-index: 5; }
         
+        /* CONTROLS */
         .btn-main { width: 100%; background: linear-gradient(to bottom, #2563eb, #1d4ed8); border-bottom: 4px solid #1e40af; color: white; font-weight: 900; font-size: 24px; border-radius: 8px; padding: 15px; letter-spacing: 2px; transition: 0.1s; }
         .btn-main:active { transform: translateY(4px); border-bottom: 0; }
         .btn-main:disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.5; transform: none; border-bottom: 4px solid #334155; }
         
-        .slot { width: 100%; height: 50px; background: #020617; border: 2px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; }
-        .slot:hover { border-color: var(--neon); background: #1e293b; }
+        .slot { width: 100%; height: 50px; background: #020617; border: 2px solid #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; position: relative; }
+        .slot:hover { border-color: var(--neon); background: #1e293b; transform: scale(1.05); z-index: 20; box-shadow: 0 0 15px var(--neon); }
+        .r-common { border-color: #64748b; } .r-rare { border-color: #3b82f6; box-shadow: inset 0 0 5px #3b82f6; } 
+        .r-legendary { border-color: #f59e0b; animation: pulse 2s infinite; box-shadow: inset 0 0 5px #f59e0b; }
         
-        /* MODAL (Crucial pour la sélection) */
-        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #0f172a; border: 2px solid var(--neon); padding: 40px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; box-shadow: 0 0 50px rgba(59,130,246,0.3); }
-        .hidden { display: none !important; }
+        /* TOOLTIP */
+        #tooltip { position: fixed; pointer-events: none; z-index: 5000; background: rgba(15,23,42,0.98); border: 1px solid #475569; padding: 10px; border-radius: 8px; font-size: 12px; max-width: 250px; color: #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; }
+        #tooltip.visible { display: block; }
+        
+        /* ANIMATIONS */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulse { 50% { border-color: #fbbf24; box-shadow: 0 0 15px #fbbf24; } }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+        .shake-anim { animation: shake 0.5s; }
         
         /* FX */
-        .dmg { position: absolute; font-weight: 900; font-size: 30px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; }
-        @keyframes fly { to { transform: translateY(-80px); opacity: 0; } }
+        .dmg { position: absolute; font-weight: 900; font-size: 32px; animation: fly 0.8s forwards; pointer-events: none; z-index: 50; text-shadow: 2px 2px 0 black; }
+        @keyframes fly { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-20px) scale(1.2); opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
         
-        .bar-container { background: #000; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #334155; margin-top: 5px; }
-        .bar-fill { height: 100%; width: 100%; transition: width 0.3s; }
+        .bar-container { background: #000; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid #334155; margin-top: 5px; position: relative; }
+        .bar-fill { height: 100%; transition: width 0.2s; }
         .hp { background: linear-gradient(90deg, #991b1b, #ef4444); }
+        
+        /* MODAL */
+        #modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #0f172a; border: 2px solid var(--neon); padding: 40px; border-radius: 16px; text-align: center; max-width: 600px; width: 90%; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="fx-layer" class="fixed inset-0 pointer-events-none z-50"></div>
+    <div id="tooltip"></div>
     
     <div id="modal-overlay" class="hidden">
         <div id="modal-content" class="modal-box"></div>
@@ -51,9 +68,10 @@
     <div class="layout">
         
         <div class="panel">
-            <div class="head"><span>PILOTE</span> <span>ID: V18</span></div>
+            <div class="head"><span>PILOTE</span> <span>ID: V19</span></div>
             <div class="hero-zone">
-                <div id="vis-hero" class="hero-img">?</div>
+                <div id="vis-hero" class="hero-img" onmouseenter="UI.tip(event, 'C\'est vous !', 'Le pilote du système.')" onmouseleave="UI.untip()">?</div>
+                <div id="vis-pet" class="pet-img"></div>
             </div>
             <div class="p-4 space-y-4">
                 <div>
@@ -61,8 +79,8 @@
                     <div class="bar-container"><div id="ui-hp-bar" class="bar-fill hp"></div></div>
                 </div>
                 <div class="grid grid-cols-2 gap-2 text-center text-sm">
-                    <div class="bg-white/5 p-2 rounded border border-white/5"><div class="text-xs text-gray-500">ATK</div><div id="ui-atk" class="font-bold text-blue-400">10</div></div>
-                    <div class="bg-white/5 p-2 rounded border border-white/5"><div class="text-xs text-gray-500">DEF</div><div id="ui-def" class="font-bold text-green-400">0</div></div>
+                    <div class="bg-white/5 p-2 rounded border border-white/5" onmouseenter="UI.tip(event, 'Puissance', 'Dégâts infligés par tour.')" onmouseleave="UI.untip()"><div class="text-xs text-gray-500">ATK</div><div id="ui-atk" class="font-bold text-blue-400">10</div></div>
+                    <div class="bg-white/5 p-2 rounded border border-white/5" onmouseenter="UI.tip(event, 'Défense', 'Dégâts réduits par coup.')" onmouseleave="UI.untip()"><div class="text-xs text-gray-500">DEF</div><div id="ui-def" class="font-bold text-green-400">0</div></div>
                 </div>
             </div>
             <div class="mt-auto p-4 border-t border-white/10">
@@ -71,26 +89,29 @@
                     <div id="s-h" class="slot text-gray-600">🛡️</div>
                     <div id="s-p" class="slot text-gray-600">🐾</div>
                 </div>
-                <button onclick="Core.hardReset()" class="w-full text-center text-[10px] text-red-500 mt-2 hover:text-white uppercase font-bold cursor-pointer">⚠️ FORCER LE RESET (SI BUG)</button>
+                <button onclick="Core.hardReset()" class="w-full text-center text-[10px] text-red-500 mt-2 hover:text-white font-bold cursor-pointer">⚠️ RESET SAUVEGARDE</button>
             </div>
         </div>
 
         <div class="panel">
             <div class="head">
                 <span>ZONE <span id="ui-zone" class="text-blue-400">1-1</span></span>
-                <span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span>
+                <div class="flex gap-4">
+                    <span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span>
+                    <span class="text-purple-400">✨ <span id="ui-perls">0</span></span>
+                </div>
             </div>
             
             <div class="flex-grow bg-slate-950 relative flex flex-col items-center justify-center">
                 <div id="enemy-box" class="text-center hidden relative z-10">
                     <div class="w-32 h-2 bg-black border border-red-800 rounded mx-auto mb-2"><div id="ui-en-bar" class="h-full bg-red-600 w-full transition-all"></div></div>
-                    <div id="vis-enemy" class="text-9xl filter drop-shadow-2xl">🦀</div>
+                    <div id="vis-enemy" class="text-9xl filter drop-shadow-2xl transition-transform" onmouseenter="UI.tip(event, 'Cible', 'PV et stats de l\'ennemi.')" onmouseleave="UI.untip()">🦀</div>
                     <div id="name-enemy" class="font-bold text-red-400 bg-black/60 px-2 rounded mt-2 inline-block">CIBLE</div>
                 </div>
                 
                 <div id="text-box" class="text-center z-0">
                     <h1 id="txt-1" class="text-4xl font-black text-white mb-2">DISTORY GO</h1>
-                    <p id="txt-2" class="text-blue-400 font-mono text-xs bg-black/80 px-2 py-1 rounded">En attente...</p>
+                    <p id="txt-2" class="text-blue-400 font-mono text-xs bg-black/80 px-2 py-1 rounded">V19 SENSORY</p>
                 </div>
             </div>
 
@@ -113,10 +134,48 @@
     </div>
 
     <script>
+        // --- SON (AUDIO ENGINE) ---
+        const AudioSys = {
+            ctx: null,
+            init: () => {
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                AudioSys.ctx = new AudioContext();
+            },
+            play: (type) => {
+                if(!AudioSys.ctx) AudioSys.init();
+                const o = AudioSys.ctx.createOscillator();
+                const g = AudioSys.ctx.createGain();
+                o.connect(g); g.connect(AudioSys.ctx.destination);
+                
+                if(type === 'hit') {
+                    o.type = 'sawtooth'; o.frequency.setValueAtTime(150, AudioSys.ctx.currentTime);
+                    o.frequency.exponentialRampToValueAtTime(0.01, AudioSys.ctx.currentTime + 0.1);
+                    g.gain.setValueAtTime(0.1, AudioSys.ctx.currentTime);
+                    o.start(); o.stop(AudioSys.ctx.currentTime + 0.1);
+                } else if(type === 'coin') {
+                    o.type = 'sine'; o.frequency.setValueAtTime(1200, AudioSys.ctx.currentTime);
+                    o.frequency.linearRampToValueAtTime(2000, AudioSys.ctx.currentTime + 0.1);
+                    g.gain.setValueAtTime(0.05, AudioSys.ctx.currentTime);
+                    o.start(); o.stop(AudioSys.ctx.currentTime + 0.2);
+                } else if(type === 'click') {
+                    o.type = 'triangle'; o.frequency.setValueAtTime(600, AudioSys.ctx.currentTime);
+                    g.gain.setValueAtTime(0.05, AudioSys.ctx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.01, AudioSys.ctx.currentTime + 0.05);
+                    o.start(); o.stop(AudioSys.ctx.currentTime + 0.05);
+                }
+            }
+        };
+
+        // --- DATA ---
         const DB = {
             chars: [{id:"🐙",n:"Poulpe"}, {id:"🦈",n:"Requin"}, {id:"🐢",n:"Tortue"}, {id:"👽",n:"Alien"}],
             enemies: [{n:"Crabe",hp:50,atk:5,i:"🦀"}, {n:"Poisson",hp:40,atk:8,i:"🐟"}],
-            items: [{n:"Dague",e:"🗡️",s:10,t:"weapon",r:"r-common"}, {n:"Bouclier",e:"🛡️",s:20,t:"head",r:"r-rare"}]
+            items: [
+                {n:"Dague",e:"🗡️",s:10,t:"weapon",r:"r-common",d:"Arme simple"}, 
+                {n:"Bouclier",e:"🛡️",s:20,t:"head",r:"r-rare",d:"Protection++"},
+                {n:"Dragon",e:"🐉",s:15,t:"pet",r:"r-legendary",d:"Familier rare"},
+                {n:"Potion",e:"🧪",s:5,t:"weapon",r:"r-common",d:"Objet mystère"}
+            ]
         };
 
         let D = { gold:0, perls:50, stats:{hp:0,atk:0,def:0}, weapon:null, head:null, pet:null, inv:[], char:null };
@@ -126,35 +185,26 @@
 
         const Core = {
             init: () => {
-                console.log("INIT V18");
-                let s = localStorage.getItem('distory_v18');
-                
-                // --- SÉCURITÉ ANTI-CRASH ---
+                let s = localStorage.getItem('distory_v19');
                 if(s) {
                     try { 
                         let loaded = JSON.parse(s);
-                        // Vérifie si la save est valide (a-t-elle un char ?)
-                        if(!loaded.char) throw "Save invalide"; 
+                        if(!loaded.char) throw "Reset"; 
                         D = loaded;
-                    } catch(e) { 
-                        console.error("Save corrompue, reset auto.");
-                        localStorage.removeItem('distory_v18');
-                        s = null; 
-                    }
+                    } catch(e) { localStorage.removeItem('distory_v19'); s = null; }
                 }
 
                 if(!s || !D.char) {
-                    UI.modal('char'); // Force la sélection si pas de char
+                    UI.modal('char');
                 } else {
-                    Core.calc(); 
-                    UI.upd();
+                    Core.calc(); UI.upd();
                     if(R.active && !C.active) UI.btn("CONTINUER", Core.next);
                     else if(C.active) { C.active = false; UI.btn("REPRENDRE", Core.next); } 
                     else UI.btn("DÉMARRER", Core.start);
                 }
             },
 
-            save: () => localStorage.setItem('distory_v18', JSON.stringify(D)),
+            save: () => localStorage.setItem('distory_v19', JSON.stringify(D)),
             hardReset: () => { localStorage.clear(); location.reload(); },
 
             calc: () => {
@@ -168,26 +218,26 @@
             },
 
             pick: (c) => { 
-                D.char = c; 
-                Core.save(); 
+                D.char = c; Core.save(); 
                 document.getElementById('modal-overlay').classList.add('hidden'); 
-                UI.upd(); 
-                UI.btn("DÉMARRER", Core.start); 
+                UI.upd(); UI.btn("DÉMARRER", Core.start);
+                AudioSys.play('coin'); 
             },
 
             start: () => {
                 Core.calc(); R.hp=R.max; R.day=0; R.active=true;
-                UI.scene('adv'); 
-                UI.btn("JOUR SUIVANT", Core.next); 
-                UI.txt("MISSION","Zone 1");
+                UI.scene('adv'); UI.btn("JOUR SUIVANT", Core.next); UI.txt("MISSION","Zone 1");
+                AudioSys.play('click');
                 Core.next();
             },
 
             next: () => {
                 R.day++; Core.calc(); UI.upd();
+                AudioSys.play('click');
                 if(Math.random()<0.5) Core.fight();
                 else {
                     D.gold += 20; UI.log("Ressources trouvées (+20 Or)");
+                    AudioSys.play('coin');
                     UI.upd();
                 }
             },
@@ -208,21 +258,23 @@
             turn: () => {
                 if(!C.active) return;
                 
-                // Player hit
                 let dmg = R.atk;
                 C.hp -= dmg; 
                 UI.fx(dmg, '#fbbf24', 'vis-enemy');
+                UI.shake('vis-enemy'); // ANIMATION DE COUP
                 UI.bar();
+                AudioSys.play('hit'); // SON
 
                 if(C.hp <= 0) { setTimeout(()=>Core.end(true), 500); return; }
 
-                // Enemy hit
                 setTimeout(()=>{
                     if(!C.active) return;
                     let edmg = Math.max(1, C.atk - R.def);
                     R.hp -= edmg;
                     UI.fx(edmg, '#f00', 'vis-hero');
+                    UI.shake('vis-hero'); // ANIMATION DE COUP REÇU
                     UI.upd();
+                    AudioSys.play('hit');
                     
                     if(R.hp <= 0) Core.end(false);
                     else setTimeout(Core.turn, 800);
@@ -235,6 +287,7 @@
                     D.gold += 15 + R.day;
                     UI.log("Victoire !");
                     UI.btn("CONTINUER", Core.next);
+                    AudioSys.play('coin');
                 } else {
                     R.active = false;
                     UI.log("Echec mission.");
@@ -251,6 +304,8 @@
                     let i = DB.items[Math.floor(Math.random()*DB.items.length)];
                     D.inv.push({...i, uid:Date.now()});
                     Core.save(); UI.upd();
+                    UI.fx(i.e, '#a855f7', 'btn-act'); // Anim visuelle loot
+                    AudioSys.play('coin');
                 }
             },
             equip: (idx) => {
@@ -258,12 +313,14 @@
                 if(D[it.t]) D.inv.push(D[it.t]);
                 D[it.t] = it; D.inv.splice(idx,1);
                 Core.save(); Core.calc(); UI.upd();
+                AudioSys.play('click');
             }
         };
 
         const UI = {
             upd: () => {
                 document.getElementById('ui-gold').innerText = D.gold;
+                document.getElementById('ui-perls').innerText = D.perls;
                 if(R.active || D.char) {
                     document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`;
                     document.getElementById('ui-hp-bar').style.width = (R.hp/R.max*100)+"%";
@@ -271,12 +328,20 @@
                     document.getElementById('ui-def').innerText = R.def;
                 }
                 if(D.char) document.getElementById('vis-hero').innerText = D.char;
+                if(D.pet) document.getElementById('vis-pet').innerText = D.pet.e;
                 
                 let g = document.getElementById('inv-grid'); g.innerHTML='';
                 D.inv.forEach((it,i) => {
                     let d=document.createElement('div'); d.className=`slot ${it.r}`; d.innerText=it.e;
-                    d.onclick=()=>Core.equip(i); g.appendChild(d);
+                    d.onclick=()=>Core.equip(i); 
+                    d.onmouseenter=(e)=>UI.tip(e, it.n, it.d + "<br>Atk: +" + it.s); // TOOLTIP
+                    d.onmouseleave=UI.untip;
+                    g.appendChild(d);
                 });
+                
+                // Update Slots visual
+                const set=(id,it,def)=>{ let el=document.getElementById(id); if(it){el.innerText=it.e;el.className=`slot ${it.r}`;}else{el.innerText=def;el.className='slot text-gray-600';}};
+                set('s-w',D.weapon,'⚔️'); set('s-h',D.head,'🛡️'); set('s-p',D.pet,'🐾');
             },
             bar: () => document.getElementById('ui-en-bar').style.width = (C.hp/C.max*100)+"%",
             scene: (t) => {
@@ -293,12 +358,31 @@
                 el.style.left=(r.left+20)+'px'; el.style.top=r.top+'px';
                 document.getElementById('fx-layer').appendChild(el); setTimeout(()=>el.remove(),800);
             },
+            shake: (id) => {
+                let el=document.getElementById(id);
+                el.classList.remove('shake-anim'); void el.offsetWidth; el.classList.add('shake-anim');
+            },
             modal: (t) => {
                 let l=document.getElementById('modal-overlay'), c=document.getElementById('modal-content');
                 l.classList.remove('hidden');
                 c.innerHTML=`<h2 class="text-white text-3xl font-bold mb-8">CHOISIS TON PILOTE</h2><div class="flex gap-4 justify-center">${DB.chars.map(x=>`<button onclick="Core.pick('${x.id}')" class="text-6xl p-4 bg-slate-800 rounded-xl border border-blue-500 hover:scale-110 transition shadow-lg shadow-blue-500/50">${x.id}</button>`).join('')}</div>`;
-            }
+            },
+            tip: (e, t, d) => {
+                let tt = document.getElementById('tooltip');
+                tt.innerHTML = `<div class="font-bold border-b border-gray-600 pb-1 mb-1">${t}</div><div>${d}</div>`;
+                tt.classList.add('visible');
+                tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px';
+            },
+            untip: () => document.getElementById('tooltip').classList.remove('visible')
         };
+
+        // TRACK MOUSE FOR TOOLTIP
+        document.addEventListener('mousemove', (e) => {
+            let tt = document.getElementById('tooltip');
+            if(tt.classList.contains('visible')) {
+                tt.style.left = (e.clientX + 15) + 'px'; tt.style.top = (e.clientY + 15) + 'px';
+            }
+        });
 
         window.onload = Core.init;
     </script>
