@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - Ultra Animated</title>
+    <title>Distory Go - V53 STABLE</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -13,71 +13,55 @@
             --border-blue: #1c2a4d;
             --active-blue: #3b82f6;
             --hp-red: #be123c;
-            --fusion-gold: #fbbf24;
         }
-        body { 
-            background: var(--bg-deep); color: white; font-family: 'Rajdhani', sans-serif; 
-            overflow: hidden; height: 100vh; user-select: none;
-        }
+        body { background: var(--bg-deep); color: white; font-family: 'Rajdhani', sans-serif; overflow: hidden; height: 100vh; user-select: none; }
 
-        /* --- ANIMATIONS CORE --- */
-        @keyframes breathe { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.3)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.6)); } }
+        /* ANIMATIONS */
+        @keyframes breathe { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3)); } 50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6)); } }
         @keyframes scanline { 0% { top: -10%; opacity: 0; } 50% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
-        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
         .anim-breathe { animation: breathe 3s infinite ease-in-out; }
-        .anim-shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
-        .anim-panel { animation: fadeInScale 0.5s ease-out; }
+        .anim-shake { animation: shake 0.3s both; }
         .laser-line { position: absolute; left: 0; width: 100%; height: 2px; background: var(--active-blue); box-shadow: 0 0 15px var(--active-blue); z-index: 100; pointer-events: none; opacity: 0; }
-        .scanning { animation: scanline 0.7s linear; }
+        .scanning { animation: scanline 0.6s linear; }
 
-        /* --- STRUCTURE --- */
+        /* STRUCTURE HUD */
         .layout { display: grid; grid-template-columns: 320px 1fr 300px; gap: 12px; height: 100vh; padding: 12px; }
         .layout.blur { filter: blur(15px) brightness(0.4); pointer-events: none; }
         .panel { background: var(--panel-bg); border: 1px solid var(--border-blue); border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
         /* GAUCHE : PILOTE */
-        .bio-lvl { position: absolute; top: 10px; right: 20px; text-align: center; }
-        .bio-lvl span { display: block; font-size: 32px; font-weight: 700; color: #fff; }
-        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border-blue); border-radius: 4px; padding: 10px; text-align: center; transition: all 0.3s; }
-        .stat-box:hover { border-color: var(--active-blue); background: rgba(59, 130, 246, 0.05); }
-
-        /* HP BAR */
-        .hp-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 3px; overflow: hidden; border: 1px solid #1e293b; }
-        .hp-bar-fill { height: 100%; background: var(--hp-red); transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .bio-lvl { position: absolute; top: 10px; right: 20px; text-align: center; font-size: 10px; color: #64748b; font-weight: bold; }
+        .bio-lvl span { display: block; font-size: 32px; color: #fff; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border-blue); border-radius: 4px; padding: 8px; text-align: center; }
+        .hp-bar-bg { width: 100%; height: 6px; background: #000; border-radius: 3px; border: 1px solid #1e293b; overflow: hidden; }
+        .hp-bar-fill { height: 100%; background: var(--hp-red); transition: width 0.4s ease-out; }
 
         /* CENTRE : MISSION */
         .mission-viewport { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .mission-text { font-size: 72px; font-weight: 700; letter-spacing: -2px; transition: transform 0.3s; }
-        .storage-zone { height: 180px; border-top: 1px solid var(--border-blue); padding: 12px; display: grid; grid-template-columns: 1fr 180px; gap: 15px; background: rgba(0,0,0,0.2); }
+        .mission-text { font-size: 72px; font-weight: 700; text-transform: uppercase; }
+        .storage-zone { height: 180px; border-top: 1px solid var(--border-blue); padding: 12px; display: grid; grid-template-columns: 1fr 180px; gap: 15px; }
         .slot { aspect-ratio: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-blue); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; }
-        .slot:hover { transform: scale(1.1); border-color: var(--active-blue); z-index: 10; }
-        .slot-active { border-color: var(--active-blue); box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+        .slot:hover { border-color: var(--active-blue); transform: scale(1.05); }
+        .slot-equipped { border-color: var(--active-blue); box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2); }
 
-        /* BOUTON RELANCER */
         .btn-relancer { 
             width: 100%; height: 70px; background: linear-gradient(180deg, #3259ce, #1e3a8a); 
             border-radius: 6px; border: 1px solid #4a74e8; color: white; font-weight: 700; font-size: 24px;
-            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: 0.2s;
+            text-transform: uppercase; cursor: pointer; transition: 0.2s;
         }
-        .btn-relancer:hover { filter: brightness(1.2); box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-        .btn-relancer:active { transform: scale(0.95); }
+        .btn-relancer:active { transform: scale(0.96); }
 
-        /* DROITE : LOGS */
-        .log-area { flex-grow: 1; padding: 10px 16px; font-size: 13px; color: #8ea5d9; overflow-y: auto; display: flex; flex-direction: column-reverse; scroll-behavior: smooth; }
+        /* DROITE : JOURNAL */
+        .log-area { flex-grow: 1; padding: 12px; font-size: 13px; color: #8ea5d9; overflow-y: auto; display: flex; flex-direction: column-reverse; }
         .tabs { height: 50px; border-top: 1px solid var(--border-blue); display: flex; }
-        .tab-btn { flex: 1; border: none; background: transparent; color: #64748b; font-weight: 700; font-size: 12px; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
-        .tab-btn:hover { color: white; }
-        .tab-btn.active { color: white; border-bottom: 3px solid var(--active-blue); background: rgba(59, 130, 246, 0.05); }
+        .tab-btn { flex: 1; background: transparent; border: none; color: #64748b; font-weight: 700; font-size: 12px; text-transform: uppercase; cursor: pointer; }
+        .tab-btn.active { color: white; border-bottom: 3px solid var(--active-blue); }
 
         /* MODALS */
-        .modal-full { position: fixed; inset: 0; background: rgba(2, 5, 14, 0.98); z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .avatar-btn { font-size: 75px; padding: 25px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-blue); border-radius: 16px; cursor: pointer; transition: 0.3s; }
-        .avatar-btn:hover { transform: scale(1.15) rotate(5deg); border-color: var(--active-blue); box-shadow: 0 0 30px rgba(59, 130, 246, 0.4); }
-
-        .float-text { position: absolute; font-weight: 800; color: var(--fusion-gold); animation: floatUp 1s forwards; pointer-events: none; z-index: 1000; }
+        .modal-full { position: fixed; inset: 0; background: var(--bg-deep); z-index: 50000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .avatar-btn { font-size: 70px; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-blue); border-radius: 12px; cursor: pointer; transition: 0.3s; }
+        .avatar-btn:hover { border-color: var(--active-blue); transform: scale(1.1); }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -85,9 +69,9 @@
 
     <div id="laser-fx" class="laser-line"></div>
 
-    <div id="boot-screen" class="modal-full anim-panel">
-        <h1 class="text-4xl font-bold mb-12 tracking-widest text-blue-400">CHOISIR UNE UNITÉ</h1>
-        <div class="grid grid-cols-3 gap-8">
+    <div id="boot-screen" class="modal-full">
+        <h1 class="text-3xl font-bold mb-10 tracking-widest text-blue-400">UNITÉ DE DÉPART</h1>
+        <div class="grid grid-cols-3 gap-6">
             <button class="avatar-btn" onclick="Core.selectSpecies('🐙')">🐙</button>
             <button class="avatar-btn" onclick="Core.selectSpecies('🐹')">🐹</button>
             <button class="avatar-btn" onclick="Core.selectSpecies('🦊')">🦊</button>
@@ -95,75 +79,55 @@
             <button class="avatar-btn" onclick="Core.selectSpecies('🐕')">🐕</button>
             <button class="avatar-btn" onclick="Core.selectSpecies('🐱')">🐱</button>
         </div>
-        <button onclick="Core.hardReset()" class="mt-20 text-[10px] text-gray-600 uppercase hover:text-red-500 transition">Effacer les données cloud</button>
+        <button onclick="Core.hardReset()" class="mt-20 text-[10px] text-gray-600 uppercase hover:text-red-500">Réinitialiser Système</button>
     </div>
 
     <div id="game-ui" class="layout blur">
-        
-        <div class="panel anim-panel">
-            <div class="p-4 flex justify-between">
-                <span class="text-xs font-bold text-blue-300 uppercase">PILOTE</span>
-                <span id="ui-pseudo" class="text-xs font-black text-blue-500">NARCISSE</span>
+        <div class="panel">
+            <div class="p-4 flex justify-between border-b border-slate-800"><span class="text-xs font-bold text-blue-300">PILOTE</span><span id="ui-pseudo" class="text-xs font-bold text-blue-500">NARCISSE</span></div>
+            <div class="bio-zone flex-grow flex flex-col items-center justify-center relative">
+                <div class="bio-lvl">NIVEAU<span id="ui-lvl">1</span></div>
+                <div id="ui-avatar-display" class="anim-breathe" style="font-size: 130px;">🐙</div>
             </div>
-            <div class="bio-zone">
-                <div class="bio-lvl text-gray-500 font-bold text-[10px]">NIVEAU<span id="ui-lvl">1</span></div>
-                <div id="ui-avatar-display" class="anim-breathe" style="font-size: 130px; margin-top: 20px;">🐙</div>
-            </div>
-            <div class="px-6 mb-6">
+            <div class="px-6 mb-4">
                 <div class="flex justify-between text-[11px] font-bold mb-1 uppercase">INTÉGRITÉ <span id="ui-hp-txt">100/100</span></div>
                 <div class="hp-bar-bg"><div id="ui-hp-fill" class="hp-bar-fill" style="width:100%"></div></div>
             </div>
-            <div class="px-6 pb-8 grid grid-cols-2 gap-4">
-                <div class="stat-box">
-                    <div class="text-[9px] text-gray-500 font-bold uppercase">PUISSANCE</div>
-                    <div id="ui-atk" class="text-2xl font-bold text-blue-400">10</div>
-                </div>
-                <div class="stat-box">
-                    <div class="text-[9px] text-gray-500 font-bold uppercase">BLINDAGE</div>
-                    <div id="ui-def" class="text-2xl font-bold text-blue-400">0</div>
-                </div>
+            <div class="px-6 pb-6 grid grid-cols-2 gap-3">
+                <div class="stat-box"><div class="text-[9px] text-gray-500 font-bold">PUISSANCE</div><div id="ui-atk" class="text-2xl font-bold text-blue-400">10</div></div>
+                <div class="stat-box"><div class="text-[9px] text-gray-500 font-bold">BLINDAGE</div><div id="ui-def" class="text-2xl font-bold text-blue-400">0</div></div>
             </div>
-            <div class="mt-auto p-4 border-t border-slate-900 grid grid-cols-3 gap-2 bg-black/20">
-                <div id="slot-weapon" class="slot">⚔️</div>
-                <div id="slot-head" class="slot">🛡️</div>
-                <div id="slot-pet" class="slot">🐾</div>
+            <div class="p-4 border-t border-slate-800 grid grid-cols-3 gap-2 bg-black/20">
+                <div id="slot-weapon" class="slot">⚔️</div><div id="slot-head" class="slot">🛡️</div><div id="slot-pet" class="slot">🐾</div>
             </div>
         </div>
 
-        <div class="panel anim-panel" id="center-panel">
-            <div class="p-4 flex justify-between">
-                <span class="text-xs font-bold text-blue-300">ZONE <span id="ui-zone">1-1</span></span>
-                <div class="flex gap-6 font-bold text-sm">
-                    <span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span>
-                    <span class="text-purple-400">✨ <span id="ui-perls">0</span></span>
-                </div>
+        <div class="panel" id="center-panel">
+            <div class="p-4 flex justify-between border-b border-slate-800">
+                <span class="text-xs font-bold text-blue-300 uppercase">Zone <span id="ui-zone">1-1</span></span>
+                <div class="flex gap-4 font-bold text-xs"><span class="text-yellow-400">🪙 <span id="ui-gold">0</span></span><span class="text-purple-400">✨ <span id="ui-perls">0</span></span></div>
             </div>
             <div class="mission-viewport">
-                <div id="enemy-box" class="hidden text-center scale-110">
-                    <div id="ui-en-img" style="font-size: 160px; filter: drop-shadow(0 0 30px red);">👾</div>
-                </div>
+                <div id="enemy-box" class="hidden text-center"><div id="ui-en-img" style="font-size: 150px; filter: drop-shadow(0 0 20px red);">👾</div></div>
                 <div id="story-box" class="text-center">
-                    <div class="mission-text uppercase text-white">MISSION</div>
-                    <div class="mission-btn-sub">Secteur 1</div>
+                    <div class="mission-text">MISSION</div>
+                    <div class="mt-2 py-1 px-6 border border-slate-700 rounded-full text-xs text-gray-500 uppercase">Secteur 1</div>
                 </div>
             </div>
             <div class="storage-zone">
                 <div class="flex flex-col">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">STOCKAGE</span>
-                        <button onclick="Core.chest()" class="bg-purple-600 hover:bg-purple-500 text-white text-[9px] px-3 py-1 rounded font-bold transition">OUVRIR COFFRE (5✨)</button>
-                    </div>
-                    <div id="inv-grid" class="inv-grid overflow-y-auto pr-1"></div>
+                    <div class="flex justify-between items-center mb-2"><span class="text-[10px] text-gray-500 font-bold uppercase">Stockage</span><button onclick="Core.chest()" class="bg-purple-600 text-white text-[9px] px-3 py-1 rounded font-bold">OUVRIR COFFRE (5✨)</button></div>
+                    <div id="inv-grid" class="grid grid-cols-6 gap-2"></div>
                 </div>
                 <div class="flex flex-col justify-end">
                     <button id="main-btn" onclick="Core.processScanner()" class="btn-relancer">RELANCER</button>
-                    <div class="mt-2 text-[10px] text-gray-600 font-bold text-center">AUTO: <span id="ui-auto" class="text-blue-400">ON</span> VIT: <span id="ui-speed" class="text-blue-400">x2</span></div>
+                    <div class="mt-2 text-[10px] text-gray-600 font-bold text-center">AUTO: ON | VIT: x2</div>
                 </div>
             </div>
         </div>
 
-        <div class="panel anim-panel">
-            <div class="p-4 border-b border-slate-900"><span class="text-xs font-bold text-blue-300 uppercase">JOURNAL DE BORD</span></div>
+        <div class="panel">
+            <div class="p-4 border-b border-slate-800"><span class="text-xs font-bold text-blue-300 uppercase">JOURNAL DE BORD</span></div>
             <div id="logs" class="log-area"></div>
             <div class="tabs">
                 <button class="tab-btn active">AVENTURE</button>
@@ -173,33 +137,28 @@
     </div>
 
     <div id="hub-view" class="modal-full hidden">
-        <h2 class="text-5xl font-bold mb-16 text-white uppercase italic">Amélioration Base</h2>
-        <div class="grid grid-cols-1 gap-6 w-80">
-            <div onclick="Core.upgradeBase('hp')" class="stat-box cursor-pointer p-6"><div class="stat-label">INTÉGRITÉ</div><div class="text-2xl font-bold">+20 HP</div><div id="up-hp-cost" class="text-yellow-500 mt-2">100 🪙</div></div>
-            <div onclick="Core.upgradeBase('atk')" class="stat-box cursor-pointer p-6"><div class="stat-label">PUISSANCE</div><div class="text-2xl font-bold">+5 ATK</div><div id="up-atk-cost" class="text-yellow-500 mt-2">100 🪙</div></div>
-            <div onclick="Core.upgradeBase('def')" class="stat-box cursor-pointer p-6"><div class="stat-label">BLINDAGE</div><div class="text-2xl font-bold">+2 DEF</div><div id="up-def-cost" class="text-yellow-500 mt-2">100 🪙</div></div>
+        <h2 class="text-4xl font-bold mb-12 text-white italic">AMÉLIORATION DE BASE</h2>
+        <div class="grid grid-cols-1 gap-4 w-72">
+            <div onclick="Core.upgradeBase('hp')" class="stat-box cursor-pointer p-4"><div class="text-[10px] text-gray-500">INTÉGRITÉ</div><div class="text-xl font-bold">+20 HP</div><div id="up-hp-cost" class="text-yellow-500">100 🪙</div></div>
+            <div onclick="Core.upgradeBase('atk')" class="stat-box cursor-pointer p-4"><div class="text-[10px] text-gray-500">PUISSANCE</div><div class="text-xl font-bold">+5 ATK</div><div id="up-atk-cost" class="text-yellow-500">100 🪙</div></div>
+            <div onclick="Core.upgradeBase('def')" class="stat-box cursor-pointer p-4"><div class="text-[10px] text-gray-500">BLINDAGE</div><div class="text-xl font-bold">+2 DEF</div><div id="up-def-cost" class="text-yellow-500">100 🪙</div></div>
         </div>
-        <button onclick="UI.hideHub()" class="mt-12 text-blue-500 font-bold uppercase tracking-widest hover:text-white transition">Fermer Terminal</button>
+        <button onclick="UI.hideHub()" class="mt-10 text-blue-500 font-bold uppercase tracking-widest">Retour</button>
     </div>
 
     <script>
         const DATA = {
             enemies: [{n:"Drone", i:"🛸", h:50, a:5}, {n:"Xeno", i:"👾", h:70, a:9}],
-            items: [
-                {n:"Laser", e:"🔫", s:10, t:"weapon"},
-                {n:"Bouclier", e:"🛡️", s:20, t:"head"},
-                {n:"Sonde", e:"🤖", s:5, t:"pet"}
-            ],
-            rarities: ["r-common", "r-rare", "r-epic", "r-legend"]
+            items: [{n:"Canon", e:"🔫", s:10, t:"weapon"}, {n:"Blindage", e:"🛡️", s:20, t:"head"}, {n:"Bot", e:"🤖", s:5, t:"pet"}]
         };
 
         let Player = { char:null, gold:0, perls:20, stats:{hp:0, atk:0, def:0}, inv:[], eq:{weapon:null, head:null, pet:null} };
-        let Run = { active:false, day:0, hp:100, max:100, atk:10, def:0, auto:true, speed:2 };
+        let Run = { active:false, day:0, hp:100, max:100, atk:10, def:0, auto:true, speed:2, processing:false };
         let Combat = { active:false, h:0, m:0, a:0 };
 
         const Core = {
             initGame: () => {
-                let save = localStorage.getItem('distory_v52_anim');
+                let save = localStorage.getItem('distory_v53');
                 if(save) {
                     Player = JSON.parse(save);
                     if(Player.char) {
@@ -219,23 +178,25 @@
             },
 
             processScanner: () => {
-                if(!Run.active) { Run.active = true; Run.day = 1; UI.log("Initialisation du saut..."); UI.scene('adv'); }
-                if(Combat.active) return;
+                if(Run.processing || Combat.active) return;
+                Run.processing = true;
+
+                if(!Run.active) { Run.active = true; Run.day = 1; UI.log("Initialisation mission..."); UI.scene('adv'); }
                 
                 // Animation Laser
                 const laser = document.getElementById('laser-fx');
                 laser.classList.add('scanning');
-                setTimeout(() => laser.classList.remove('scanning'), 700);
+                setTimeout(() => laser.classList.remove('scanning'), 600);
 
-                Run.day++;
-                Core.updateStats();
-                if(Run.day % 5 === 0) Core.startCombat();
-                else { 
-                    Player.gold += 20; 
-                    UI.log("Ressources détectées (+20 Or)"); 
-                }
-                UI.refresh();
-                if(Run.auto && Run.active) setTimeout(Core.processScanner, 1200/Run.speed);
+                setTimeout(() => {
+                    Run.day++;
+                    Core.updateStats();
+                    if(Run.day % 5 === 0) Core.startCombat();
+                    else { Player.gold += 20; UI.log("> Ressources détectées (+20 Or)"); }
+                    UI.refresh();
+                    Run.processing = false;
+                    if(Run.auto && Run.active) setTimeout(Core.processScanner, 800/Run.speed);
+                }, 700);
             },
 
             startCombat: () => {
@@ -250,22 +211,21 @@
             combatTurn: () => {
                 if(!Combat.active) return;
                 Combat.h -= Run.atk;
-                UI.fxShake('ui-en-img');
+                UI.shake('ui-en-img');
 
                 if(Combat.h <= 0) { 
-                    Combat.active = false; 
-                    Player.gold += 50;
-                    UI.log("Victoire ! Zone sécurisée."); 
+                    Combat.active = false; Player.gold += 50;
+                    UI.log("> Victoire ! Secteur nettoyé."); 
                     UI.scene('adv'); UI.refresh(); return; 
                 }
 
                 setTimeout(() => {
                     Run.hp -= Math.max(1, Combat.a - Run.def);
-                    UI.fxShake('center-panel');
+                    UI.shake('center-panel');
                     UI.refresh();
                     if(Run.hp <= 0) { 
                         Combat.active = false; Run.active = false; 
-                        UI.log("Echec mission. Structure endommagée."); 
+                        UI.log("> Echec. Structure endommagée."); 
                         UI.scene('adv'); 
                     } else setTimeout(Core.combatTurn, 800/Run.speed);
                 }, 400/Run.speed);
@@ -284,10 +244,8 @@
             chest: () => {
                 if(Player.perls >= 5) {
                     Player.perls -= 5;
-                    let newItem = {...DATA.items[Math.floor(Math.random()*DATA.items.length)], uid: Date.now()};
-                    Player.inv.push(newItem);
-                    Core.checkFusion();
-                    UI.refresh(); Core.saveGame();
+                    Player.inv.push({...DATA.items[Math.floor(Math.random()*DATA.items.length)], uid: Date.now()});
+                    Core.checkFusion(); UI.refresh(); Core.saveGame();
                 }
             },
 
@@ -297,8 +255,8 @@
                     if(counts[n] >= 3) {
                         let it = Player.inv.find(x => x.n === n);
                         Player.inv = Player.inv.filter(x => x.n !== n);
-                        Player.inv.push({...it, s: Math.floor(it.s * 2.5), n: it.n});
-                        UI.log("FUSION RÉUSSIE : " + n + " NIVEAU SUPÉRIEUR");
+                        Player.inv.push({...it, s: Math.floor(it.s * 2.2), n: it.n});
+                        UI.log("> FUSION : " + n + " AMÉLIORÉ");
                         Core.checkFusion(); break;
                     }
                 }
@@ -315,13 +273,10 @@
 
             upgradeBase: (s) => {
                 let c = 100 + (Player.stats[s] * 50);
-                if(Player.gold >= c) {
-                    Player.gold -= c; Player.stats[s]++;
-                    Core.updateStats(); UI.refresh(); Core.saveGame();
-                }
+                if(Player.gold >= c) { Player.gold -= c; Player.stats[s]++; Core.updateStats(); UI.refresh(); Core.saveGame(); }
             },
 
-            saveGame: () => localStorage.setItem('distory_v52_anim', JSON.stringify(Player)),
+            saveGame: () => localStorage.setItem('distory_v53', JSON.stringify(Player)),
             hardReset: () => { localStorage.clear(); location.reload(); }
         };
 
@@ -335,23 +290,17 @@
                 document.getElementById('ui-hp-txt').innerText = Math.floor(Run.hp) + "/" + Run.max;
                 document.getElementById('ui-hp-fill').style.width = (Run.hp/Run.max*100) + "%";
                 document.getElementById('ui-avatar-display').innerText = Player.char;
-                
                 let g = document.getElementById('inv-grid'); g.innerHTML = '';
                 Player.inv.forEach(i => {
                     let d = document.createElement('div'); d.className = "slot"; d.innerText = i.e;
-                    d.onclick = () => Core.equip(i.uid);
-                    g.appendChild(d);
+                    d.onclick = () => Core.equip(i.uid); g.appendChild(d);
                 });
-
                 const set = (id, it) => {
                     let el = document.getElementById(id);
-                    if(it) { el.innerText = it.e; el.classList.add('slot-active'); }
-                    else { el.innerText = ""; el.classList.remove('slot-active'); }
+                    if(it) { el.innerText = it.e; el.classList.add('slot-equipped'); }
+                    else { el.innerText = ""; el.classList.remove('slot-equipped'); }
                 };
-                set('slot-weapon', Player.eq.weapon);
-                set('slot-head', Player.eq.head);
-                set('slot-pet', Player.eq.pet);
-
+                set('slot-weapon', Player.eq.weapon); set('slot-head', Player.eq.head); set('slot-pet', Player.eq.pet);
                 document.getElementById('up-hp-cost').innerText = (100 + Player.stats.hp * 50) + " 🪙";
                 document.getElementById('up-atk-cost').innerText = (100 + Player.stats.atk * 50) + " 🪙";
                 document.getElementById('up-def-cost').innerText = (100 + Player.stats.def * 50) + " 🪙";
@@ -362,21 +311,15 @@
             },
             log: (m) => {
                 let l = document.getElementById('logs');
-                l.innerHTML = `<div class="log-entry">> ${m}</div>` + l.innerHTML;
+                l.innerHTML = `<div class="mb-1">${m}</div>` + l.innerHTML;
             },
-            fxShake: (id) => {
+            shake: (id) => {
                 const el = document.getElementById(id);
-                el.classList.remove('anim-shake');
-                void el.offsetWidth;
-                el.classList.add('anim-shake');
+                el.classList.remove('anim-shake'); void el.offsetWidth; el.classList.add('anim-shake');
             },
             showHub: () => document.getElementById('hub-view').classList.remove('hidden'),
             hideHub: () => document.getElementById('hub-view').classList.add('hidden'),
-            modal: (t) => {
-                if(t==='settings') {
-                    UI.showHub(); // Réutilise l'esthétique du hub pour les options
-                }
-            }
+            modal: (t) => { if(t==='settings') UI.showHub(); }
         };
         window.onload = Core.initGame;
     </script>
