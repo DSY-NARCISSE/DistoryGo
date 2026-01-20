@@ -3,1068 +3,501 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distory Go - V56 UNLIMITED</title>
+    <title>Distory Go - V57 IRONCLAD</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* === CONFIGURATION GRAPHIQUE GLOBALE === */
         :root {
             --bg-dark: #02050e;
-            --panel-bg: rgba(10, 15, 30, 0.95);
+            --panel-bg: rgba(10, 15, 30, 0.98);
             --border-color: #1e293b;
             --highlight-blue: #3b82f6;
             --highlight-purple: #8b5cf6;
-            --text-main: #94a3b8;
-            --text-light: #f8fafc;
             --hp-red: #be123c;
             --gold: #fbbf24;
         }
 
         body {
             background-color: var(--bg-dark);
-            color: var(--text-light);
+            color: #f8fafc;
             font-family: 'Rajdhani', sans-serif;
             height: 100vh;
             overflow: hidden;
             user-select: none;
-            background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, #02050e 100%);
         }
 
-        /* === ANIMATIONS (KEYFRAMES) === */
-        @keyframes scanline-move {
-            0% { top: -5%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 105%; opacity: 0; }
-        }
-
-        @keyframes hero-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        @keyframes attack-lunge {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(80px) scale(1.1); }
-            100% { transform: translateX(0); }
-        }
-
-        @keyframes hit-shake {
-            0% { transform: translate(0, 0); filter: brightness(1); }
-            20% { transform: translate(-5px, 5px); filter: brightness(2) sepia(1) hue-rotate(-50deg) saturate(5); }
-            40% { transform: translate(5px, -5px); }
-            60% { transform: translate(-5px, 5px); }
-            80% { transform: translate(5px, -5px); }
-            100% { transform: translate(0, 0); filter: brightness(1); }
-        }
-
-        @keyframes loot-pop {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* === CLASSES UTILITAIRES ANIMATIONS === */
-        .anim-scanning {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--highlight-blue);
-            box-shadow: 0 0 20px var(--highlight-blue);
-            z-index: 50;
-            pointer-events: none;
-            animation: scanline-move 0.8s linear forwards;
-        }
-
-        .anim-floating {
-            animation: hero-float 4s ease-in-out infinite;
-        }
-
-        .anim-attacking {
-            animation: attack-lunge 0.3s ease-in-out forwards;
-        }
-
-        .anim-hit {
-            animation: hit-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
-        }
-
-        /* === LAYOUT & PANNEAUX === */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 350px 1fr 320px;
-            gap: 16px;
-            height: 100vh;
-            padding: 16px;
-            transition: filter 0.3s ease;
-        }
-
-        .game-panel {
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .panel-header {
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--highlight-blue);
-            text-transform: uppercase;
-        }
-
-        /* === GAUCHE : PILOTE === */
-        .bio-container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 20px;
-        }
-
-        .hero-avatar {
-            font-size: 140px;
-            filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
-            transition: transform 0.2s;
-        }
-
-        .level-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            text-align: right;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 0 20px 20px 20px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .stat-title { font-size: 10px; color: var(--text-main); font-weight: 700; text-transform: uppercase; }
-        .stat-value { font-size: 24px; font-weight: 700; color: white; }
-
-        .hp-bar-container {
-            width: 100%;
-            padding: 0 20px 10px 20px;
-        }
+        /* --- ANIMATIONS --- */
+        @keyframes hero-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes scan-laser { 0% { top: -10px; opacity: 0; } 10% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         
-        .hp-track {
-            width: 100%;
-            height: 8px;
-            background: #000;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
+        .anim-float { animation: hero-float 3s ease-in-out infinite; }
+        .anim-shake { animation: shake 0.2s ease-in-out; }
+        
+        .laser-line {
+            position: absolute; left: 0; width: 100%; height: 2px;
+            background: var(--highlight-blue); box-shadow: 0 0 15px var(--highlight-blue);
+            z-index: 50; pointer-events: none; opacity: 0;
+        }
+        .scanning { animation: scan-laser 0.5s linear forwards; }
+
+        /* --- LAYOUT --- */
+        .layout { display: grid; grid-template-columns: 350px 1fr 320px; gap: 12px; height: 100vh; padding: 12px; transition: filter 0.3s; }
+        .layout.blur { filter: blur(10px); pointer-events: none; }
+
+        .panel {
+            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
-        .hp-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #9f1239, #e11d48);
-            width: 100%;
-            transition: width 0.3s ease-out;
+        .header {
+            padding: 10px 15px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; color: var(--highlight-blue); text-transform: uppercase; font-size: 14px;
         }
 
-        .equipment-slots {
-            display: flex;
-            gap: 10px;
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
-            border-top: 1px solid var(--border-color);
-        }
+        /* --- GAUCHE --- */
+        .bio-zone { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .hero-avatar { font-size: 130px; filter: drop-shadow(0 0 20px rgba(59,130,246,0.4)); }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 20px 20px; }
+        .stat-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 8px; text-align: center; border-radius: 4px; }
+        .stat-val { font-size: 24px; font-weight: 800; color: #e2e8f0; }
+        .stat-lbl { font-size: 10px; color: #64748b; font-weight: 700; text-transform: uppercase; }
 
-        /* === CENTRE : MISSION === */
-        .mission-display {
-            flex-grow: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+        .hp-zone { padding: 0 20px 10px; }
+        .hp-bar { width: 100%; height: 6px; background: black; border: 1px solid #334155; border-radius: 3px; overflow: hidden; }
+        .hp-fill { height: 100%; background: var(--hp-red); width: 100%; transition: width 0.3s; }
 
-        .mission-title {
-            font-size: 80px;
-            font-weight: 900;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
+        .equip-zone { padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: rgba(0,0,0,0.2); }
 
-        .mission-subtitle {
-            font-size: 14px;
-            color: var(--highlight-blue);
-            border: 1px solid var(--highlight-blue);
-            padding: 4px 20px;
-            border-radius: 20px;
-            margin-top: 10px;
-            background: rgba(59, 130, 246, 0.1);
-        }
+        /* --- CENTRE --- */
+        .viewport { flex-grow: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .mission-title { font-size: 70px; font-weight: 900; line-height: 1; text-transform: uppercase; }
+        .mission-sub { font-size: 12px; color: var(--highlight-blue); border: 1px solid var(--highlight-blue); padding: 2px 15px; border-radius: 20px; margin-top: 10px; }
 
-        .enemy-display {
-            font-size: 160px;
-            filter: drop-shadow(0 0 40px rgba(220, 38, 38, 0.6));
-            transition: transform 0.1s;
-        }
+        .enemy-box { text-align: center; display: none; }
+        .enemy-box.active { display: block; }
+        .enemy-sprite { font-size: 140px; filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.5)); }
 
-        .bottom-action-area {
-            height: 200px;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid var(--border-color);
-            padding: 15px;
-            display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 15px;
+        .actions { height: 200px; border-top: 1px solid var(--border-color); padding: 15px; display: grid; grid-template-columns: 1fr 180px; gap: 15px; background: rgba(0,0,0,0.2); }
+        
+        .inv-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; align-content: start; }
+        .slot { 
+            aspect-ratio: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); 
+            border-radius: 4px; display: flex; align-items: center; justify-content: center; 
+            font-size: 22px; cursor: pointer; transition: 0.1s; 
         }
+        .slot:hover { border-color: var(--highlight-blue); background: rgba(59,130,246,0.1); }
+        .slot.equipped { border-color: var(--gold); box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.2); }
 
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            align-content: start;
+        .btn-main { 
+            width: 100%; height: 60px; background: linear-gradient(180deg, #3b82f6, #1d4ed8); 
+            border: 1px solid #60a5fa; border-radius: 6px; color: white; font-size: 22px; 
+            font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.1s;
         }
+        .btn-main:active { transform: translateY(2px); filter: brightness(0.9); }
+        .btn-main:disabled { filter: grayscale(1); opacity: 0.5; cursor: not-allowed; }
 
-        .item-slot {
-            aspect-ratio: 1;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* --- DROITE --- */
+        .logs { flex-grow: 1; padding: 10px; overflow-y: auto; font-family: monospace; font-size: 12px; color: #94a3b8; display: flex; flex-direction: column-reverse; }
+        .log-line { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 2px; }
 
-        .item-slot:hover {
-            border-color: var(--highlight-blue);
-            transform: scale(1.05);
-            background: rgba(59, 130, 246, 0.1);
-        }
+        /* --- MODALS --- */
+        .modal-full { position: fixed; inset: 0; background: var(--bg-dark); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .avatar-opt { font-size: 60px; padding: 20px; background: rgba(255,255,255,0.05); border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: 0.2s; }
+        .avatar-opt:hover { border-color: var(--highlight-blue); transform: scale(1.1); }
 
-        .item-slot.equipped {
-            border-color: var(--gold);
-            box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.2);
-        }
-
-        .main-btn {
-            width: 100%;
-            height: 70px;
-            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
-            border: 1px solid #60a5fa;
-            border-radius: 8px;
-            color: white;
-            font-size: 24px;
-            font-weight: 800;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.1s;
-            box-shadow: 0 4px 0 #1e40af;
-        }
-
-        .main-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #1e40af;
-        }
-
-        .main-btn:disabled {
-            filter: grayscale(100%);
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .controls-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        .control-toggle {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-main);
-            background: none;
-            border: 1px solid var(--border-color);
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .control-toggle.active {
-            color: var(--highlight-blue);
-            border-color: var(--highlight-blue);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        /* === DROITE : JOURNAL === */
-        .log-container {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column-reverse;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .log-entry {
-            margin-bottom: 6px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding-bottom: 4px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            height: 50px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .nav-tab {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-weight: 700;
-            font-size: 12px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .nav-tab:hover { color: white; }
-        .nav-tab.active {
-            color: white;
-            border-bottom: 3px solid var(--highlight-blue);
-            background: rgba(255,255,255,0.02);
-        }
-
-        /* === MODALS & OVERLAYS === */
-        .modal-fullscreen {
-            position: fixed;
-            inset: 0;
-            background-color: var(--bg-dark);
-            z-index: 5000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .avatar-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .avatar-option {
-            font-size: 60px;
-            padding: 30px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .avatar-option:hover {
-            transform: scale(1.1);
-            border-color: var(--highlight-blue);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 6000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-box {
-            background: #0f172a;
-            border: 1px solid var(--highlight-blue);
-            padding: 40px;
-            border-radius: 12px;
-            text-align: center;
-            width: 400px;
-            max-width: 90%;
-        }
-
-        /* UTILS */
         .hidden { display: none !important; }
-        .text-gold { color: var(--gold); }
-        .text-purple { color: var(--highlight-purple); }
-        
     </style>
 </head>
 <body>
 
-    <div id="laser-layer"></div>
+    <div id="laser" class="laser-line"></div>
 
-    <div id="boot-screen" class="modal-fullscreen">
-        <h1 class="text-4xl font-bold text-white mb-12 tracking-widest text-center">INITIALISATION DU PILOTE</h1>
-        
-        <div class="avatar-selection-grid">
-            <button class="avatar-option" onclick="Game.selectAvatar('🐙')">🐙</button>
-            <button class="avatar-option" onclick="Game.selectAvatar('🐹')">🐹</button>
-            <button class="avatar-option" onclick="Game.selectAvatar('🦊')">🦊</button>
-            <button class="avatar-option" onclick="Game.selectAvatar('🦌')">🦌</button>
-            <button class="avatar-option" onclick="Game.selectAvatar('🐕')">🐕</button>
-            <button class="avatar-option" onclick="Game.selectAvatar('🐱')">🐱</button>
+    <div id="boot-screen" class="modal-full">
+        <h1 class="text-4xl font-black text-white mb-10 tracking-widest">SÉLECTION DU PILOTE</h1>
+        <div class="avatar-grid">
+            <button class="avatar-opt" onclick="Game.start('🐙')">🐙</button>
+            <button class="avatar-opt" onclick="Game.start('🐹')">🐹</button>
+            <button class="avatar-opt" onclick="Game.start('🦊')">🦊</button>
+            <button class="avatar-opt" onclick="Game.start('🦌')">🦌</button>
+            <button class="avatar-opt" onclick="Game.start('🐕')">🐕</button>
+            <button class="avatar-opt" onclick="Game.start('🐱')">🐱</button>
         </div>
-
-        <button onclick="Game.hardReset()" class="text-xs text-gray-500 uppercase hover:text-red-500 transition border-b border-transparent hover:border-red-500">
-            Effacer les données locales
-        </button>
+        <button onclick="Game.resetData()" class="text-xs text-red-500 uppercase border-b border-red-900 hover:text-white">Réinitialiser les données</button>
     </div>
 
-    <div id="game-interface" class="main-layout blur">
-        
-        <div class="game-panel">
-            <div class="panel-header">
-                <span>PILOTE</span>
-                <span id="ui-pseudo" class="text-blue-400">COMMANDANT</span>
-            </div>
-
-            <div class="bio-container">
-                <div class="level-badge">
-                    <span class="text-[10px] text-gray-500 uppercase font-bold">Niveau</span>
-                    <span id="ui-level" class="block text-3xl font-bold text-white">1</span>
+    <div id="game-ui" class="layout blur">
+        <div class="panel">
+            <div class="header"><span>PILOTE</span> <span id="ui-name" class="text-blue-400">...</span></div>
+            <div class="bio-zone">
+                <div class="absolute top-2 right-4 text-right">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase">Niveau</div>
+                    <div id="ui-lvl" class="text-2xl font-bold">1</div>
                 </div>
-                <div id="ui-avatar" class="hero-avatar anim-floating">?</div>
+                <div id="ui-avatar" class="hero-avatar anim-float">?</div>
             </div>
-
-            <div class="hp-bar-container">
-                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1 uppercase">
-                    <span>Intégrité Structurelle</span>
-                    <span id="ui-hp-text">100/100</span>
-                </div>
-                <div class="hp-track">
-                    <div id="ui-hp-fill" class="hp-fill"></div>
-                </div>
+            <div class="hp-zone">
+                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1 uppercase"><span>Intégrité</span> <span id="ui-hp-txt">100/100</span></div>
+                <div class="hp-bar"><div id="ui-hp-fill" class="hp-fill"></div></div>
             </div>
-
             <div class="stat-grid">
-                <div class="stat-card">
-                    <div class="stat-title">PUISSANCE</div>
-                    <div id="ui-atk" class="stat-value text-blue-400">10</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-title">BLINDAGE</div>
-                    <div id="ui-def" class="stat-value text-blue-400">0</div>
-                </div>
+                <div class="stat-box"><div class="stat-lbl">PUISSANCE</div><div id="ui-atk" class="stat-val text-blue-400">10</div></div>
+                <div class="stat-box"><div class="stat-lbl">BLINDAGE</div><div id="ui-def" class="stat-val text-blue-400">0</div></div>
             </div>
-
-            <div class="equipment-slots">
-                <div id="slot-weapon" class="item-slot" style="flex:1;">⚔️</div>
-                <div id="slot-head" class="item-slot" style="flex:1;">🛡️</div>
-                <div id="slot-pet" class="item-slot" style="flex:1;">🐾</div>
+            <div class="equip-zone">
+                <div id="slot-w" class="slot" style="flex:1">⚔️</div>
+                <div id="slot-h" class="slot" style="flex:1">🛡️</div>
+                <div id="slot-p" class="slot" style="flex:1">🐾</div>
             </div>
         </div>
 
-        <div class="game-panel">
-            <div class="panel-header">
+        <div class="panel">
+            <div class="header">
                 <span>ZONE <span id="ui-zone">1-1</span></span>
-                <div class="flex gap-4">
-                    <span class="text-gold font-bold">🪙 <span id="ui-gold">0</span></span>
-                    <span class="text-purple font-bold">✨ <span id="ui-gems">0</span></span>
-                </div>
+                <div class="flex gap-4"><span class="text-gold">🪙 <span id="ui-gold">0</span></span><span class="text-purple-400">✨ <span id="ui-gems">0</span></span></div>
             </div>
-
-            <div class="mission-display" id="mission-viewport">
+            
+            <div class="viewport">
                 <div id="view-mission" class="text-center">
                     <div class="mission-title">MISSION</div>
-                    <div class="mission-subtitle">SECTEUR D'EXPLORATION</div>
+                    <div class="mission-sub">SECTEUR ACTIF</div>
                 </div>
-                
-                <div id="view-combat" class="text-center hidden">
-                    <div id="enemy-sprite" class="enemy-display">👾</div>
-                    <div class="mt-4 inline-block bg-red-900/50 border border-red-500 px-4 py-1 rounded text-red-300 font-bold uppercase text-sm">
-                        Cible Détectée
-                    </div>
+                <div id="view-combat" class="enemy-box">
+                    <div id="ui-enemy-icon" class="enemy-sprite">👾</div>
+                    <div class="mt-4 text-red-400 font-bold uppercase tracking-widest text-sm bg-red-900/30 px-4 py-1 rounded">Cible Hostile</div>
                 </div>
             </div>
 
-            <div class="bottom-action-area">
-                <div class="flex flex-col h-full">
+            <div class="actions">
+                <div class="flex flex-col">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] font-bold text-gray-500 uppercase">SOUTE MATÉRIEL</span>
-                        <button onclick="Game.openChest()" class="bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold px-2 py-1 rounded transition">
-                            COFFRE (5✨)
-                        </button>
+                        <span class="text-[10px] font-bold text-gray-500 uppercase">SOUTE</span>
+                        <button onclick="Game.chest()" class="bg-purple-600 hover:bg-purple-500 text-white text-[10px] px-2 py-1 rounded font-bold uppercase">COFFRE (5✨)</button>
                     </div>
-                    <div id="inventory-grid" class="inventory-grid">
-                        </div>
+                    <div id="inv-grid" class="inv-grid"></div>
                 </div>
-
-                <div class="flex flex-col justify-end">
-                    <button id="btn-action" onclick="Game.triggerAction()" class="main-btn">
-                        LANCER
-                    </button>
-                    
-                    <div class="controls-row">
-                        <button id="btn-auto" onclick="Game.toggleAuto()" class="control-toggle">AUTO: OFF</button>
-                        <button id="btn-speed" onclick="Game.toggleSpeed()" class="control-toggle">VIT: x1</button>
-                        <button onclick="UI.openSettings()" class="control-toggle">⚙️</button>
+                <div class="flex flex-col justify-end gap-2">
+                    <button id="btn-action" onclick="Game.action()" class="btn-main">LANCER</button>
+                    <div class="flex justify-between">
+                        <button id="btn-auto" onclick="Game.toggleAuto()" class="text-[10px] border border-blue-900 px-2 py-1 rounded uppercase text-gray-400 hover:text-white">AUTO: OFF</button>
+                        <button id="btn-speed" onclick="Game.toggleSpeed()" class="text-[10px] border border-blue-900 px-2 py-1 rounded uppercase text-gray-400 hover:text-white">VIT: x1</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="game-panel">
-            <div class="panel-header">
-                <span>TERMINAL</span>
+        <div class="panel">
+            <div class="header"><span>JOURNAL</span> <button onclick="UI.toggleHub()" class="text-xs text-gray-500 hover:text-white">⚙️</button></div>
+            <div id="logs" class="logs">
+                <div class="log-line">> Système en attente.</div>
             </div>
-
-            <div id="log-container" class="log-container">
-                <div class="log-entry">> Système initialisé.</div>
-            </div>
-
-            <div class="nav-tabs">
-                <button class="nav-tab active" onclick="UI.switchTab('logs')">JOURNAL</button>
-                <button class="nav-tab" onclick="UI.switchTab('hub')">BASE</button>
+            <div class="flex border-t border-gray-800">
+                <button class="flex-1 p-3 text-xs font-bold text-white bg-white/5 border-b-2 border-blue-500">AVENTURE</button>
+                <button onclick="UI.toggleHub()" class="flex-1 p-3 text-xs font-bold text-gray-500 hover:text-white">BASE</button>
             </div>
         </div>
     </div>
 
-    <div id="hub-overlay" class="modal-fullscreen hidden">
-        <h2 class="text-4xl font-bold text-white mb-10 italic">AMÉLIORATION DE LA BASE</h2>
-        
+    <div id="hub-view" class="fixed inset-0 bg-[#02050e] z-40 hidden flex-col items-center justify-center">
+        <h2 class="text-4xl font-bold text-white mb-10 uppercase italic">Maintenance Base</h2>
         <div class="grid grid-cols-1 gap-6 w-80">
-            <div onclick="Game.upgradeStat('hp')" class="stat-card cursor-pointer hover:border-blue-500 transition p-6 flex justify-between items-center">
-                <div class="text-left">
-                    <div class="stat-title">INTÉGRITÉ</div>
-                    <div class="text-xl font-bold text-white">+20 PV</div>
-                </div>
-                <div id="cost-hp" class="text-gold font-bold">100 🪙</div>
+            <div onclick="Game.upgrade('hp')" class="bg-white/5 border border-blue-900 p-4 rounded hover:border-blue-500 cursor-pointer flex justify-between">
+                <div><div class="text-xs text-gray-500 font-bold">VITALITÉ</div><div class="text-xl font-bold">+20 PV</div></div>
+                <div id="cost-hp" class="text-gold font-bold">100</div>
             </div>
-
-            <div onclick="Game.upgradeStat('atk')" class="stat-card cursor-pointer hover:border-blue-500 transition p-6 flex justify-between items-center">
-                <div class="text-left">
-                    <div class="stat-title">PUISSANCE</div>
-                    <div class="text-xl font-bold text-white">+5 ATK</div>
-                </div>
-                <div id="cost-atk" class="text-gold font-bold">100 🪙</div>
+            <div onclick="Game.upgrade('atk')" class="bg-white/5 border-blue-900 border p-4 rounded hover:border-blue-500 cursor-pointer flex justify-between">
+                <div><div class="text-xs text-gray-500 font-bold">FORCE</div><div class="text-xl font-bold">+5 ATK</div></div>
+                <div id="cost-atk" class="text-gold font-bold">100</div>
             </div>
-
-            <div onclick="Game.upgradeStat('def')" class="stat-card cursor-pointer hover:border-blue-500 transition p-6 flex justify-between items-center">
-                <div class="text-left">
-                    <div class="stat-title">BLINDAGE</div>
-                    <div class="text-xl font-bold text-white">+2 DEF</div>
-                </div>
-                <div id="cost-def" class="text-gold font-bold">100 🪙</div>
+            <div onclick="Game.upgrade('def')" class="bg-white/5 border-blue-900 border p-4 rounded hover:border-blue-500 cursor-pointer flex justify-between">
+                <div><div class="text-xs text-gray-500 font-bold">DÉFENSE</div><div class="text-xl font-bold">+2 DEF</div></div>
+                <div id="cost-def" class="text-gold font-bold">100</div>
             </div>
         </div>
-
-        <button onclick="UI.closeHub()" class="mt-12 text-blue-400 font-bold uppercase hover:text-white transition tracking-widest border-b border-transparent hover:border-white">
-            RETOUR AUX OPÉRATIONS
-        </button>
-    </div>
-
-    <div id="settings-modal" class="modal-overlay">
-        <div class="modal-box">
-            <h2 class="text-2xl font-bold text-white mb-8">PARAMÈTRES</h2>
-            <button onclick="Game.hardReset()" class="w-full py-3 bg-red-900/50 border border-red-500 text-red-200 rounded font-bold hover:bg-red-900 transition mb-4">
-                RÉINITIALISATION D'USINE
-            </button>
-            <button onclick="UI.closeSettings()" class="w-full py-3 bg-slate-800 rounded text-white font-bold hover:bg-slate-700 transition">
-                RETOUR
-            </button>
-        </div>
+        <button onclick="UI.toggleHub()" class="mt-12 text-blue-500 font-bold uppercase hover:text-white">Retour</button>
     </div>
 
     <script>
-        // --- DONNÉES DU JEU ---
-        const GameData = {
-            enemies: [
-                { name: "Drone Pirate", icon: "🛸", hp: 50, atk: 5 },
-                { name: "Xéno-Morphe", icon: "👾", hp: 80, atk: 8 },
-                { name: "Sonde Corrompue", icon: "🛰️", hp: 40, atk: 12 }
-            ],
+        // DONNÉES
+        const DATA = {
+            enemies: [{n:"Drone", i:"🛸", h:50, a:5}, {n:"Xeno", i:"👾", h:80, a:8}],
             items: [
-                { name: "Lame Laser", icon: "⚔️", type: "weapon", stat: 10 },
-                { name: "Bouclier Plasma", icon: "🛡️", type: "head", stat: 20 },
-                { name: "Drone Support", icon: "🤖", type: "pet", stat: 5 }
+                {n:"Lame", i:"⚔️", t:"weapon", s:10}, 
+                {n:"Casque", i:"🛡️", t:"head", s:20}, 
+                {n:"Bot", i:"🤖", t:"pet", s:5}
             ]
         };
 
-        // --- ÉTAT DU JOUEUR ---
-        let Player = {
-            avatar: null,
-            gold: 0,
-            gems: 20,
-            level: 1,
-            baseStats: { hp: 0, atk: 0, def: 0 },
-            inventory: [],
-            equipment: { weapon: null, head: null, pet: null }
-        };
+        // VARIABLES DE JEU
+        let P = { char: null, gold: 0, gems: 20, lvl: 1, stats: {hp:0, atk:0, def:0}, inv:[], eq: {weapon:null, head:null, pet:null} };
+        let R = { active: false, day: 0, hp: 100, max: 100, atk: 10, def: 0, auto: false, speed: 1 };
+        let Combat = { on: false, ehp: 0, emax: 0, eatk: 0 };
+        let autoInterval = null;
 
-        // --- ÉTAT DE LA RUN ---
-        let Run = {
-            isActive: false,
-            isProcessing: false,
-            day: 0,
-            currentHp: 100,
-            maxHp: 100,
-            atk: 10,
-            def: 0,
-            autoMode: false,
-            speedMultiplier: 1 // 1 = normal (1000ms), 2 = rapide (500ms)
-        };
-
-        let Combat = {
-            isActive: false,
-            enemyHp: 0,
-            enemyMaxHp: 0,
-            enemyAtk: 0
-        };
-
-        // --- CŒUR DU JEU (LOGIQUE) ---
+        // MOTEUR
         const Game = {
-            // Initialisation
             init: () => {
-                const save = localStorage.getItem('distory_save_v56');
-                if (save) {
-                    Player = JSON.parse(save);
-                    if (Player.avatar) {
-                        UI.hideBootScreen();
-                        UI.updateAll();
+                let s = localStorage.getItem('distory_v57');
+                if(s) {
+                    P = JSON.parse(s);
+                    if(P.char) {
+                        document.getElementById('boot-screen').classList.add('hidden');
+                        document.getElementById('game-ui').classList.remove('blur');
+                        UI.refresh();
                     }
                 }
             },
-
-            selectAvatar: (emoji) => {
-                Player.avatar = emoji;
+            start: (char) => {
+                P.char = char;
                 Game.save();
-                UI.hideBootScreen();
-                UI.updateAll();
+                document.getElementById('boot-screen').classList.add('hidden');
+                document.getElementById('game-ui').classList.remove('blur');
+                UI.refresh();
             },
+            resetData: () => {
+                localStorage.clear();
+                location.reload();
+            },
+            save: () => localStorage.setItem('distory_v57', JSON.stringify(P)),
 
-            // Boucle principale d'action
-            triggerAction: () => {
-                if (Run.isProcessing || Combat.isActive) return;
+            // ACTION PRINCIPALE
+            action: () => {
+                if(Combat.on) return; // Pas d'action si combat en cours
                 
-                // Si c'est le tout premier lancement
-                if (!Run.isActive) {
-                    Run.isActive = true;
-                    Run.day = 1;
-                    UI.log("Mission initialisée. Systèmes prêts.");
-                }
+                // Animation Scan
+                const laser = document.getElementById('laser');
+                laser.classList.remove('scanning');
+                void laser.offsetWidth; // Reset anim
+                laser.classList.add('scanning');
 
-                Run.isProcessing = true;
-                UI.triggerScanEffect();
+                // Logique
+                if(!R.active) { R.active = true; R.day = 1; UI.log("Mission initialisée."); }
+                else R.day++;
 
-                // Délai simulant le scan
-                setTimeout(() => {
-                    Run.day++;
-                    Game.calculateStats();
-                    
-                    // Logique de rencontre (1 chance sur 5 d'avoir un combat)
-                    if (Run.day % 5 === 0) {
-                        Game.startCombat();
-                    } else {
-                        // Événement pacifique
-                        const goldFound = 20 + Math.floor(Math.random() * 20);
-                        Player.gold += goldFound;
-                        UI.log(`> Ressources trouvées (+${goldFound} Or)`);
-                        UI.updateAll();
-                        Game.endAction();
-                    }
-                }, 600 / Run.speedMultiplier); // Vitesse dépend du multiplicateur
-            },
-
-            endAction: () => {
-                Run.isProcessing = false;
-                if (Run.autoMode && Run.isActive && !Combat.isActive) {
-                    setTimeout(Game.triggerAction, 800 / Run.speedMultiplier);
+                Game.calcStats();
+                
+                // 20% Chance combat
+                if(R.day % 5 === 0) {
+                    Game.startCombat();
+                } else {
+                    // Loot
+                    P.gold += 20;
+                    UI.log(`> Ressources trouvées (+20 Or)`);
+                    UI.refresh();
                 }
             },
 
-            // Système de Combat
+            // COMBAT
             startCombat: () => {
-                Combat.isActive = true;
-                const enemyTemplate = GameData.enemies[Math.floor(Math.random() * GameData.enemies.length)];
+                Combat.on = true;
+                let en = DATA.enemies[Math.floor(Math.random()*DATA.enemies.length)];
+                let mult = 1 + (R.day * 0.1);
+                Combat.emax = Math.floor(en.h * mult);
+                Combat.ehp = Combat.emax;
+                Combat.eatk = Math.floor(en.a * mult);
                 
-                // Scaling des stats ennemies
-                const scale = 1 + (Run.day * 0.1);
-                Combat.enemyMaxHp = Math.floor(enemyTemplate.hp * scale);
-                Combat.enemyHp = Combat.enemyMaxHp;
-                Combat.enemyAtk = Math.floor(enemyTemplate.atk * scale);
+                document.getElementById('view-mission').classList.add('hidden');
+                document.getElementById('view-combat').classList.add('active');
+                document.getElementById('ui-enemy-icon').innerText = en.i;
+                document.getElementById('btn-action').disabled = true;
+                document.getElementById('btn-action').innerText = "COMBAT...";
 
-                UI.showCombatView(enemyTemplate.icon);
-                UI.log(`! ALERTE : ${enemyTemplate.name} détecté !`);
-
-                setTimeout(Game.combatRound, 800 / Run.speedMultiplier);
+                UI.log(`! ALERTE : ${en.n} détecté !`);
+                setTimeout(Game.turn, 800/R.speed);
             },
 
-            combatRound: () => {
-                if (!Combat.isActive) return;
+            turn: () => {
+                if(!Combat.on) return;
 
-                // Tour du Joueur
-                UI.animPlayerAttack();
-                Combat.enemyHp -= Run.atk;
-                
-                if (Combat.enemyHp <= 0) {
-                    Game.winCombat();
+                // Joueur tape
+                Combat.ehp -= R.atk;
+                document.getElementById('ui-enemy-icon').classList.add('anim-shake');
+                setTimeout(()=>document.getElementById('ui-enemy-icon').classList.remove('anim-shake'), 200);
+
+                if(Combat.ehp <= 0) {
+                    Combat.on = false;
+                    P.gold += 50;
+                    UI.log("> Cible éliminée (+50 Or).");
+                    Game.endCombat();
                     return;
                 }
 
-                // Tour de l'ennemi (après petit délai)
+                // Ennemi tape
                 setTimeout(() => {
-                    const dmg = Math.max(1, Combat.enemyAtk - Run.def);
-                    Run.currentHp -= dmg;
-                    UI.animPlayerHit();
-                    UI.updateHpBar();
-
-                    if (Run.currentHp <= 0) {
-                        Game.loseCombat();
+                    let dmg = Math.max(1, Combat.eatk - R.def);
+                    R.hp -= dmg;
+                    UI.refresh();
+                    
+                    if(R.hp <= 0) {
+                        Combat.on = false;
+                        R.active = false;
+                        R.auto = false;
+                        clearInterval(autoInterval);
+                        UI.log("!!! MISSION ÉCHOUÉE !!!");
+                        Game.endCombat();
                     } else {
-                        // Prochain round
-                        setTimeout(Game.combatRound, 800 / Run.speedMultiplier);
+                        setTimeout(Game.turn, 800/R.speed);
                     }
-                }, 400 / Run.speedMultiplier);
+                }, 400/R.speed);
             },
 
-            winCombat: () => {
-                Combat.isActive = false;
-                const goldReward = 50 + (Run.day * 2);
-                Player.gold += goldReward;
-                UI.log(`> Cible éliminée. Gain: ${goldReward} Or.`);
-                UI.showMissionView();
-                UI.updateAll();
+            endCombat: () => {
+                document.getElementById('view-mission').classList.remove('hidden');
+                document.getElementById('view-combat').classList.remove('active');
+                document.getElementById('btn-action').disabled = false;
+                document.getElementById('btn-action').innerText = "LANCER";
+                UI.refresh();
                 Game.save();
-                Game.endAction(); // Reprend la boucle auto si active
             },
 
-            loseCombat: () => {
-                Combat.isActive = false;
-                Run.isActive = false;
-                Run.autoMode = false; // Stop l'auto en cas de mort
-                Run.currentHp = 0;
-                UI.log("!!! ÉCHEC CRITIQUE DE LA MISSION !!!");
-                UI.showMissionView();
-                UI.updateAll();
-                Game.save();
-                // Ne rappelle pas endAction, le joueur doit relancer manuellement
+            // STATS & INVENTAIRE
+            calcStats: () => {
+                R.max = 100 + (P.stats.hp * 20);
+                R.atk = 10 + (P.stats.atk * 5);
+                R.def = P.stats.def * 2;
+                if(P.eq.weapon) R.atk += P.eq.weapon.s;
+                if(P.eq.head) R.max += P.eq.head.s;
+                if(P.eq.pet) R.atk += P.eq.pet.s;
+                
+                // Heal si hors combat et max augmenté
+                if(!Combat.on) R.hp = Math.min(R.hp + 5, R.max);
             },
 
-            // Gestion Inventaire & Stats
-            openChest: () => {
-                if (Player.gems >= 5) {
-                    Player.gems -= 5;
-                    const itemTemplate = GameData.items[Math.floor(Math.random() * GameData.items.length)];
-                    // Création instance objet unique
-                    const newItem = { ...itemTemplate, uid: Date.now() };
-                    Player.inventory.push(newItem);
-                    UI.log(`> Coffre ouvert : ${newItem.name} obtenu.`);
+            chest: () => {
+                if(P.gems >= 5) {
+                    P.gems -= 5;
+                    let item = {...DATA.items[Math.floor(Math.random()*DATA.items.length)], uid: Date.now()};
+                    P.inv.push(item);
                     Game.checkFusion();
-                    UI.updateAll();
+                    UI.refresh();
                     Game.save();
-                } else {
-                    UI.log("> Pas assez de matière (5✨ requis).");
-                }
+                    UI.log(`> Coffre: ${item.n} obtenu.`);
+                } else UI.log("> Pas assez de gemmes.");
             },
 
             checkFusion: () => {
-                // Compte les items par nom
-                const counts = {};
-                Player.inventory.forEach(item => {
-                    counts[item.name] = (counts[item.name] || 0) + 1;
-                });
-
-                for (const name in counts) {
-                    if (counts[name] >= 3) {
-                        // Fusion trouvée
-                        const baseItem = Player.inventory.find(i => i.name === name);
-                        // Retirer 3 exemplaires
+                let counts = {};
+                P.inv.forEach(i => counts[i.n] = (counts[i.n] || 0) + 1);
+                for (let n in counts) {
+                    if (counts[n] >= 3) {
+                        let base = P.inv.find(x => x.n === n);
+                        // Retirer 3
                         let removed = 0;
-                        Player.inventory = Player.inventory.filter(item => {
-                            if (item.name === name && removed < 3) {
-                                removed++;
-                                return false;
-                            }
+                        P.inv = P.inv.filter(x => {
+                            if(x.n === n && removed < 3) { removed++; return false; }
                             return true;
                         });
-                        
-                        // Ajouter version améliorée (Stat * 2 approx)
-                        const upgradedItem = {
-                            ...baseItem,
-                            stat: Math.floor(baseItem.stat * 2.2),
-                            name: baseItem.name + "+"
-                        };
-                        Player.inventory.push(upgradedItem);
-                        UI.log(`*** FUSION RÉUSSIE : ${baseItem.name} -> ${upgradedItem.name} ***`);
-                        
-                        // Récursivité pour fusionner en chaîne si on en avait 9 par exemple
-                        Game.checkFusion();
+                        // Ajouter upgrade
+                        P.inv.push({...base, s: Math.floor(base.s * 2.2), n: base.n + "+", uid: Date.now()});
+                        UI.log(`*** FUSION: ${base.n} ***`);
+                        Game.checkFusion(); // Recursif
                         return;
                     }
                 }
             },
 
-            equipItem: (uid) => {
-                const index = Player.inventory.findIndex(i => i.uid === uid);
-                if (index === -1) return;
-
-                const item = Player.inventory[index];
-                const type = item.type;
-
-                // Si un item est déjà équipé, on le remet dans l'inventaire
-                if (Player.equipment[type]) {
-                    Player.inventory.push(Player.equipment[type]);
-                }
-
-                // Équiper le nouveau
-                Player.equipment[type] = item;
-                // Retirer de l'inventaire
-                Player.inventory.splice(index, 1);
-
-                Game.calculateStats();
-                UI.updateAll();
-                Game.save();
-            },
-
-            calculateStats: () => {
-                // Base stats
-                let maxHp = 100 + (Player.baseStats.hp * 20);
-                let atk = 10 + (Player.baseStats.atk * 5);
-                let def = 0 + (Player.baseStats.def * 2);
-
-                // Equipment stats
-                if (Player.equipment.weapon) atk += Player.equipment.weapon.stat;
-                if (Player.equipment.head) maxHp += Player.equipment.head.stat;
-                if (Player.equipment.pet) atk += Player.equipment.pet.stat;
-
-                // Update Run stats
-                Run.maxHp = maxHp;
-                Run.atk = atk;
-                Run.def = def;
-                
-                // Soin si on augmente les HP max ou début de run
-                if (Run.currentHp > Run.maxHp) Run.currentHp = Run.maxHp;
-                if (!Run.isActive) Run.currentHp = Run.maxHp; 
-            },
-
-            upgradeStat: (statType) => {
-                const cost = 100 + (Player.baseStats[statType] * 50);
-                if (Player.gold >= cost) {
-                    Player.gold -= cost;
-                    Player.baseStats[statType]++;
-                    Game.calculateStats();
-                    UI.updateAll();
+            equip: (uid) => {
+                let idx = P.inv.findIndex(x => x.uid === uid);
+                if(idx > -1) {
+                    let item = P.inv[idx];
+                    if(P.eq[item.t]) P.inv.push(P.eq[item.t]); // Déséquiper l'ancien
+                    P.eq[item.t] = item;
+                    P.inv.splice(idx, 1);
+                    Game.calcStats();
+                    UI.refresh();
                     Game.save();
                 }
             },
 
-            // Contrôles
+            upgrade: (s) => {
+                let cost = 100 + (P.stats[s] * 50);
+                if(P.gold >= cost) {
+                    P.gold -= cost;
+                    P.stats[s]++;
+                    Game.calcStats();
+                    UI.refresh();
+                    Game.save();
+                }
+            },
+
+            // CONTROLES
             toggleAuto: () => {
-                Run.autoMode = !Run.autoMode;
-                UI.updateControls();
-                // Si on active l'auto et qu'on est idle, on relance
-                if (Run.autoMode && Run.isActive && !Run.isProcessing && !Combat.isActive) {
-                    Game.triggerAction();
+                R.auto = !R.auto;
+                document.getElementById('btn-auto').innerText = R.auto ? "AUTO: ON" : "AUTO: OFF";
+                document.getElementById('btn-auto').style.color = R.auto ? "#3b82f6" : "#9ca3af";
+                
+                if(R.auto) {
+                    if(autoInterval) clearInterval(autoInterval);
+                    autoInterval = setInterval(() => {
+                        if(!Combat.on && R.active) Game.action();
+                    }, 1200/R.speed);
+                } else {
+                    clearInterval(autoInterval);
                 }
             },
-
             toggleSpeed: () => {
-                Run.speedMultiplier = (Run.speedMultiplier === 1) ? 2 : 1;
-                UI.updateControls();
-            },
-
-            hardReset: () => {
-                if (confirm("ATTENTION : Cela effacera toute votre progression. Continuer ?")) {
-                    localStorage.removeItem('distory_save_v56');
-                    location.reload();
-                }
-            },
-
-            save: () => {
-                localStorage.setItem('distory_save_v56', JSON.stringify(Player));
+                R.speed = R.speed === 1 ? 2 : 1;
+                document.getElementById('btn-speed').innerText = `VIT: x${R.speed}`;
+                // Restart interval si auto actif pour appliquer vitesse
+                if(R.auto) { Game.toggleAuto(); Game.toggleAuto(); } 
             }
         };
 
-        // --- GESTION DE L'INTERFACE (UI) ---
+        // VISUEL
         const UI = {
-            hideBootScreen: () => {
-                document.getElementById('boot-screen').classList.add('hidden');
-                document.getElementById('game-interface').classList.remove('blur');
-            },
-
-            updateAll: () => {
-                // Top Stats
-                document.getElementById('ui-gold').innerText = Player.gold;
-                document.getElementById('ui-gems').innerText = Player.gems;
-                document.getElementById('ui-zone').innerText = `1-${Run.day}`;
-
-                // Pilot Stats
-                document.getElementById('ui-avatar').innerText = Player.avatar;
-                document.getElementById('ui-level').innerText = Math.floor(Run.day / 10) + 1;
+            refresh: () => {
+                document.getElementById('ui-gold').innerText = P.gold;
+                document.getElementById('ui-gems').innerText = P.gems;
+                document.getElementById('ui-avatar').innerText = P.char || "?";
+                document.getElementById('ui-zone').innerText = `1-${R.day}`;
+                document.getElementById('ui-lvl').innerText = Math.floor(R.day/10)+1;
                 
-                document.getElementById('ui-hp-txt').innerText = `${Math.floor(Run.currentHp)}/${Run.maxHp}`;
-                const hpPercent = Math.max(0, (Run.currentHp / Run.maxHp) * 100);
-                document.getElementById('ui-hp-fill').style.width = `${hpPercent}%`;
+                // Barres
+                document.getElementById('ui-hp-txt').innerText = `${Math.floor(R.hp)}/${R.max}`;
+                document.getElementById('ui-hp-fill').style.width = (R.hp/R.max*100)+"%";
+                document.getElementById('ui-atk').innerText = R.atk;
+                document.getElementById('ui-def').innerText = R.def;
 
-                document.getElementById('ui-atk').innerText = Run.atk;
-                document.getElementById('ui-def').innerText = Run.def;
-
-                // Inventory Grid
-                const grid = document.getElementById('inventory-grid');
-                grid.innerHTML = '';
-                Player.inventory.forEach(item => {
-                    const el = document.createElement('div');
-                    el.className = 'item-slot';
-                    el.innerText = item.icon;
-                    el.onclick = () => Game.equipItem(item.uid);
-                    grid.appendChild(el);
+                // Inventaire
+                let g = document.getElementById('inv-grid');
+                g.innerHTML = '';
+                P.inv.forEach(i => {
+                    let d = document.createElement('div');
+                    d.className = 'slot'; d.innerText = i.i;
+                    d.onclick = () => Game.equip(i.uid);
+                    g.appendChild(d);
                 });
 
-                // Equipment Slots
-                const setSlot = (id, item) => {
-                    const el = document.getElementById(id);
-                    if (item) {
-                        el.innerText = item.icon;
-                        el.classList.add('equipped');
-                    } else {
-                        // Reset icon default (un peu brut, on pourrait garder les icônes par défaut)
-                        if(id.includes('weapon')) el.innerText = "⚔️";
-                        if(id.includes('head')) el.innerText = "🛡️";
-                        if(id.includes('pet')) el.innerText = "🐾";
-                        el.classList.remove('equipped');
-                    }
+                // Equipement
+                const setEq = (id, it) => {
+                    let el = document.getElementById(id);
+                    if(it) { el.innerText = it.i; el.classList.add('equipped'); }
+                    else { el.innerText = id==='slot-w'?'⚔️':id==='slot-h'?'🛡️':'🐾'; el.classList.remove('equipped'); }
                 };
-                setSlot('slot-weapon', Player.equipment.weapon);
-                setSlot('slot-head', Player.equipment.head);
-                setSlot('slot-pet', Player.equipment.pet);
+                setEq('slot-w', P.eq.weapon);
+                setEq('slot-h', P.eq.head);
+                setEq('slot-p', P.eq.pet);
 
-                // Upgrade Costs
-                document.getElementById('cost-hp').innerText = `${100 + Player.baseStats.hp*50} 🪙`;
-                document.getElementById('cost-atk').innerText = `${100 + Player.baseStats.atk*50} 🪙`;
-                document.getElementById('cost-def').innerText = `${100 + Player.baseStats.def*50} 🪙`;
-
-                UI.updateControls();
+                // Hub Costs
+                ['hp','atk','def'].forEach(k => {
+                    document.getElementById(`cost-${k}`).innerText = (100 + P.stats[k]*50) + " 🪙";
+                });
             },
-
-            updateControls: () => {
-                const btnAuto = document.getElementById('btn-auto');
-                btnAuto.innerText = Run.autoMode ? "AUTO: ON" : "AUTO: OFF";
-                btnAuto.classList.toggle('active', Run.autoMode);
-
-                const btnSpeed = document.getElementById('btn-speed');
-                btnSpeed.innerText = `VIT: x${Run.speedMultiplier}`;
-                
-                const mainBtn = document.getElementById('btn-action');
-                if (Run.isActive) {
-                    mainBtn.innerText = "EN COURS...";
-                    mainBtn.disabled = true;
-                } else {
-                    mainBtn.innerText = "LANCER";
-                    mainBtn.disabled = false;
-                }
-            },
-
-            triggerScanEffect: () => {
-                const layer = document.getElementById('laser-layer');
-                const laser = document.createElement('div');
-                laser.className = 'anim-scanning';
-                layer.appendChild(laser);
-                setTimeout(() => laser.remove(), 800);
-            },
-
-            showCombatView: (enemyIcon) => {
-                document.getElementById('view-mission').classList.add('hidden');
-                document.getElementById('view-combat').classList.remove('hidden');
-                document.getElementById('enemy-sprite').innerText = enemyIcon;
-            },
-
-            showMissionView: () => {
-                document.getElementById('view-combat').classList.add('hidden');
-                document.getElementById('view-mission').classList.remove('hidden');
-            },
-
-            animPlayerAttack: () => {
-                const avatar = document.getElementById('ui-avatar');
-                avatar.classList.remove('anim-floating'); // Pause float
-                avatar.classList.add('anim-attacking');
-                setTimeout(() => {
-                    avatar.classList.remove('anim-attacking');
-                    avatar.classList.add('anim-floating');
-                }, 300);
-            },
-
-            animPlayerHit: () => {
-                const panel = document.querySelector('.game-panel'); // Shake whole panel
-                panel.classList.add('anim-hit');
-                setTimeout(() => panel.classList.remove('anim-hit'), 400);
-            },
-
-            updateHpBar: () => {
-                const hpPercent = Math.max(0, (Run.currentHp / Run.maxHp) * 100);
-                document.getElementById('ui-hp-fill').style.width = `${hpPercent}%`;
-                document.getElementById('ui-hp-txt').innerText = `${Math.floor(Run.currentHp)}/${Run.maxHp}`;
-            },
-
             log: (msg) => {
-                const container = document.getElementById('log-container');
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.innerText = `> ${msg}`;
-                container.insertBefore(entry, container.firstChild);
-                // Limite le log à 50 entrées
-                if (container.children.length > 50) container.lastChild.remove();
+                let l = document.getElementById('logs');
+                l.innerHTML = `<div class="log-line">> ${msg}</div>` + l.innerHTML;
             },
-
-            switchTab: (tabName) => {
-                if (tabName === 'hub') {
-                    document.getElementById('hub-overlay').classList.remove('hidden');
-                }
-            },
-
-            closeHub: () => {
-                document.getElementById('hub-overlay').classList.add('hidden');
-            },
-
-            openSettings: () => {
-                document.getElementById('settings-modal').style.display = 'flex';
-            },
-
-            closeSettings: () => {
-                document.getElementById('settings-modal').style.display = 'none';
+            toggleHub: () => {
+                let h = document.getElementById('hub-view');
+                h.classList.toggle('hidden');
+                h.classList.toggle('flex'); // Pour centrer avec flexbox
             }
         };
 
-        // Lancement au chargement de la page
         window.onload = Game.init;
-
     </script>
 </body>
 </html>
