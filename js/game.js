@@ -1,9 +1,12 @@
+/* === MOTEUR DE JEU PRINCIPAL (V0.122) === */
+
 let Player = { name: "Héros", class: "barbarian", level: 1, xp: 0, maxXp: 100, baseHp: 100, baseAtk: 10, baseDef: 0, baseLuck: 0, hp: 100, maxHp: 100, atk: 10, def: 0, luck: 0, gold: 0, gems: 5, inv: [], equipment: { weapon: null, head: null, pet: null }, skills: [], day: 1, room: 1, floor: 1 };
 let GameState = { processing: false, inCombat: false, auto: false, speed: 1, enemy: null, lastEventIdx: -1, combatEffects: {}, turnCount: 0, eventHistory: [] };
 
 const Game = {
     init: () => {
-        const save = localStorage.getItem('distory_v122'); // Version Check
+        // Version Check : distory_v122
+        const save = localStorage.getItem('distory_v122'); 
         if(save) { 
             const loaded = JSON.parse(save);
             Player = { ...Player, ...loaded }; 
@@ -199,6 +202,7 @@ const Game = {
     },
 
     addSkill: (skill) => { Player.skills.push(skill); UI.log(`Skill: ${skill.name}`, 'levelup'); Game.calcStats(); UI.update(); },
+    
     gameOver: () => { 
         alert("MORT. Reset salle 1."); 
         Player.hp = Player.maxHp; 
@@ -263,7 +267,7 @@ const Game = {
         
         Game.calcStats(); 
         UI.update();
-        UI.updateCamp(); // Refresh prices in modal
+        UI.updateCamp(); 
         Game.save();
     },
 
@@ -279,3 +283,7 @@ const Game = {
         }
     }
 };
+
+// Export et Init global
+window.Game = Game;
+window.onload = Game.init;
