@@ -1,150 +1,146 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Distory Go - V0.122 DEV</title>
+/* === GESTION DE L'INTERFACE UTILISATEUR === */
+
+const UI = {
+    initClassSelection: () => {
+        const g = document.getElementById('class-grid'); g.innerHTML = "";
+        for(const [k, c] of Object.entries(CLASSES)) {
+            const d = document.createElement('div'); d.className = "class-card"; d.id = "cls-"+k;
+            const vis = c.img ? `<img src="${c.img}" class="w-16 h-16 object-contain mb-2">` : `<div class="text-4xl mb-2">${c.icon}</div>`;
+            d.innerHTML = `${vis}<div class="font-bold text-gold uppercase text-sm">${c.name}</div><div class="text-xs text-gray-400 italic">${c.desc}</div>`;
+            d.onclick = () => Game.selectClass(k); g.appendChild(d);
+        }
+        Game.selectClass('barbarian');
+    },
+
+    update: () => {
+        if(document.getElementById('boot-screen').classList.contains('hidden')===false) return;
+        const setText = (id, val) => { const el = document.getElementById(id); if(el) el.innerText = val; };
+        setText('ui-name', Player.name); setText('ui-class-name', CLASSES[Player.class].name); setText('ui-level', Player.level);
+        
+        const avEl = document.getElementById('ui-avatar-visual');
+        if(avEl) { const c = CLASSES[Player.class]; if(c.img) avEl.innerHTML = `<img src="${c.img}" class="custom-img">`; else avEl.innerHTML = `<div class="emoji-fallback">${c.icon}</div>`; }
+
+        setText('ui-hp-text', Math.floor(Player.hp)+"/"+Player.maxHp);
+        const hpBar = document.getElementById('ui-hp-bar'); if(hpBar) hpBar.style.width = Math.max(0,(Player.hp/Player.maxHp)*100)+"%";
+        setText('ui-xp-text', Player.xp + "/" + Player.maxXp);
+        const xpBar = document.getElementById('ui-xp-bar'); if(xpBar) xpBar.style.width = Math.min(100,(Player.xp/Player.maxXp)*100)+"%";
+        
+        setText('ui-atk', Player.atk); setText('ui-def', Player.def); setText('ui-luck', Player.luck); setText('ui-room', Player.room);
+        setText('ui-gold', Player.gold); setText('ui-gems', Player.gems); setText('ui-zone', "Étage " + Player.floor + " - Salle " + Player.room);
+
+        const shieldBar = document.getElementById('ui-shield-bar');
+        if(shieldBar) { const shieldPct = Math.min(100, (GameState.combatEffects.shield / Player.maxHp) * 100); shieldBar.style.width = shieldPct + "%"; }
+
+        ['weapon','head','pet'].forEach(t => {
+            const el = document.getElementById('slot-'+t); if(!el) return; const it = Player.equipment[t]; el.innerHTML = "";
+            if(it) { 
+                if(it.img) el.innerHTML = `<img src="${it.img}" class="item-img">`; else el.innerText = it.icon; 
+                el.className = `item-slot w-14 h-14 rarity-${it.rarity}`;
+                el.onmouseenter = (e) => UI.tip(e, it.name, `${it.desc}\n\nType: ${it.type.toUpperCase()}\nBonus: +${it.val} ${it.stat.toUpperCase()}`);
+                if(t === 'pet') { const petVis = document.getElementById('ui-pet-visual'); if(petVis) petVis.innerHTML = it.img ? `<img src="${it.img}" class="h-full">` : it.icon; }
+            } else { 
+                el.innerText = t==='weapon'?'🗡️':t==='head'?'🛡️':'🐾'; el.className = "item-slot w-14 h-14"; el.style.borderColor = "#5b5a56";
+                el.onmouseenter = (e) => UI.tip(e, 'Vide', 'Rien équipé.'); 
+                if(t === 'pet') document.getElementById('ui-pet-visual').innerHTML = "";
+            }
+        });
+
+        const ig = document.getElementById('inventory'); if(ig) { ig.innerHTML = ""; Player.inv.forEach(i => { const d = document.createElement('div'); d.className = `item-slot rarity-${i.rarity}`; if(i.img) d.innerHTML = `<img src="${i.img}" class="item-img">`; else d.innerText = i.icon; d.onclick = () => Game.equipItem(i.uid); d.onmouseenter = (e) => UI.tip(e, i.name, `${i.desc}\n\nBonus: +${i.val} ${i.stat.toUpperCase()}`); d.onmouseleave = UI.hideTip; ig.appendChild(d); }); }
+        
+        const sg = document.getElementById('ui-skills'); if(sg) { sg.innerHTML = ""; Player.skills.forEach(s => { const d = document.createElement('div'); d.className = 'skill-slot'; d.innerText = s.icon; d.onmouseenter = (e) => UI.tip(e, s.name, s.desc); d.onmouseleave = UI.hideTip; sg.appendChild(d); }); }
+    },
+
+    updateCombat: () => {
+        if(!GameState.enemy) return;
+        const elName = document.getElementById('enemy-name'); if(elName) elName.innerText = GameState.enemy.name;
+        const elHp = document.getElementById('enemy-hp-text'); if(elHp) elHp.innerText = Math.floor(GameState.enemy.hp)+"/"+GameState.enemy.maxHp;
+        const elBar = document.getElementById('enemy-hp-bar'); if(elBar) elBar.style.width = Math.max(0,(GameState.enemy.hp/GameState.enemy.maxHp)*100)+"%";
+        const eEl = document.getElementById('enemy-sprite'); if(eEl) { if(GameState.enemy.img) eEl.innerHTML = `<img src="${GameState.enemy.img}" class="h-full object-contain filter drop-shadow-lg">`; else eEl.innerHTML = `<div class="text-[80px]">${GameState.enemy.icon}</div>`; }
+    },
+
+    animPlayerAttack: () => { const el = document.getElementById('ui-avatar-visual'); if(el) { el.classList.remove('attack-anim'); void el.offsetWidth; el.classList.add('attack-anim'); } },
     
-    <!-- Polices -->
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Beaufort+LoL:wght@500;700&family=Spiegel:wght@400&display=swap" rel="stylesheet">
+    showPopup: (m, t) => {
+        const c = document.getElementById('combat-fx-layer'); if(!c) return;
+        const e = document.createElement('div');
+        e.className = `popup-msg ${t}`; e.innerText = m;
+        c.appendChild(e);
+        if(c.children.length > 3) c.firstChild.remove();
+        setTimeout(()=>e.remove(), 2800);
+    },
+
+    log: (m) => { const b = document.getElementById('gamelog'); if(!b) return; const l = document.createElement('div'); l.className = "log-line log-narrator"; l.innerText = "> " + m; b.insertBefore(l, b.firstChild); if(b.children.length>15) b.lastChild.remove(); },
     
-    <!-- Framework CSS (Tailwind) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    tip: (e, t, d) => { const el = document.getElementById('tooltip'); if(!el) return; el.style.display='block'; el.style.left=(e.clientX+10)+'px'; el.style.top=(e.clientY-40)+'px'; el.innerHTML = `<strong>${t}</strong>${d}`; },
+    hideTip: () => { const el = document.getElementById('tooltip'); if(el) el.style.display='none'; },
     
-    <!-- Votre CSS Perso -->
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    floatText: (t, id, c) => {
+        const container = document.getElementById('combat-fx-layer');
+        if(!container) return;
+        const el = document.createElement('div');
+        el.className = 'float-txt'; el.innerText = t;
+        if(c==='dmg') el.style.color='red';
+        else if(c==='crit') { el.style.color='gold'; el.style.fontSize='30px'; }
+        else if(c==='gold') el.style.color='#f0e6d2';
+        
+        const target = document.getElementById(id);
+        const zone = document.getElementById('center-zone');
+        if(target && zone) {
+            const r = target.getBoundingClientRect();
+            const z = zone.getBoundingClientRect();
+            el.style.left = (r.left - z.left + (r.width/2)) + 'px';
+            el.style.top = (r.top - z.top) + 'px';
+        } else {
+            el.style.left = '50%'; el.style.top = '50%';
+        }
+        container.appendChild(el);
+        setTimeout(()=>el.remove(), 1000);
+    },
+    
+    showFullStats: (e) => {
+        const stats = `
+            Niveau: <span class='text-gold'>${Player.level}</span>
+            XP: ${Player.xp} / ${Player.maxXp}
+            ---
+            Force: <span class='text-red-400'>${Player.atk}</span>
+            Défense: <span class='text-blue-400'>${Player.def}</span>
+            Chance: <span class='text-green-400'>${Player.luck}</span>
+            ---
+            Or: <span class='text-yellow-300'>${Player.gold}</span>
+            Gemmes: <span class='text-purple-400'>${Player.gems}</span>
+        `.replace(/\n/g, '<br>');
+        UI.tip(e, "STATISTIQUES COMPLÈTES", stats);
+    },
 
-    <div id="tooltip"></div>
-
-    <!-- ECRAN TITRE -->
-    <div id="boot-screen" class="modal-overlay">
-        <div class="modal-content">
-            <h1 class="text-5xl text-gold mb-2 font-bold uppercase tracking-widest" style="color:var(--hex-gold); text-shadow: 0 0 10px var(--hex-gold);">CRÉATION DU HÉROS</h1>
-            <p class="text-purple-300 mb-6 italic text-lg">"Choisissez votre destin (et votre manière de mourir)."</p>
-            <input type="text" id="player-name-input" placeholder="Nom" maxlength="15" class="bg-transparent border-b-2 border-gray-600 text-center text-3xl text-white outline-none w-80 mb-4 focus:border-purple-500 uppercase py-2">
-            <div id="class-grid" class="class-grid"></div>
-            <div id="dice-roll-area" class="h-8 text-purple-400 font-bold italic mb-4 text-xl"></div>
-            <button onclick="Game.startGame()" class="btn-hex primary w-full mt-2 py-3 text-xl tracking-widest">ENTRER DANS LE DONJON</button>
-            <button onclick="Game.hardReset()" class="text-xs text-gray-500 hover:text-red-500 mt-4 underline decoration-dashed">Effacer tout</button>
-        </div>
-    </div>
-
-    <!-- JEU -->
-    <div id="game-interface" class="main-layout" style="filter: blur(5px);">
-        <!-- Header -->
-        <div class="header-area">
-            <div class="flex items-center gap-4 min-w-0">
-                <span class="text-gold font-bold text-lg md:text-xl uppercase tracking-widest truncate">DISTORY GO</span>
-                <span class="text-gray-500 text-sm hidden md:inline">|</span>
-                <span class="text-sm text-purple-400 uppercase tracking-widest hidden md:inline">V0.122</span>
+    openCamp: () => {
+        const modal = document.getElementById('modal-body');
+        const cost = 100 * Player.level;
+        modal.innerHTML = `
+            <h2 class="text-2xl text-gold mb-4 uppercase">CAMPEMENT</h2>
+            <p class="mb-4 text-gray-300 italic">"Ici, on s'entraîne. On ne dort pas."</p>
+            <div class="grid grid-cols-3 gap-4">
+                <button class="btn-hex" onclick="Game.spendGold('hp')">
+                    <div class="text-xl">❤️</div>
+                    <div>+10 PV Max</div>
+                    <div class="text-xs text-gold mt-1">${cost} 🪙</div>
+                </button>
+                <button class="btn-hex" onclick="Game.spendGold('atk')">
+                    <div class="text-xl">⚔️</div>
+                    <div>+1 Force</div>
+                    <div class="text-xs text-gold mt-1">${cost} 🪙</div>
+                </button>
+                <button class="btn-hex" onclick="Game.spendGold('def')">
+                    <div class="text-xl">🛡️</div>
+                    <div>+1 Défense</div>
+                    <div class="text-xs text-gold mt-1">${cost} 🪙</div>
+                </button>
             </div>
-            <div class="flex items-center gap-4 md:gap-8 font-tech text-lg">
-                <div class="flex items-center gap-2 text-gold filter drop-shadow-md"><span class="text-xl">🪙</span> <span id="ui-gold">0</span></div>
-                <div class="flex items-center gap-2 text-purple-400 filter drop-shadow-md"><span class="text-xl">✨</span> <span id="ui-gems">0</span></div>
-                <div class="text-gray-400 uppercase text-sm border-l border-gray-700 pl-4 truncate max-w-[100px] md:max-w-none" id="ui-zone">Hall</div>
-            </div>
-        </div>
+            <button class="btn-hex primary mt-6 w-full" onclick="document.getElementById('modal-overlay').classList.add('hidden')">QUITTER LE CAMP</button>
+        `;
+        document.getElementById('modal-overlay').classList.remove('hidden');
+    },
+    updateCamp: () => UI.openCamp()
+};
 
-        <!-- Gauche -->
-        <div class="hex-panel left-area">
-            <div class="text-center mb-2 flex-shrink-0">
-                <div class="avatar-container" onmouseenter="UI.showFullStats(event)" onmouseleave="UI.hideTip()">
-                    <div id="ui-avatar-visual"></div> 
-                    <div id="ui-pet-visual" class="pet-visual-container"></div>
-                </div>
-                <div class="mt-2 font-bold text-lg text-white uppercase tracking-widest" id="ui-name">JOUEUR</div>
-                <div class="text-xs text-purple-400 uppercase tracking-widest" id="ui-class-name">Classe</div>
-            </div>
-            
-            <div class="space-y-3 flex-shrink-0">
-                <div class="bar-container" onmouseenter="UI.tip(event, 'SANTÉ', 'Si ça tombe à zéro, c\'est game over.')" onmouseleave="UI.hideTip()">
-                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Santé</span><span id="ui-hp-text">100/100</span></div>
-                    <div class="bar-track"><div id="ui-hp-bar" class="bar-fill"></div><div id="ui-shield-bar" class="shield-fill"></div></div>
-                </div>
-                <div class="bar-container" onmouseenter="UI.tip(event, 'EXPÉRIENCE', 'Pour devenir moins nul.')" onmouseleave="UI.hideTip()">
-                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Expérience</span><span id="ui-xp-text">0/100</span></div>
-                    <div class="bar-track" style="height: 6px;"><div id="ui-xp-bar" class="bar-fill xp"></div></div>
-                </div>
-            </div>
-
-            <div class="stat-grid flex-shrink-0">
-                <div class="stat-box" onmouseenter="UI.tip(event, 'FORCE', 'Dégâts physiques bruts infligés par vos attaques de base.')" onmouseleave="UI.hideTip()"><div class="stat-label">Force</div><div id="ui-atk" class="stat-val text-red-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'DÉFENSE', 'Réduit les dégâts subis de chaque attaque ennemie.')" onmouseleave="UI.hideTip()"><div class="stat-label">Défense</div><div id="ui-def" class="stat-val text-blue-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'CHANCE', 'Augmente la probabilité de coups critiques et la qualité des butins.')" onmouseleave="UI.hideTip()"><div class="stat-label">Chance</div><div id="ui-luck" class="stat-val text-green-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'SALLE', 'Votre progression actuelle dans l\'étage du donjon.')" onmouseleave="UI.hideTip()"><div class="stat-label">Salle</div><div id="ui-room" class="stat-val text-yellow-400">1</div></div>
-            </div>
-
-            <div class="mt-auto flex justify-center gap-2 pb-2">
-                <div id="slot-weapon" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-                <div id="slot-head" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-                <div id="slot-pet" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-            </div>
-        </div>
-
-        <!-- Centre -->
-        <div class="center-area" id="center-zone">
-            <h2 class="absolute top-4 text-3xl font-bold text-white opacity-5 tracking-[10px] pointer-events-none w-full text-center">COMBAT</h2>
-            <div id="combat-fx-layer"></div>
-            
-            <div id="view-story" class="text-center max-w-md p-6 bg-black/60 border border-gray-700 backdrop-blur-md rounded-lg shadow-xl m-4 relative z-10">
-                <div id="story-text" class="text-xl text-gray-200 leading-relaxed font-medieval">Entrez dans le donjon...</div>
-                <button id="btn-next-floor" onclick="Game.nextFloor()" class="hidden btn-hex primary w-full mt-4 text-xl animate-bounce">DESCENDRE À L'ÉTAGE SUIVANT</button>
-            </div>
-
-            <div id="view-combat" class="hidden flex flex-col items-center w-full justify-center h-full relative z-10">
-                <div class="enemy-card">
-                    <div id="enemy-sprite" class="enemy-visual">👹</div>
-                    <div class="w-full bg-black/50 rounded p-2 mt-2">
-                        <div class="flex justify-between text-xs text-red-400 font-bold uppercase mb-1"><span id="enemy-name">Cible</span><span id="enemy-hp-text">100%</span></div>
-                        <div class="bar-track border-red-900 h-3 rounded-full overflow-hidden"><div id="enemy-hp-bar" class="bar-fill enemy"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bas -->
-        <div class="bottom-area">
-            <div class="flex flex-col gap-2 w-48 flex-shrink-0 flex-col-mobile w-full-mobile">
-                <button id="btn-action" onclick="Game.action()" class="btn-hex primary text-lg h-full">AVANCER</button>
-                <div class="flex gap-2 h-10">
-                    <button onclick="Game.toggleAuto()" id="btn-auto" class="btn-hex flex-1 text-[10px]">AUTO</button>
-                    <button onclick="Game.toggleSpeed()" id="btn-speed" class="btn-hex flex-1 text-[10px]">x1</button>
-                </div>
-            </div>
-
-            <div class="flex-grow hex-panel p-2 flex flex-col items-center bg-black/40 min-w-0 flex-grow-mobile">
-                <div class="text-[9px] text-gray-500 uppercase mb-1 tracking-widest">Compétences</div>
-                <div id="ui-skills" class="flex gap-2 flex-wrap justify-center overflow-y-auto content-start w-full h-full p-1 skill-scroll-mobile"></div>
-            </div>
-
-            <div class="w-64 hex-panel p-2 flex flex-col flex-shrink-0 w-64-mobile">
-                <div class="flex justify-between items-center mb-1 px-1">
-                    <span class="text-[9px] uppercase text-gray-500 tracking-widest">Sac à dos</span>
-                    <button onclick="Game.buyChest()" class="text-[9px] text-purple-400 hover:text-white uppercase font-bold border border-purple-900 px-2 py-0.5 rounded bg-purple-900/20">Shop (5✨)</button>
-                </div>
-                <div class="inventory-container"><div id="inventory" class="inv-grid"></div></div>
-            </div>
-        </div>
-
-        <!-- Droite -->
-        <div class="hex-panel right-area">
-            <div class="text-xs text-gold uppercase border-b border-gray-800 pb-2 mb-2 text-center tracking-widest">JOURNAL</div>
-            <div id="gamelog" class="log-box"></div>
-            <div class="mt-2 pt-2 border-t border-gray-800 flex gap-2">
-                <button onclick="UI.openCamp()" class="btn-hex flex-1 text-xs">CAMP</button>
-                <button onclick="alert('Vous êtes le meilleur.')" class="btn-hex flex-1 text-xs">RANG</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALE -->
-    <div id="modal-overlay" class="hidden modal-overlay"><div class="modal-content" id="modal-body"></div></div>
-
-    <!-- CHARGEMENT DES SCRIPTS -->
-    <script src="js/data.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/game.js"></script>
-</body>
-</html>
+// Export global
+window.UI = UI;
