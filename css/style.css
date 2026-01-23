@@ -1,249 +1,150 @@
-/* === RESET & BASES === */
-* { box-sizing: border-box; }
-
-:root {
-    --hex-dark: #05010a;
-    --hex-panel: #160928;
-    --hex-border: #2d1e2d;
-    --hex-gold: #c8aa6e;
-    --hex-gold-light: #f0e6d2;
-    --hex-purple: #a855f7;
-    --hex-red: #e03e3e;
-    --hex-metal: #5b5a56;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Distory Go - V0.122 DEV</title>
     
-    --rarity-common: #9ca3af;
-    --rarity-rare: #3b82f6;
-    --rarity-epic: #a855f7;
-    --rarity-legendary: #fbbf24;
-}
+    <!-- Polices -->
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Beaufort+LoL:wght@500;700&family=Spiegel:wght@400&display=swap" rel="stylesheet">
+    
+    <!-- Framework CSS (Tailwind) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Votre CSS Perso -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-body { 
-    background-color: var(--hex-dark); 
-    color: var(--hex-gold-light); 
-    font-family: 'MedievalSharp', cursive;
-    height: 100vh; 
-    width: 100vw;
-    overflow: hidden; 
-    user-select: none; 
-    background-image: radial-gradient(circle at 50% 0%, #2a1c38 0%, #05010a 80%); 
-}
+    <div id="tooltip"></div>
 
-/* SCROLLBARS INTERNES */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #05010a; }
-::-webkit-scrollbar-thumb { background: var(--hex-purple); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #d8b4fe; }
+    <!-- ECRAN TITRE -->
+    <div id="boot-screen" class="modal-overlay">
+        <div class="modal-content">
+            <h1 class="text-5xl text-gold mb-2 font-bold uppercase tracking-widest" style="color:var(--hex-gold); text-shadow: 0 0 10px var(--hex-gold);">CRÉATION DU HÉROS</h1>
+            <p class="text-purple-300 mb-6 italic text-lg">"Choisissez votre destin (et votre manière de mourir)."</p>
+            <input type="text" id="player-name-input" placeholder="Nom" maxlength="15" class="bg-transparent border-b-2 border-gray-600 text-center text-3xl text-white outline-none w-80 mb-4 focus:border-purple-500 uppercase py-2">
+            <div id="class-grid" class="class-grid"></div>
+            <div id="dice-roll-area" class="h-8 text-purple-400 font-bold italic mb-4 text-xl"></div>
+            <button onclick="Game.startGame()" class="btn-hex primary w-full mt-2 py-3 text-xl tracking-widest">ENTRER DANS LE DONJON</button>
+            <button onclick="Game.hardReset()" class="text-xs text-gray-500 hover:text-red-500 mt-4 underline decoration-dashed">Effacer tout</button>
+        </div>
+    </div>
 
-.font-tech { font-family: 'Arial', sans-serif; letter-spacing: 1px; }
-.text-gold { color: var(--hex-gold); }
-.text-purple { color: var(--hex-purple); }
+    <!-- JEU -->
+    <div id="game-interface" class="main-layout" style="filter: blur(5px);">
+        <!-- Header -->
+        <div class="header-area">
+            <div class="flex items-center gap-4 min-w-0">
+                <span class="text-gold font-bold text-lg md:text-xl uppercase tracking-widest truncate">DISTORY GO</span>
+                <span class="text-gray-500 text-sm hidden md:inline">|</span>
+                <span class="text-sm text-purple-400 uppercase tracking-widest hidden md:inline">V0.122</span>
+            </div>
+            <div class="flex items-center gap-4 md:gap-8 font-tech text-lg">
+                <div class="flex items-center gap-2 text-gold filter drop-shadow-md"><span class="text-xl">🪙</span> <span id="ui-gold">0</span></div>
+                <div class="flex items-center gap-2 text-purple-400 filter drop-shadow-md"><span class="text-xl">✨</span> <span id="ui-gems">0</span></div>
+                <div class="text-gray-400 uppercase text-sm border-l border-gray-700 pl-4 truncate max-w-[100px] md:max-w-none" id="ui-zone">Hall</div>
+            </div>
+        </div>
 
-/* TOOLTIP */
-#tooltip { 
-    position: fixed; background: rgba(10, 1, 20, 0.98); border: 1px solid var(--hex-gold); 
-    color: var(--hex-gold-light); padding: 10px; border-radius: 4px; font-size: 13px; 
-    pointer-events: none; z-index: 9999; display: none; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); 
-    max-width: 280px; 
-}
-#tooltip strong { color: var(--hex-purple); display: block; margin-bottom: 4px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--hex-border); padding-bottom: 4px; }
+        <!-- Gauche -->
+        <div class="hex-panel left-area">
+            <div class="text-center mb-2 flex-shrink-0">
+                <div class="avatar-container" onmouseenter="UI.showFullStats(event)" onmouseleave="UI.hideTip()">
+                    <div id="ui-avatar-visual"></div> 
+                    <div id="ui-pet-visual" class="pet-visual-container"></div>
+                </div>
+                <div class="mt-2 font-bold text-lg text-white uppercase tracking-widest" id="ui-name">JOUEUR</div>
+                <div class="text-xs text-purple-400 uppercase tracking-widest" id="ui-class-name">Classe</div>
+            </div>
+            
+            <div class="space-y-3 flex-shrink-0">
+                <div class="bar-container" onmouseenter="UI.tip(event, 'SANTÉ', 'Si ça tombe à zéro, c\'est game over.')" onmouseleave="UI.hideTip()">
+                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Santé</span><span id="ui-hp-text">100/100</span></div>
+                    <div class="bar-track"><div id="ui-hp-bar" class="bar-fill"></div><div id="ui-shield-bar" class="shield-fill"></div></div>
+                </div>
+                <div class="bar-container" onmouseenter="UI.tip(event, 'EXPÉRIENCE', 'Pour devenir moins nul.')" onmouseleave="UI.hideTip()">
+                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Expérience</span><span id="ui-xp-text">0/100</span></div>
+                    <div class="bar-track" style="height: 6px;"><div id="ui-xp-bar" class="bar-fill xp"></div></div>
+                </div>
+            </div>
 
-/* === LAYOUT GRID ROBUSTE === */
-.main-layout { 
-    display: grid; 
-    grid-template-columns: 280px 1fr 280px; 
-    grid-template-rows: 60px 1fr 220px; 
-    gap: 8px; 
-    height: 100vh; 
-    width: 100vw;
-    padding: 8px; 
-}
+            <div class="stat-grid flex-shrink-0">
+                <div class="stat-box" onmouseenter="UI.tip(event, 'FORCE', 'Dégâts physiques bruts infligés par vos attaques de base.')" onmouseleave="UI.hideTip()"><div class="stat-label">Force</div><div id="ui-atk" class="stat-val text-red-400">0</div></div>
+                <div class="stat-box" onmouseenter="UI.tip(event, 'DÉFENSE', 'Réduit les dégâts subis de chaque attaque ennemie.')" onmouseleave="UI.hideTip()"><div class="stat-label">Défense</div><div id="ui-def" class="stat-val text-blue-400">0</div></div>
+                <div class="stat-box" onmouseenter="UI.tip(event, 'CHANCE', 'Augmente la probabilité de coups critiques et la qualité des butins.')" onmouseleave="UI.hideTip()"><div class="stat-label">Chance</div><div id="ui-luck" class="stat-val text-green-400">0</div></div>
+                <div class="stat-box" onmouseenter="UI.tip(event, 'SALLE', 'Votre progression actuelle dans l\'étage du donjon.')" onmouseleave="UI.hideTip()"><div class="stat-label">Salle</div><div id="ui-room" class="stat-val text-yellow-400">1</div></div>
+            </div>
 
-/* PANNEAUX GÉNÉRIQUES */
-.hex-panel { 
-    background: linear-gradient(180deg, rgba(20,9,40,0.95) 0%, rgba(5,1,10,0.98) 100%);
-    border: 1px solid var(--hex-border); 
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.9), 0 0 5px rgba(88, 28, 135, 0.3);
-    position: relative; 
-    display: flex; 
-    flex-direction: column; 
-    border-radius: 4px;
-    overflow: hidden; 
-    min-height: 0; min-width: 0;
-}
-.hex-panel::after { 
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; 
-    background: linear-gradient(90deg, transparent, var(--hex-gold), transparent); 
-    opacity: 0.5; pointer-events: none;
-}
+            <div class="mt-auto flex justify-center gap-2 pb-2">
+                <div id="slot-weapon" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
+                <div id="slot-head" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
+                <div id="slot-pet" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
+            </div>
+        </div>
 
-/* HEADER */
-.header-area { 
-    grid-column: 1 / 4; grid-row: 1; 
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 0 15px; background: #0a0112; 
-    border-bottom: 1px solid var(--hex-border); 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5); min-width: 0;
-}
+        <!-- Centre -->
+        <div class="center-area" id="center-zone">
+            <h2 class="absolute top-4 text-3xl font-bold text-white opacity-5 tracking-[10px] pointer-events-none w-full text-center">COMBAT</h2>
+            <div id="combat-fx-layer"></div>
+            
+            <div id="view-story" class="text-center max-w-md p-6 bg-black/60 border border-gray-700 backdrop-blur-md rounded-lg shadow-xl m-4 relative z-10">
+                <div id="story-text" class="text-xl text-gray-200 leading-relaxed font-medieval">Entrez dans le donjon...</div>
+                <button id="btn-next-floor" onclick="Game.nextFloor()" class="hidden btn-hex primary w-full mt-4 text-xl animate-bounce">DESCENDRE À L'ÉTAGE SUIVANT</button>
+            </div>
 
-/* ZONES SPÉCIFIQUES */
-.left-area { grid-column: 1; grid-row: 2 / 4; padding: 10px; gap: 10px; }
+            <div id="view-combat" class="hidden flex flex-col items-center w-full justify-center h-full relative z-10">
+                <div class="enemy-card">
+                    <div id="enemy-sprite" class="enemy-visual">👹</div>
+                    <div class="w-full bg-black/50 rounded p-2 mt-2">
+                        <div class="flex justify-between text-xs text-red-400 font-bold uppercase mb-1"><span id="enemy-name">Cible</span><span id="enemy-hp-text">100%</span></div>
+                        <div class="bar-track border-red-900 h-3 rounded-full overflow-hidden"><div id="enemy-hp-bar" class="bar-fill enemy"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-.center-area { 
-    grid-column: 2; grid-row: 2; position: relative; 
-    background: radial-gradient(circle, #2d1e28 0%, #05010a 90%); 
-    display: flex; flex-direction: column; justify-content: center; align-items: center; 
-    border: 1px solid var(--hex-border); border-radius: 4px; overflow: hidden;
-    contain: layout;
-}
+        <!-- Bas -->
+        <div class="bottom-area">
+            <div class="flex flex-col gap-2 w-48 flex-shrink-0 flex-col-mobile w-full-mobile">
+                <button id="btn-action" onclick="Game.action()" class="btn-hex primary text-lg h-full">AVANCER</button>
+                <div class="flex gap-2 h-10">
+                    <button onclick="Game.toggleAuto()" id="btn-auto" class="btn-hex flex-1 text-[10px]">AUTO</button>
+                    <button onclick="Game.toggleSpeed()" id="btn-speed" class="btn-hex flex-1 text-[10px]">x1</button>
+                </div>
+            </div>
 
-.right-area { grid-column: 3; grid-row: 2 / 4; display: flex; flex-direction: column; padding: 10px; }
-.bottom-area { grid-column: 2; grid-row: 3; display: flex; gap: 8px; min-height: 0; }
+            <div class="flex-grow hex-panel p-2 flex flex-col items-center bg-black/40 min-w-0 flex-grow-mobile">
+                <div class="text-[9px] text-gray-500 uppercase mb-1 tracking-widest">Compétences</div>
+                <div id="ui-skills" class="flex gap-2 flex-wrap justify-center overflow-y-auto content-start w-full h-full p-1 skill-scroll-mobile"></div>
+            </div>
 
-/* === ÉLÉMENTS UI === */
-.avatar-container { width: 120px; height: 120px; margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center; cursor: help; }
-.custom-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px var(--hex-purple)); }
-.emoji-fallback { font-size: 70px; filter: grayscale(0.3) drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+            <div class="w-64 hex-panel p-2 flex flex-col flex-shrink-0 w-64-mobile">
+                <div class="flex justify-between items-center mb-1 px-1">
+                    <span class="text-[9px] uppercase text-gray-500 tracking-widest">Sac à dos</span>
+                    <button onclick="Game.buyChest()" class="text-[9px] text-purple-400 hover:text-white uppercase font-bold border border-purple-900 px-2 py-0.5 rounded bg-purple-900/20">Shop (5✨)</button>
+                </div>
+                <div class="inventory-container"><div id="inventory" class="inv-grid"></div></div>
+            </div>
+        </div>
 
-.pet-visual-container { 
-    position: absolute; bottom: 0; right: -10px; 
-    font-size: 30px; z-index: 10; 
-    filter: drop-shadow(0 0 5px black);
-    animation: float-pet 3s infinite ease-in-out;
-}
-@keyframes float-pet { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-.attack-anim { animation: lunge 0.2s forwards !important; }
-.pet-attack-anim { animation: pet-lunge 0.3s forwards !important; }
-@keyframes lunge { 0% { transform: translateX(0); } 50% { transform: translateX(40px) scale(1.1); } 100% { transform: translateX(0); } }
-@keyframes pet-lunge { 0% { transform: translateX(0); } 50% { transform: translateX(40px) scale(1.2); } 100% { transform: translateX(0); } }
+        <!-- Droite -->
+        <div class="hex-panel right-area">
+            <div class="text-xs text-gold uppercase border-b border-gray-800 pb-2 mb-2 text-center tracking-widest">JOURNAL</div>
+            <div id="gamelog" class="log-box"></div>
+            <div class="mt-2 pt-2 border-t border-gray-800 flex gap-2">
+                <button onclick="UI.openCamp()" class="btn-hex flex-1 text-xs">CAMP</button>
+                <button onclick="alert('Vous êtes le meilleur.')" class="btn-hex flex-1 text-xs">RANG</button>
+            </div>
+        </div>
+    </div>
 
-/* BARRES */
-.bar-container { width: 100%; margin-bottom: 4px; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; cursor: help; }
-.bar-track { height: 12px; background: #111; border: 1px solid #3c3c41; position: relative; border-radius: 2px; overflow: hidden; }
-.bar-fill { height: 100%; background: linear-gradient(90deg, #15803d, #22c55e); width: 100%; transition: width 0.3s; position: absolute; top:0; left:0; z-index: 1; }
-.bar-fill.enemy { background: linear-gradient(90deg, #991b1b, #ef4444); }
-.bar-fill.xp { background: linear-gradient(90deg, #6b21a8, #a855f7); }
-.shield-fill { 
-    position: absolute; top:0; left:0; height:100%; 
-    background: linear-gradient(90deg, rgba(253, 224, 71, 0.6), rgba(234, 179, 8, 0.7)); 
-    width:0%; transition: width 0.3s; z-index: 2; 
-    box-shadow: 0 0 8px #facc15; border-right: 1px solid #fef08a;
-}
+    <!-- MODALE -->
+    <div id="modal-overlay" class="hidden modal-overlay"><div class="modal-content" id="modal-body"></div></div>
 
-/* STATS */
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 5px; flex-shrink: 0; }
-.stat-box { background: rgba(255,255,255,0.03); padding: 4px; text-align: center; border-radius: 4px; border: 1px solid transparent; cursor: help; }
-.stat-box:hover { border-color: var(--hex-purple); background: rgba(168, 85, 247, 0.1); }
-.stat-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; }
-.stat-val { font-size: 14px; color: white; font-family: 'Share Tech Mono', monospace; }
-
-/* BOUTONS */
-.btn-hex { background: linear-gradient(to bottom, #2e1065, #0f0518); border: 1px solid var(--hex-purple); color: #d8b4fe; padding: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center; border-radius: 4px; box-shadow: 0 4px 0 #1e0836; display: flex; align-items: center; justify-content: center; }
-.btn-hex:hover { background: linear-gradient(to bottom, #4c1d95, #1e0836); color: #fff; transform: translateY(-1px); }
-.btn-hex:active { transform: translateY(2px); box-shadow: none; }
-.btn-hex.primary { background: linear-gradient(to bottom, #b45309, #451a03); border-color: var(--hex-gold); color: #fef3c7; box-shadow: 0 4px 0 #451a03; }
-.btn-hex.primary:hover { background: linear-gradient(to bottom, #d97706, #78350f); }
-
-/* ITEMS */
-.inv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 4px; align-content: start; }
-.item-slot { aspect-ratio: 1; background: #0a0112; border: 1px solid #3c3c41; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; border-radius: 4px; overflow: hidden; flex-shrink: 0; }
-.item-slot:hover { transform: scale(1.05); z-index: 10; border-color: var(--hex-gold); }
-.item-img { width: 80%; height: 80%; object-fit: contain; }
-.inventory-container { flex-grow: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--hex-border); padding: 4px; overflow-y: auto; overflow-x: hidden; }
-
-/* ENEMY CARD */
-.enemy-card { width: 240px; background: #1a0b2e; border: 2px solid var(--hex-red); padding: 10px; border-radius: 8px; text-align: center; box-shadow: 0 0 30px rgba(220, 38, 38, 0.2); animation: float-anim 3s infinite ease-in-out; }
-.enemy-visual { font-size: 70px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)) grayscale(0.3) sepia(0.2); margin-bottom: 5px; }
-
-/* SKILLS */
-.skill-slot { width: 36px; height: 36px; background: rgba(168,85,247,0.1); border: 1px solid var(--hex-purple); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: help; flex-shrink: 0; }
-.skill-slot:hover { background: rgba(168,85,247,0.4); border-color: var(--hex-gold); }
-.skill-card { background: rgba(20, 5, 30, 0.95); border: 1px solid var(--hex-purple); padding: 10px; cursor: pointer; border-radius: 6px; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: center; }
-.skill-card:hover { transform: scale(1.05); border-color: var(--hex-gold); background: rgba(30, 10, 50, 1); }
-.skill-icon-lg { font-size: 32px; margin-bottom: 5px; }
-.skill-name { color: var(--hex-gold); font-weight: bold; text-transform: uppercase; font-size: 12px; margin-bottom: 5px; text-align: center; }
-.skill-desc { color: #d1d5db; font-size: 11px; font-style: italic; text-align: center; }
-
-/* LOGS */
-.log-box { flex-grow: 1; overflow: hidden; display: flex; flex-direction: column-reverse; font-size: 12px; color: #9ca3af; padding: 10px; }
-.log-line { padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.log-narrator { color: #d8b4fe; font-style: italic; }
-.log-crit { color: var(--hex-gold); font-weight: bold; }
-.log-damage { color: #fca5a5; }
-
-/* COMBAT FX & POPUPS */
-#combat-fx-layer {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 50;
-}
-
-.popup-msg { 
-    background: rgba(22, 9, 40, 0.95); 
-    border-left: 3px solid var(--hex-gold); 
-    border-right: 3px solid var(--hex-gold); 
-    color: var(--hex-gold-light); 
-    padding: 8px 16px; 
-    font-family: 'MedievalSharp', cursive; 
-    font-size: 14px; 
-    text-align: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.8); 
-    backdrop-filter: blur(4px); 
-    text-shadow: 1px 1px 0 #000; 
-    min-width: 200px;
-    animation: popup-anim 3s forwards;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.popup-msg.crit { border-color: var(--hex-red); color: #fff; background: rgba(224, 62, 62, 0.4); font-weight: bold; }
-.popup-msg.loot { border-color: var(--hex-purple); color: #e9d5ff; background: rgba(168, 85, 247, 0.3); }
-.popup-msg.damage { border-color: #e03e3e; color: #fca5a5; }
-.popup-msg.levelup { border-color: #fbbf24; color: #fbbf24; background: rgba(251, 191, 36, 0.3); font-size: 18px; font-weight: bold; }
-
-@keyframes popup-anim { 
-    0% { opacity: 0; bottom: 10%; } 
-    10% { opacity: 1; bottom: 20%; } 
-    80% { opacity: 1; bottom: 20%; } 
-    100% { opacity: 0; bottom: 30%; } 
-}
-
-@keyframes float-anim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-.float-txt { 
-    position: absolute; 
-    font-weight: bold; 
-    font-size: 20px; 
-    animation: float-damage 1s forwards; 
-    pointer-events: none; 
-    text-shadow: 0 0 3px black; 
-    z-index: 60; 
-}
-@keyframes float-damage {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-30px); }
-}
-
-/* MODALES */
-.modal-overlay { position: fixed; inset: 0; background: rgba(5, 1, 10, 0.98); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-.modal-content { background: #0f0518; border: 2px solid var(--hex-gold); padding: 30px; width: 800px; max-width: 95%; max-height: 90vh; overflow-y: auto; text-align: center; border-radius: 8px; box-shadow: 0 0 50px rgba(168,85,247,0.3); }
-.class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
-.class-card { border: 1px solid #3c3c41; padding: 15px; cursor: pointer; transition: 0.2s; background: rgba(255,255,255,0.02); border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
-.class-card:hover { border-color: var(--hex-gold); background: rgba(200,170,110,0.1); transform: translateY(-3px); }
-.class-card.selected { border: 2px solid var(--hex-gold); background: rgba(200,170,110,0.05); box-shadow: 0 0 15px var(--hex-gold); }
-
-/* MOBILE RESPONSIVE TWEAKS */
-@media (max-width: 768px) {
-    .main-layout { grid-template-columns: 1fr; grid-template-rows: auto auto 1fr auto auto; overflow-y: auto; height: auto; min-height: 100vh; display: flex; flex-direction: column; }
-    .header-area { order: 1; position: sticky; top: 0; z-index: 100; }
-    .center-area { order: 2; height: 300px; flex-shrink: 0; }
-    .left-area { order: 3; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; }
-    .bottom-area { order: 4; flex-direction: column; }
-    .right-area { order: 5; height: 150px; }
-    .stat-grid { grid-template-columns: repeat(4, 1fr); width: 100%; }
-    .w-full-mobile { width: 100%; }
-    .flex-col-mobile { flex-direction: row; }
-    .flex-grow-mobile { flex-grow: 0; height: 120px; }
-    .w-64-mobile { width: 100%; height: auto; }
-    .skill-scroll-mobile { flex-wrap: nowrap; justify-content: flex-start; }
-}
+    <!-- CHARGEMENT DES SCRIPTS -->
+    <script src="js/data.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
