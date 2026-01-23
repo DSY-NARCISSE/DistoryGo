@@ -1,150 +1,57 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Distory Go - V0.122 DEV</title>
-    
-    <!-- Polices -->
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Beaufort+LoL:wght@500;700&family=Spiegel:wght@400&display=swap" rel="stylesheet">
-    
-    <!-- Framework CSS (Tailwind) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Votre CSS Perso -->
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+/* === BASES DE DONNÉES (ITEMS, CLASSES, MOBS) === */
 
-    <div id="tooltip"></div>
+const CLASSES = {
+    'barbarian': { name: "Barbare", img: "", icon: "🪓", desc: "Tape fort.", bonus: "+2 Force", malus: "-5 Int", stats: { hp: 130, atk: 15, def: 2, crit: 0.05, luck: 0 } },
+    'mage': { name: "Magicienne", img: "", icon: "🔮", desc: "Boules de feu.", bonus: "+3 Magie", malus: "-2 PV", stats: { hp: 80, atk: 18, def: 0, crit: 0.10, luck: 1 } },
+    'ranger': { name: "Voleur", img: "", icon: "🗡️", desc: "Fuit vite.", bonus: "+2 Agi", malus: "-1 Courage", stats: { hp: 100, atk: 12, def: 1, crit: 0.25, luck: 3 } },
+    'paladin': { name: "Paladin", img: "", icon: "🛡️", desc: "Brille.", bonus: "+2 Def", malus: "-2 Discrétion", stats: { hp: 150, atk: 10, def: 5, crit: 0.05, luck: 0 } },
+    'elf': { name: "Elfe", img: "", icon: "🏹", desc: "Tire mal.", bonus: "+1 Coiffure", malus: "N'aime pas les nains", stats: { hp: 90, atk: 13, def: 1, crit: 0.15, luck: 2 } },
+    'dwarf': { name: "Nain", img: "", icon: "🍺", desc: "Aime l'or.", bonus: "+10% Or", malus: "Sent le poney", stats: { hp: 140, atk: 14, def: 4, crit: 0.05, luck: 1 } }
+};
 
-    <!-- ECRAN TITRE -->
-    <div id="boot-screen" class="modal-overlay">
-        <div class="modal-content">
-            <h1 class="text-5xl text-gold mb-2 font-bold uppercase tracking-widest" style="color:var(--hex-gold); text-shadow: 0 0 10px var(--hex-gold);">CRÉATION DU HÉROS</h1>
-            <p class="text-purple-300 mb-6 italic text-lg">"Choisissez votre destin (et votre manière de mourir)."</p>
-            <input type="text" id="player-name-input" placeholder="Nom" maxlength="15" class="bg-transparent border-b-2 border-gray-600 text-center text-3xl text-white outline-none w-80 mb-4 focus:border-purple-500 uppercase py-2">
-            <div id="class-grid" class="class-grid"></div>
-            <div id="dice-roll-area" class="h-8 text-purple-400 font-bold italic mb-4 text-xl"></div>
-            <button onclick="Game.startGame()" class="btn-hex primary w-full mt-2 py-3 text-xl tracking-widest">ENTRER DANS LE DONJON</button>
-            <button onclick="Game.hardReset()" class="text-xs text-gray-500 hover:text-red-500 mt-4 underline decoration-dashed">Effacer tout</button>
-        </div>
-    </div>
+const ENEMIES = [
+    { name: "Gobelin", img: "", icon: "👺", hp: 30, atk: 4, xp: 10 },
+    { name: "Rat Géant", img: "", icon: "🐀", hp: 45, atk: 6, xp: 15 },
+    { name: "Orque", img: "", icon: "👹", hp: 80, atk: 10, xp: 25 },
+    { name: "Squelette", img: "", icon: "💀", hp: 50, atk: 8, xp: 20 },
+    { name: "Slime", img: "", icon: "🟢", hp: 60, atk: 5, xp: 18 },
+    { name: "Bandit", img: "", icon: "🦹", hp: 70, atk: 9, xp: 22 },
+    { name: "Poulet", img: "", icon: "🐔", hp: 100, atk: 15, xp: 40 }
+];
 
-    <!-- JEU -->
-    <div id="game-interface" class="main-layout" style="filter: blur(5px);">
-        <!-- Header -->
-        <div class="header-area">
-            <div class="flex items-center gap-4 min-w-0">
-                <span class="text-gold font-bold text-lg md:text-xl uppercase tracking-widest truncate">DISTORY GO</span>
-                <span class="text-gray-500 text-sm hidden md:inline">|</span>
-                <span class="text-sm text-purple-400 uppercase tracking-widest hidden md:inline">V0.122</span>
-            </div>
-            <div class="flex items-center gap-4 md:gap-8 font-tech text-lg">
-                <div class="flex items-center gap-2 text-gold filter drop-shadow-md"><span class="text-xl">🪙</span> <span id="ui-gold">0</span></div>
-                <div class="flex items-center gap-2 text-purple-400 filter drop-shadow-md"><span class="text-xl">✨</span> <span id="ui-gems">0</span></div>
-                <div class="text-gray-400 uppercase text-sm border-l border-gray-700 pl-4 truncate max-w-[100px] md:max-w-none" id="ui-zone">Hall</div>
-            </div>
-        </div>
+const BOSSES = [
+    { name: "Troll", img: "", icon: "👿", hp: 400, atk: 25, xp: 200 },
+    { name: "Araignée", img: "", icon: "🕷️", hp: 600, atk: 35, xp: 300 },
+    { name: "Zangdar", img: "", icon: "🧙‍♂️", hp: 800, atk: 45, xp: 500 }
+];
 
-        <!-- Gauche -->
-        <div class="hex-panel left-area">
-            <div class="text-center mb-2 flex-shrink-0">
-                <div class="avatar-container" onmouseenter="UI.showFullStats(event)" onmouseleave="UI.hideTip()">
-                    <div id="ui-avatar-visual"></div> 
-                    <div id="ui-pet-visual" class="pet-visual-container"></div>
-                </div>
-                <div class="mt-2 font-bold text-lg text-white uppercase tracking-widest" id="ui-name">JOUEUR</div>
-                <div class="text-xs text-purple-400 uppercase tracking-widest" id="ui-class-name">Classe</div>
-            </div>
-            
-            <div class="space-y-3 flex-shrink-0">
-                <div class="bar-container" onmouseenter="UI.tip(event, 'SANTÉ', 'Si ça tombe à zéro, c\'est game over.')" onmouseleave="UI.hideTip()">
-                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Santé</span><span id="ui-hp-text">100/100</span></div>
-                    <div class="bar-track"><div id="ui-hp-bar" class="bar-fill"></div><div id="ui-shield-bar" class="shield-fill"></div></div>
-                </div>
-                <div class="bar-container" onmouseenter="UI.tip(event, 'EXPÉRIENCE', 'Pour devenir moins nul.')" onmouseleave="UI.hideTip()">
-                    <div class="flex justify-between text-[10px] text-gray-400 uppercase mb-1"><span>Expérience</span><span id="ui-xp-text">0/100</span></div>
-                    <div class="bar-track" style="height: 6px;"><div id="ui-xp-bar" class="bar-fill xp"></div></div>
-                </div>
-            </div>
+const ITEMS_DB = [
+    { name: "Épée Rouillée", desc: "Ça coupe, c'est déjà ça.", type: "weapon", val: 2, stat: "atk", img: "", icon: "🗡️", rarity: "common" },
+    { name: "Hache du Nain", desc: "Pour les négociations difficiles.", type: "weapon", val: 5, stat: "atk", img: "", icon: "🪓", rarity: "rare" },
+    { name: "Bâton Magique", desc: "Un bout de bois qui fait des étincelles.", type: "weapon", val: 8, stat: "atk", img: "", icon: "🪄", rarity: "epic" },
+    { name: "Casque à Cornes", desc: "Protège des chutes de pierres.", type: "head", val: 2, stat: "def", img: "", icon: "🪖", rarity: "common" },
+    { name: "Bouclier en Bois", desc: "Une planche avec une poignée.", type: "head", val: 5, stat: "def", img: "", icon: "🛡️", rarity: "rare" },
+    { name: "Couronne d'Or", desc: "Ça brille, les gobelins aiment ça.", type: "head", val: 8, stat: "def", img: "", icon: "👑", rarity: "epic" },
+    { name: "Rat Toxique", desc: "Il a la rage, c'est un bonus.", type: "pet", val: 2, stat: "atk", element: "poison", img: "", icon: "🐀", rarity: "common" },
+    { name: "Dragonnet", desc: "Attention, il crache.", type: "pet", val: 5, stat: "atk", element: "fire", img: "", icon: "🐲", rarity: "rare" },
+    { name: "Gelée Vivante", desc: "C'est froid et gluant.", type: "pet", val: 3, stat: "atk", element: "ice", img: "", icon: "🧊", rarity: "rare" }
+];
 
-            <div class="stat-grid flex-shrink-0">
-                <div class="stat-box" onmouseenter="UI.tip(event, 'FORCE', 'Dégâts physiques bruts infligés par vos attaques de base.')" onmouseleave="UI.hideTip()"><div class="stat-label">Force</div><div id="ui-atk" class="stat-val text-red-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'DÉFENSE', 'Réduit les dégâts subis de chaque attaque ennemie.')" onmouseleave="UI.hideTip()"><div class="stat-label">Défense</div><div id="ui-def" class="stat-val text-blue-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'CHANCE', 'Augmente la probabilité de coups critiques et la qualité des butins.')" onmouseleave="UI.hideTip()"><div class="stat-label">Chance</div><div id="ui-luck" class="stat-val text-green-400">0</div></div>
-                <div class="stat-box" onmouseenter="UI.tip(event, 'SALLE', 'Votre progression actuelle dans l\'étage du donjon.')" onmouseleave="UI.hideTip()"><div class="stat-label">Salle</div><div id="ui-room" class="stat-val text-yellow-400">1</div></div>
-            </div>
+const EVENTS = [
+    { title: "Porte", desc: "Fermée.", choices: [{t:"Défoncer", ef:"trap", result:"Piège !"}, {t:"Partir", ef:"nothing", result:"Rien."}], type: 'choice' },
+    { title: "Marchand", desc: "Il vend.", choices: [{t:"Acheter", ef:"scam", result:"Arnaque !"}, {t:"Voler", ef:"loot", result:"Vol réussi."}], type: 'choice' },
+    { title: "Pause", desc: "Manger ?", choices: [{t:"Oui", ef:"heal_small", result:"Miam."}, {t:"Non", ef:"damage", result:"Faim."}], type: 'choice' },
+    { title: "Fontaine", desc: "Une eau claire.", ef: "heal_small", type: 'instant' }
+];
 
-            <div class="mt-auto flex justify-center gap-2 pb-2">
-                <div id="slot-weapon" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-                <div id="slot-head" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-                <div id="slot-pet" class="item-slot w-12 h-12" style="border-color: #5b5a56;"></div>
-            </div>
-        </div>
+const SKILLS_DB = [
+    { id: 'poison', name: "Chaussette Puante", icon: "🧦", desc: "L'ennemi perd 2 PV par tour (Poison).", type: 'dot_poison' },
+    { id: 'elec', name: "Doigts dans la Prise", icon: "⚡", desc: "Augmente vos dégâts de base de 2.", type: 'dmg_flat' },
+    { id: 'fire', name: "Haleine de Chili", icon: "🌶️", desc: "Inflige 3 dégâts de feu par tour.", type: 'dot_fire' },
+    { id: 'shadow', name: "Vampirisme", icon: "🧛", desc: "Soigne 20% des dégâts que vous infligez.", type: 'lifesteal' },
+    { id: 'light', name: "Aura de Propreté", icon: "✨", desc: "Commence le combat avec 15 points de Bouclier.", type: 'shield_start' },
+    { id: 'chi', name: "Yoga du Dimanche", icon: "🧘", desc: "+2 Force, +1 Défense, +5 PV Max.", type: 'stat_boost' },
+    { id: 'crit', name: "Coup de Bol", icon: "🍀", desc: "Augmente les chances de critique de 10%.", type: 'stat_crit' }
+];
 
-        <!-- Centre -->
-        <div class="center-area" id="center-zone">
-            <h2 class="absolute top-4 text-3xl font-bold text-white opacity-5 tracking-[10px] pointer-events-none w-full text-center">COMBAT</h2>
-            <div id="combat-fx-layer"></div>
-            
-            <div id="view-story" class="text-center max-w-md p-6 bg-black/60 border border-gray-700 backdrop-blur-md rounded-lg shadow-xl m-4 relative z-10">
-                <div id="story-text" class="text-xl text-gray-200 leading-relaxed font-medieval">Entrez dans le donjon...</div>
-                <button id="btn-next-floor" onclick="Game.nextFloor()" class="hidden btn-hex primary w-full mt-4 text-xl animate-bounce">DESCENDRE À L'ÉTAGE SUIVANT</button>
-            </div>
-
-            <div id="view-combat" class="hidden flex flex-col items-center w-full justify-center h-full relative z-10">
-                <div class="enemy-card">
-                    <div id="enemy-sprite" class="enemy-visual">👹</div>
-                    <div class="w-full bg-black/50 rounded p-2 mt-2">
-                        <div class="flex justify-between text-xs text-red-400 font-bold uppercase mb-1"><span id="enemy-name">Cible</span><span id="enemy-hp-text">100%</span></div>
-                        <div class="bar-track border-red-900 h-3 rounded-full overflow-hidden"><div id="enemy-hp-bar" class="bar-fill enemy"></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bas -->
-        <div class="bottom-area">
-            <div class="flex flex-col gap-2 w-48 flex-shrink-0 flex-col-mobile w-full-mobile">
-                <button id="btn-action" onclick="Game.action()" class="btn-hex primary text-lg h-full">AVANCER</button>
-                <div class="flex gap-2 h-10">
-                    <button onclick="Game.toggleAuto()" id="btn-auto" class="btn-hex flex-1 text-[10px]">AUTO</button>
-                    <button onclick="Game.toggleSpeed()" id="btn-speed" class="btn-hex flex-1 text-[10px]">x1</button>
-                </div>
-            </div>
-
-            <div class="flex-grow hex-panel p-2 flex flex-col items-center bg-black/40 min-w-0 flex-grow-mobile">
-                <div class="text-[9px] text-gray-500 uppercase mb-1 tracking-widest">Compétences</div>
-                <div id="ui-skills" class="flex gap-2 flex-wrap justify-center overflow-y-auto content-start w-full h-full p-1 skill-scroll-mobile"></div>
-            </div>
-
-            <div class="w-64 hex-panel p-2 flex flex-col flex-shrink-0 w-64-mobile">
-                <div class="flex justify-between items-center mb-1 px-1">
-                    <span class="text-[9px] uppercase text-gray-500 tracking-widest">Sac à dos</span>
-                    <button onclick="Game.buyChest()" class="text-[9px] text-purple-400 hover:text-white uppercase font-bold border border-purple-900 px-2 py-0.5 rounded bg-purple-900/20">Shop (5✨)</button>
-                </div>
-                <div class="inventory-container"><div id="inventory" class="inv-grid"></div></div>
-            </div>
-        </div>
-
-        <!-- Droite -->
-        <div class="hex-panel right-area">
-            <div class="text-xs text-gold uppercase border-b border-gray-800 pb-2 mb-2 text-center tracking-widest">JOURNAL</div>
-            <div id="gamelog" class="log-box"></div>
-            <div class="mt-2 pt-2 border-t border-gray-800 flex gap-2">
-                <button onclick="UI.openCamp()" class="btn-hex flex-1 text-xs">CAMP</button>
-                <button onclick="alert('Vous êtes le meilleur.')" class="btn-hex flex-1 text-xs">RANG</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALE -->
-    <div id="modal-overlay" class="hidden modal-overlay"><div class="modal-content" id="modal-body"></div></div>
-
-    <!-- CHARGEMENT DES SCRIPTS -->
-    <script src="js/data.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/game.js"></script>
-</body>
-</html>
+const CULT_QUOTES = ["Chaussette !", "Baston !", "Zog zog."];
